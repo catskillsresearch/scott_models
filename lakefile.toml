@@ -1,0 +1,28 @@
+name = "scott_models"
+version = "0.1.0"
+keywords = ["domain-theory", "scott", "equivalence", "lean4"]
+defaultTargets = ["ScottModels"]
+
+[leanOptions]
+pp.unicode.fun = true
+relaxedAutoImplicit = true
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.30.0"
+
+[[require]]
+name = "scott1972"
+path = "../scott1972"
+
+[[require]]
+name = "scott1980"
+path = "../scott1980"
+
+[[require]]
+name = "scott1982"
+path = "../scott1982"
+
+[[lean_lib]]
+name = "ScottModels"

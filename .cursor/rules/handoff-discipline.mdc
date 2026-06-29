@@ -1,0 +1,35 @@
+---
+description: HANDOFF/resume discipline and context-cost hygiene for the Scott PRG-19 Lean project
+alwaysApply: true
+---
+
+# Resume & HANDOFF discipline
+
+This project is formalized incrementally and sessions get reset by context compaction. Durable
+state lives in files, not chat memory. Treat `HANDOFF.md` as the source of truth.
+
+## On starting a session
+- Read `HANDOFF.md` **first** (it has a "Resume Protocol" header listing what else to read).
+- Do **not** read large files whole. `arxiv.md` (~2.5k lines) is the inventory: use `Grep` or
+  `Read` with `offset`/`limit` to pull only the relevant item's row, never the entire file.
+- **Never** read, grep, or search `arxiv_with_code.md` (or other `arxiv_with_code.*` outputs).
+  That file is **auto-generated** from `arxiv.md` + inlined Lean for the PDF pipeline; it is
+  stale between regenerations and duplicates the entire codebase. It is listed in `.cursorignore`.
+
+## On finishing a work item (e.g. a Definition/Theorem/Example)
+After the item builds green, do all of the following before ending the turn:
+1. `lake build <module>` is green and zero `sorry`; run an axiom audit
+   (`#print axioms <name>`) and confirm `⊆ {propext, Quot.sound}` unless choice is unavoidable.
+2. Append a dated checkpoint to `HANDOFF.md` and update its "Resume Protocol" / status lines.
+3. Update the item's row in `arxiv.md` to **Pass** with a dense proof note. In Markdown tables,
+   **escape literal `|` as `\|`** (e.g. `\|D →⊥ E\|`) or the cell truncates.
+4. Wire any new module into `Domain.lean`.
+
+## Context-cost hygiene
+- Filter shell output (`| grep -vE 'LEAN_PATH|trace:' | tail`) so builds don't dump thousands of lines.
+- Prefer appending to the end of `HANDOFF.md` over rewriting its middle (keeps the prompt cache warm).
+- Batch independent tool calls in one turn.
+
+## Choice discipline
+Data constructions must stay choice-free (`[propext, Quot.sound]`). `Classical.choice` is allowed
+only for `Prop`-level results where it is genuinely unavoidable, and must be called out in notes.
