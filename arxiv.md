@@ -27,7 +27,7 @@ flowchart LR
   P2["Part II · 1981<br/>Neighborhood Systems<br/><i>Scott1980/Neighborhood/ (§1 live)</i>"]
   P3["Part III · 1982<br/>Information Systems<br/><i>Scott1982/InfoSys.lean</i>"]
   P4["Part IV · Equivalence finale<br/><i>ScottModels/ TBD</i>"]
-  C["Domain/Constructive.lean<br/>choice-free prelude"]
+  C["Scott1982/Constructive.lean<br/>choice-free prelude"]
 
   P1 -->|"Thm: CL_to_neighborhood"| P2
   P2 -->|"Thm: neighborhood_to_infoSys"| P3
