@@ -1,3 +1,4 @@
+[![Lean 4](https://img.shields.io/github/actions/workflow/status/catskillsresearch/scott_models/build.yml?label=Lean%204)](https://github.com/catskillsresearch/scott_models/actions/workflows/build.yml)
 # scott_models
 
 **Part IV** of the Scott domain theory monograph: equivalence theorems relating the

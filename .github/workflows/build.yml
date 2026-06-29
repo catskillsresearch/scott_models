@@ -10,9 +10,32 @@ jobs:
   build:
     name: Build Lean Project
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: scott_models
     steps:
-      - name: Checkout repository
+      - name: Checkout scott_models
         uses: actions/checkout@v4
+        with:
+          path: scott_models
+
+      - name: Checkout scott1972
+        uses: actions/checkout@v4
+        with:
+          repository: catskillsresearch/scott1972
+          path: scott1972
+
+      - name: Checkout scott1980
+        uses: actions/checkout@v4
+        with:
+          repository: catskillsresearch/scott1980
+          path: scott1980
+
+      - name: Checkout scott1982
+        uses: actions/checkout@v4
+        with:
+          repository: catskillsresearch/scott1982
+          path: scott1982
 
       - name: Install elan
         run: |
