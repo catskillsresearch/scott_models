@@ -3,4 +3,8 @@ import Scott1980.Neighborhood.Basic
 import Scott1982.InfoSys
 import ScottModels.NeighborhoodToInfoSys
 import ScottModels.InfoSysToNeighborhood
+import ScottModels.ContinuousLatticeToNeighborhood
+import ScottModels.InfoSysToIdealCompletion
+import ScottModels.IdealCompletionToContinuousLattice
+import ScottModels.PresentationDomains
 import ScottModels.Equivalence

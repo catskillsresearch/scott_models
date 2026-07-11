@@ -27,10 +27,17 @@ lives in each sibling's `arxiv.md`.
 ## Current status (2026-07-11)
 
 - `neighborhoodSystem_to_infoSys` **Pass** (`NeighborhoodToInfoSys.lean`).
-- `infoSys_to_neighborhoodSystem` **Pass** (`InfoSysToNeighborhood.lean`): basic opens
-  `[u]` form a neighbourhood system on `|A|` with `domainOrderIso`.
-  Axioms ⊆ `{propext, Quot.sound}`. **1980 ↔ 1982** constructive pair is in place.
-- Remaining: 1972→1980, 1982→algebraic→1972, full equiv, constructions.
+- `infoSys_to_neighborhoodSystem` **Pass** (`InfoSysToNeighborhood.lean`).
+- `continuousLattice_to_neighborhoodSystem` **Pass** (`ContinuousLatticeToNeighborhood.lean`):
+  `↟a` neighbourhoods + `domainEmbedding : D ↪o |𝒟|` with retract `ofFilter_toFilter`.
+  Full `|𝒟| ≃o D` deferred (round-ideal / HARD). Axioms ⊆ `{propext, Quot.sound}`.
+- `infoSys_to_idealCompletion` **Pass** (`InfoSysToIdealCompletion.lean`):
+  `|A| ≃o Order.Ideal (FiniteElement A)` via Factoids 4.4–4.5.
+- `idealCompletion_to_continuousLattice` **Pass** (`IdealCompletionToContinuousLattice.lean`):
+  algebraic complete lattice ⇒ `IsContinuousLattice` (classical `≪`).
+- `presentation_domains_equiv` **Partial** (`PresentationDomains.lean`): 1980↔1982↔ideal
+  triangle; CL corner still embedding-only.
+- Remaining: close CL↔Nbhd to full iso; `infoSys_constructions_equiv`.
 
 ## On finishing a bridge theorem
 
@@ -70,3 +77,37 @@ lives in each sibling's `arxiv.md`.
   `basicOpen_empty` / `funion` which pulled `Classical.choice`).
 - Completes the constructive **1980 ↔ 1982** presentation bridge (with
   `neighborhoodSystem_to_infoSys`).
+
+### 2026-07-11 — `continuousLattice_to_neighborhoodSystem`
+
+- New `ScottModels/ContinuousLatticeToNeighborhood.lean`: `wayBelowUp a = {z | a ≪ z}`
+  as `NeighborhoodSystem` on token set `D`; principal filters `toFilter`; under
+  `IsContinuousLattice`, retract `ofFilter` (`sSup` of codes in the filter) and
+  `domainEmbedding : D ↪o |𝒟|`.
+- Does **not** claim full `|𝒟| ≃o D` (needs roundness / `a ≪ ⊔approx`).
+- `#print axioms` on named decls ⊆ `{propext, Quot.sound}`.
+- Wired through `ScottModels.lean` / `Equivalence.lean`; `arxiv.md` Pass.
+
+### 2026-07-11 — `infoSys_to_idealCompletion`
+
+- New `ScottModels/InfoSysToIdealCompletion.lean`: `FiniteElement A` = closures of
+  consistent finsets; `toIdeal` / `ofIdeal` give `domainOrderIso : |A| ≃o Ideal (FiniteElement A)`.
+- Uses 1982 Factoids 4.4–4.5 (`directedSup`, `eq_directedSup_finiteApproximants`,
+  `compact_closure`).
+- `#print axioms` ⊆ `{propext, Quot.sound}`.
+- Wired through `ScottModels.lean` / `Equivalence.lean`; `arxiv.md` Pass.
+
+### 2026-07-11 — `idealCompletion_to_continuousLattice`
+
+- New `ScottModels/IdealCompletionToContinuousLattice.lean`: `IsCompactElement`,
+  `IsAlgebraicLattice`, proof `IsAlgebraicLattice ⇒ IsContinuousLattice` (compacts are
+  way-below via Scott-open `Ici`).
+- Classical frontier: depends on 1972 topological `≪` / `ScottOpen`.
+- Wired through `ScottModels.lean` / `Equivalence.lean`; `arxiv.md` Pass.
+
+### 2026-07-11 — `presentation_domains_equiv` (partial)
+
+- New `ScottModels/PresentationDomains.lean`: `neighborhood_ideal_iso`,
+  `nbhdBasis_ideal_iso` composing 1980↔1982↔ideal completion.
+- Full three-presentation equiv blocked on `|𝒟| ≃o D` for the 1972 corner.
+- Wired into `ScottModels.lean`.

@@ -32,12 +32,12 @@ Scott notes (1982) that neighborhood systems and information systems are equival
 
 | Theorem (planned)                         | Direction                      | Depends on                                 | Status                           |
 | ----------------------------------------- | ------------------------------ | ------------------------------------------ | -------------------------------- |
-| `continuousLattice_to_neighborhoodSystem` | 1972 → 1980                    | 1972 **2.11**, **2.12**; Δ as master set | **Not Yet**                      |
+| `continuousLattice_to_neighborhoodSystem` | 1972 → 1980                    | 1972 **2.11**, **2.12**; Δ as master set | **Pass** — `↟a` nbhds + `domainEmbedding : D ↪o \|𝒟\|` (`ContinuousLatticeToNeighborhood.lean`); retract `ofFilter ∘ toFilter`; axioms ⊆ `{propext, Quot.sound}`; full `\|𝒟\| ≃o D` deferred (round ideals) |
 | `neighborhoodSystem_to_infoSys`           | 1980 → 1982                    | 1980 domain-as-filter; decidable nbhd basis | **Pass** — `NbhdBasis.toInfoSys` + `domainOrderIso` (`NeighborhoodToInfoSys.lean`); axioms ⊆ `{propext, Quot.sound}` |
 | `infoSys_to_neighborhoodSystem`           | 1982 → 1980                    | 1982 Factoid 4.6 `basicOpen`             | **Pass** — `[u]`-neighbourhoods on `\|A\|` + `domainOrderIso` (`InfoSysToNeighborhood.lean`); axioms ⊆ `{propext, Quot.sound}` |
-| `infoSys_to_idealCompletion`              | 1982 → algebraic dcpo          | 1982 `InfoSys.Element`                 | **Not Yet**                      |
-| `idealCompletion_to_continuousLattice`    | algebraic CL → 1972            | compact elements, Scott open sets          | **Not Yet** (classical frontier) |
-| `presentation_domains_equiv`              | I ↔ II ↔ III                   | all above                                  | **Not Yet**                      |
+| `infoSys_to_idealCompletion`              | 1982 → algebraic dcpo          | 1982 `InfoSys.Element`                 | **Pass** — `\|A\| ≃o Ideal (FiniteElement A)` (`InfoSysToIdealCompletion.lean`); Factoids 4.4–4.5; axioms ⊆ `{propext, Quot.sound}` |
+| `idealCompletion_to_continuousLattice`    | algebraic CL → 1972            | compact elements, Scott open sets          | **Pass** — `IsAlgebraicLattice ⇒ IsContinuousLattice` (`IdealCompletionToContinuousLattice.lean`); compact ⇒ `≪` via Scott-open `Ici`; classical frontier (1972 `≪`) |
+| `presentation_domains_equiv`              | I ↔ II ↔ III                   | all above                                  | **Partial** — constructive triangle `\|𝒟\| ≃o \|A\| ≃o Ideal(Finite)` (`PresentationDomains.lean`); 1972 corner still embedding-only |
 | `infoSys_constructions_equiv`             | products, sums, function space | 1972 **3.3**, 1982 constructions     | **Not Yet**                      |
 
 

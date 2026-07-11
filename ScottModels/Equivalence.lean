@@ -1,5 +1,8 @@
 import ScottModels.NeighborhoodToInfoSys
 import ScottModels.InfoSysToNeighborhood
+import ScottModels.ContinuousLatticeToNeighborhood
+import ScottModels.InfoSysToIdealCompletion
+import ScottModels.IdealCompletionToContinuousLattice
 
 /-!
 # Equivalence theorems (Part IV)
@@ -12,7 +15,13 @@ the cross-presentation maps. See `arxiv.md` / `HANDOFF.md`.
 
 * `neighborhoodSystem_to_infoSys` — **done** (`NeighborhoodToInfoSys.lean`)
 * `infoSys_to_neighborhoodSystem` — **done** (`InfoSysToNeighborhood.lean`)
-* `continuousLattice_to_neighborhoodSystem` — not yet
-* `infoSys_to_idealCompletion` / `idealCompletion_to_continuousLattice` — not yet
-* `presentation_domains_equiv`; `infoSys_constructions_equiv` — not yet
+* `continuousLattice_to_neighborhoodSystem` — **done** (`ContinuousLatticeToNeighborhood.lean`;
+  `domainEmbedding : D ↪o |𝒟|`, not full iso)
+* `infoSys_to_idealCompletion` — **done** (`InfoSysToIdealCompletion.lean`;
+  `|A| ≃o Ideal (FiniteElement A)`)
+* `idealCompletion_to_continuousLattice` — **done** (`IdealCompletionToContinuousLattice.lean`;
+  algebraic complete lattice ⇒ `IsContinuousLattice`; classical `≪`)
+* `presentation_domains_equiv` — **partial** (`PresentationDomains.lean`; constructive
+  triangle; CL corner embedding-only)
+* `infoSys_constructions_equiv` — not yet
 -/
