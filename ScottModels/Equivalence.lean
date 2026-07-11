@@ -3,6 +3,7 @@ import ScottModels.InfoSysToNeighborhood
 import ScottModels.ContinuousLatticeToNeighborhood
 import ScottModels.InfoSysToIdealCompletion
 import ScottModels.IdealCompletionToContinuousLattice
+import ScottModels.PresentationDomains
 
 /-!
 # Equivalence theorems (Part IV)
@@ -21,8 +22,8 @@ the cross-presentation maps. See `arxiv.md` / `HANDOFF.md`.
   `|A| ≃o Ideal (FiniteElement A)`)
 * `idealCompletion_to_continuousLattice` — **done** (`IdealCompletionToContinuousLattice.lean`;
   algebraic complete lattice ⇒ `IsContinuousLattice`; classical `≪`)
-* `presentation_domains_equiv` — **partial** (`PresentationDomains.lean`; constructive
-  triangle; CL corner is round-filter iso)
+* `presentation_domains_equiv` — **done** (`PresentationDomains.lean`;
+  `D ≃o RoundFilter ≃o RoundInfoSysElement` via `wayBelowNbhdBasis`)
 * `infoSys_constructions_equiv` — **partial** (`InfoSysConstructions.lean`; 1982 product /
   sum / function-space domain isos; 1972 ScottMap link not yet)
 -/

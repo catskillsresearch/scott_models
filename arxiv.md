@@ -37,7 +37,7 @@ Scott notes (1982) that neighborhood systems and information systems are equival
 | `infoSys_to_neighborhoodSystem`           | 1982 → 1980                    | 1982 Factoid 4.6 `basicOpen`             | **Pass** — `[u]`-neighbourhoods on `\|A\|` + `domainOrderIso` (`InfoSysToNeighborhood.lean`); axioms ⊆ `{propext, Quot.sound}` |
 | `infoSys_to_idealCompletion`              | 1982 → algebraic dcpo          | 1982 `InfoSys.Element`                 | **Pass** — `\|A\| ≃o Ideal (FiniteElement A)` (`InfoSysToIdealCompletion.lean`); Factoids 4.4–4.5; axioms ⊆ `{propext, Quot.sound}` |
 | `idealCompletion_to_continuousLattice`    | algebraic CL → 1972            | compact elements, Scott open sets          | **Pass** — `IsAlgebraicLattice ⇒ IsContinuousLattice` (`IdealCompletionToContinuousLattice.lean`); compact ⇒ `≪` via Scott-open `Ici`; classical frontier (1972 `≪`) |
-| `presentation_domains_equiv`              | I ↔ II ↔ III                   | all above                                  | **Partial** — constructive triangle + `D ≃o RoundFilter`; full three-way still needs identifying round `↟`-filters with 1980/1982 domains |
+| `presentation_domains_equiv`              | I ↔ II ↔ III                   | all above                                  | **Pass** — `D ≃o RoundFilter ≃o RoundInfoSysElement` via `wayBelowNbhdBasis` (`PresentationDomains.lean`); raw `\|𝒟\|`/`\|A\|` larger; axioms ⊆ `{propext, Quot.sound}` |
 | `infoSys_constructions_equiv`             | products, sums, function space | 1972 **3.3**, 1982 constructions     | **Partial** — 1982 side done: product, separated sum (classical), `\|A→B\|≃o ApproxMap` (`InfoSysConstructions.lean`); 1972 ScottMap cross-link not yet |
 
 
