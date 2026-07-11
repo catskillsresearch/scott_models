@@ -59,6 +59,18 @@ flowchart LR
   CL -->|"presentation_domains_equiv"| INF
 ```
 
+We prove **order isomorphisms of domains** (and of the named construction objects), not
+a 2-categorical equivalence of the full categories of continuous lattices /
+neighbourhood systems / information systems with all morphisms. Morphisms are linked
+where the sibling packages already supply them:
+
+- approximable maps ↔ Scott-continuous maps on `|A|` (Factoid 4.6);
+- Scott maps of continuous lattices ↔ their conjugates on the round presentation.
+
+A full functorial equivalence (preserving products, exponentials, and inverse limits
+simultaneously across all three presentations) would require additional coherence
+theorems.
+
 ---
 
 ## 2. Catalog of bridge theorems
@@ -77,36 +89,77 @@ The sibling packages are **finished dependencies**, not work items of this paper
 [`scott1972`](https://github.com/catskillsresearch/scott1972),
 [`scott1980`](https://github.com/catskillsresearch/scott1980), and
 [`scott1982`](https://github.com/catskillsresearch/scott1982) (information systems through
-Factoid 8.4 / domain equations). This package only builds the bridges above.
+Factoid 8.4 / domain equations). This package does **not** vendor their Lean sources;
+Lake path dependencies pull them in. Figure~2 is left-to-right: sibling packages on the
+left, local `ScottModels/` modules on the right, with arrows for **direct** imports
+(transitive imports inside the siblings are omitted). `Equivalence` re-exports the
+bridges; only the `ScottMapBridge → Equivalence` edge is drawn to avoid clutter.
+Root `ScottModels.lean` also opens 1972 `ContinuousLattice.Specialization`, 1980
+`Neighborhood.Basic`, and 1982 `InfoSys`.
 
 <!-- mermaid-caption: Lean module map -->
 ```mermaid
-flowchart TD
-  CLN["ContinuousLatticeToNeighborhood"]
-  N2I["NeighborhoodToInfoSys"]
-  I2N["InfoSysToNeighborhood"]
-  I2Id["InfoSysToIdealCompletion"]
-  Id2CL["IdealCompletionToContinuousLattice"]
-  PD["PresentationDomains"]
-  IC["InfoSysConstructions"]
-  SMB["ScottMapBridge"]
-  Eq["Equivalence"]
-
-  CLN --> PD
-  N2I --> PD
-  I2N --> PD
-  I2Id --> PD
-  Id2CL --> PD
-  IC --> SMB
-  PD --> SMB
-  CLN --> Eq
-  N2I --> Eq
-  I2N --> Eq
-  I2Id --> Eq
-  Id2CL --> Eq
-  PD --> Eq
-  IC --> Eq
-  SMB --> Eq
+flowchart LR
+  subgraph pkg1972["scott1972"]
+    direction TB
+    WB["WayBelow"]
+    FS["FunctionSpaces"]
+  end
+  subgraph pkg1980["scott1980"]
+    NB["Neighborhood.Basic"]
+  end
+  subgraph pkg1982["scott1982"]
+    direction TB
+    IS["InfoSys"]
+    P23["Proposition23"]
+    F35["Factoid35"]
+    F36["Factoid36"]
+    F45["Factoid45"]
+    F46["Factoid46"]
+    P53["Proposition53"]
+    P64["Proposition64"]
+    T72["Theorem72"]
+  end
+  subgraph local["ScottModels"]
+    direction LR
+    subgraph bridges["bridge modules"]
+      direction TB
+      CLN["ContinuousLatticeToNeighborhood"]
+      N2I["NeighborhoodToInfoSys"]
+      I2N["InfoSysToNeighborhood"]
+      I2Id["InfoSysToIdealCompletion"]
+      Id2CL["IdealCompletionToContinuousLattice"]
+      IC["InfoSysConstructions"]
+    end
+    PD["PresentationDomains"]
+    SMB["ScottMapBridge"]
+    Eq["Equivalence"]
+    CLN --> PD
+    N2I --> PD
+    I2N --> PD
+    I2Id --> PD
+    Id2CL --> PD
+    IC --> SMB
+    PD --> SMB
+    SMB --> Eq
+  end
+  WB --> CLN
+  WB --> Id2CL
+  NB --> CLN
+  NB --> N2I
+  NB --> I2N
+  IS --> N2I
+  P23 --> N2I
+  P23 --> I2N
+  F35 --> I2N
+  F46 --> I2N
+  F45 --> I2Id
+  T72 --> IC
+  P64 --> IC
+  FS --> SMB
+  F46 --> SMB
+  F36 --> SMB
+  P53 --> SMB
 ```
 
 ---
@@ -257,47 +310,37 @@ hiding choice in automation.
 
 ---
 
-## 5. What “equivalence” means here
+## 5. Worked example
 
-We prove **order isomorphisms of domains** (and of the named construction objects), not
-a 2-categorical equivalence of the full categories of continuous lattices /
-neighbourhood systems / information systems with all morphisms. Morphisms are linked
-where the sibling packages already supply them:
+This section walks one concrete domain through the three presentations, so the bridge
+theorems are visible on a single example rather than only as abstract isomorphisms.
+The example should be self-contained in [`scott1982`](https://github.com/catskillsresearch/scott1982)
+**[SR82]** (no ad-hoc data invented only for Part IV), nontrivial enough to exercise
+tokens / consistency / entailment and at least one construction, yet small enough to
+serve as tutorial intuition.
 
-- approximable maps ↔ Scott-continuous maps on `|A|` (Factoid 4.6);
-- Scott maps of continuous lattices ↔ their conjugates on the round presentation.
+**Candidate (pending choice).** Scott’s tree / S-expression domain
+`T ≅ A + (T × T)` (`Factoid81.lean`: inductive `TreeToken`, `treeSystem`, unfolding into
+`sumSystem` / `productSystem`) is the leading option: it is the textbook “lists and
+trees” equation, already fully formalized, and connects InfoSys structure to products
+and separated sums. Lighter alternatives in the same package include the ℕ lower-bound
+system (`Factoid24.lean`) and the λ-model `D ≅ A + (D → D)` (`Factoid82.lean`); the
+former may be too thin for a three-presentation tour, the latter heavier than needed
+for a first worked example.
 
-A full functorial equivalence (preserving products, exponentials, and inverse limits
-simultaneously across all three presentations) would require additional coherence
-theorems beyond this Part IV catalog.
+**Planned tour (once the example is fixed).**
 
----
+1. **1982 information system** — tokens, `Con` / `Ent`, a few finite elements, and (for
+   trees) the domain equation unfolding.
+2. **1980 neighbourhood system** — basic opens `[u]` via `infoSys_to_neighborhoodSystem`,
+   recovering the same domain as filters.
+3. **Ideal completion / 1972** — finite elements as an ideal completion
+   (`infoSys_to_idealCompletion`); where the example yields an algebraic continuous
+   lattice, the round `↟`-filter presentation via the Part IV bridges.
+4. **Optional morphism** — one approximable / Scott-continuous map on the example
+   (Factoid 4.6), to show morphisms as well as objects.
 
-## 6. Reproducibility
-
-```bash
-lake exe cache get
-lake build ScottModels
-```
-
-Sibling packages `scott1972`, `scott1980`, `scott1982` are Lake path dependencies
-(`lakefile.toml`). Session state and resume protocol live in `HANDOFF.md`; this file is
-the durable inventory and proof narrative.
-
-Axiom audits: `#print axioms` on the blueprint-facing names
-(`presentation_domains_equiv`, `infoSys_product_domain_equiv`,
-`approximableMap_scottContinuous_equiv`, `scottMap_roundInfoSys_iso`, …).
-
-Acknowledgments (Dana Scott, AI tool cards, artifact URL) are injected before References
-when building `arxiv.tex` via `scripts/ai_model_cards.py` — they are not kept in this file.
-
-Build the arXiv PDF / submission zip (GitHub-link Lean Code appendix, modelled on scott1982):
-
-```bash
-bash scripts/build_arxiv_tex.sh      # arxiv.md → arxiv.tex + figures/
-bash scripts/build_arxiv_pdf.sh      # compile PDF + package dist/arxiv_submit.zip
-# or: bash scripts/package_arxiv_submit.sh
-```
+*(Lean module and detailed narrative to be filled in after the example is chosen.)*
 
 ---
 

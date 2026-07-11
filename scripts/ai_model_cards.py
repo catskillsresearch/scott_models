@@ -150,12 +150,33 @@ from the following tools (auto-generated from `scripts/ai_model_cards.py` when b
 All definitions, constructivity audits, and final prose were reviewed by the human author, who takes
 full responsibility for them.
 
-### Artifact availability
+### Artifact availability and reproducibility
 
 The development is at
 [`github.com/catskillsresearch/scott_models`](https://github.com/catskillsresearch/scott_models).
-Run `lake build ScottModels` for the formalization; `bash scripts/build_arxiv_tex.sh`
-builds `arxiv.tex` from `arxiv.md` (Lean Code appendix = GitHub hyperlinks).
+GitHub Actions CI checks out the three sibling packages as path dependencies and runs
+`lake build`; the library builds successfully on `main` (green status).
+
+Locally:
+
+```bash
+lake exe cache get
+lake build ScottModels
+```
+
+Sibling packages `scott1972`, `scott1980`, `scott1982` are Lake path dependencies
+(`lakefile.toml`). Session state lives in `HANDOFF.md`; `arxiv.md` is the durable inventory
+and proof narrative. Axiom audits: `#print axioms` on the blueprint-facing names
+(`presentation_domains_equiv`, `infoSys_product_domain_equiv`,
+`approximableMap_scottContinuous_equiv`, `scottMap_roundInfoSys_iso`, …).
+
+Build the arXiv PDF / submission zip (Lean Code appendix = GitHub hyperlinks):
+
+```bash
+bash scripts/build_arxiv_tex.sh      # arxiv.md → arxiv.tex + figures/
+bash scripts/build_arxiv_pdf.sh      # compile PDF + package dist/arxiv_submit.zip
+# or: bash scripts/package_arxiv_submit.sh
+```
 
 """
 
