@@ -10,7 +10,8 @@ state lives in files, not chat memory. Treat `HANDOFF.md` as the source of truth
 
 ## On starting a session
 - Read `HANDOFF.md` **first** (it has a "Resume Protocol" header listing what else to read).
-- This repo's `arxiv.md` is a short Part IV blueprint — read it whole when needed.
+- This repo's `arxiv.md` is the Part IV **paper** (bridges + dense proof notes) — keep it in
+  sync when closing theorems; read relevant sections on resume.
 - For dependency details, Grep the sibling inventories (`../scott1972/arxiv.md`,
   `../scott1980/arxiv.md`, `../scott1982/arxiv.md`) or read only the relevant Lean module —
   do **not** treat stale status prose in those files as blocking if Lean already ships the result.
@@ -25,8 +26,8 @@ After the item builds green, do all of the following before ending the turn:
    (`#print axioms <name>`) and confirm `⊆ {propext, Quot.sound}` unless choice is unavoidable
    (classical frontier: document in the proof note).
 2. Append a dated checkpoint to `HANDOFF.md` and update its "Resume Protocol" / status lines.
-3. Update the item's row in `arxiv.md` (dense proof note). In Markdown tables,
-   **escape literal `|` as `\|`** (e.g. `\|D →⊥ E\|`) or the cell truncates.
+3. Update the corresponding section / catalog row in `arxiv.md` with a dense proof note
+   (not status-only). In Markdown tables, **escape literal `|` as `\|`**.
 4. Wire any new module into `ScottModels.lean`.
 
 ## Context-cost hygiene

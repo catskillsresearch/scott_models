@@ -18,7 +18,7 @@ lives in each sibling's `arxiv.md`.
 ## Resume Protocol (read this first)
 
 1. Read this `HANDOFF.md`.
-2. Read `arxiv.md` in **this** repo (short blueprint: planned bridge theorems + status).
+2. Read `arxiv.md` in **this** repo (Part IV paper: bridges, proof notes, constructivity).
 3. For dependency lemmas, **Grep** the relevant sibling `arxiv.md` / Lean module — do not rely on
    copied status dumps in this repo.
 4. Build: `lake build ScottModels` (filter: `| grep -vE 'LEAN_PATH|trace:' | tail`).
@@ -36,10 +36,12 @@ lives in each sibling's `arxiv.md`.
 - `presentation_domains_equiv` **Pass** (`PresentationDomains.lean`):
   `D ≃o RoundFilter ≃o RoundInfoSysElement` (+ ideal subtype form); InfoSys triangle
   remains constructive. Raw `|𝒟|` / full `|A|` properly larger.
-- `infoSys_constructions_equiv` **Partial** (`InfoSysConstructions.lean`): 1982 side
-  complete — product, separated sum (classical), function space `|A→B| ≃o ApproximableMap`.
-  Cross-link to 1972 `ScottMap` / Thm 3.3 still open.
-- Remaining: optional 1972↔1982 constructions bridge (`ScottMap`).
+- `infoSys_constructions_equiv` **Pass** (`InfoSysConstructions.lean` +
+  `ScottMapBridge.lean`): 1982 product/sum/function-space domain isos;
+  `ApproximableMap ≃o ScottContinuous` (Factoid 4.6); `ScottMap` conjugates along
+  round-filter / round-InfoSys presentation.
+- Part IV blueprint rows all Pass. Out of scope (documented): identifying
+  `ApproximableMap` on `wayBelowNbhdBasis` with `ScottMap` via roundness.
 
 ## On finishing a bridge theorem
 
@@ -151,4 +153,21 @@ lives in each sibling's `arxiv.md`.
   `roundFilter_infoSys_iso : RoundFilter ≃o RoundInfoSysElement`;
   `presentation_domains_equiv : D ≃o RoundInfoSysElement` and ideal subtype form.
 - Constructive: `#print axioms` ⊆ `{propext, Quot.sound}`.
-- `arxiv.md` / `Equivalence.lean` → Pass. Remaining open: 1972 `ScottMap` constructions link.
+- `arxiv.md` / `Equivalence.lean` → Pass.
+
+### 2026-07-11 — `infoSys_constructions_equiv` (ScottMap bridge)
+
+- New `ScottModels/ScottMapBridge.lean`:
+  `approximableMap_scottContinuous_equiv` (Factoid 4.6 OrderIso);
+  `scottMap_roundFilter_iso` / `scottMap_roundInfoSys_iso` conjugating
+  `ScottMap` along the round presentation; `infoSys_constructions_equiv` packaging.
+- Separated sum remains classical; Factoid 4.6 ⊆ `{propext, Quot.sound}`;
+  ScottMap conjugation inherits `Classical.choice` from 1972 Scott topology.
+- All Part IV blueprint rows Pass.
+
+### 2026-07-11 — `arxiv.md` as Part IV paper
+
+- Rewrote `arxiv.md` from terse status table into a paper narrative: abstract,
+  introduction, catalog, per-bridge proof notes (§3.1–3.7), constructivity table,
+  scope of “equivalence”, reproducibility, references.
+- Resume Protocol now treats `arxiv.md` as the durable proof document (not a stub blueprint).

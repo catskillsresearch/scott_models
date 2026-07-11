@@ -8,4 +8,5 @@ import ScottModels.InfoSysToIdealCompletion
 import ScottModels.IdealCompletionToContinuousLattice
 import ScottModels.PresentationDomains
 import ScottModels.InfoSysConstructions
+import ScottModels.ScottMapBridge
 import ScottModels.Equivalence
