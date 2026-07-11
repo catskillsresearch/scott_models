@@ -30,7 +30,7 @@ three presentations carve out the same class of domains, related by ideal comple
 and the Scott topology. Until the bridges are checked in a proof assistant, that claim
 lives in the gap between three separately formalized libraries.
 
-**Part IV** closes that gap. We do **not** re-prove Scott's internal theorems; we import
+This article closes that gap. We do **not** re-prove Scott's internal theorems; we import
 the finished sibling packages and build cross-presentation maps:
 
 | Presentation | Lean package | Characteristic object |
@@ -63,25 +63,23 @@ flowchart LR
 
 ## 2. Catalog of bridge theorems
 
-| Theorem | Direction | Lean module | Status |
-| --- | --- | --- | --- |
-| `continuousLattice_to_neighborhoodSystem` | 1972 → 1980 | `ContinuousLatticeToNeighborhood.lean` | **Pass** |
-| `neighborhoodSystem_to_infoSys` | 1980 → 1982 | `NeighborhoodToInfoSys.lean` | **Pass** |
-| `infoSys_to_neighborhoodSystem` | 1982 → 1980 | `InfoSysToNeighborhood.lean` | **Pass** |
-| `infoSys_to_idealCompletion` | 1982 → algebraic | `InfoSysToIdealCompletion.lean` | **Pass** |
-| `idealCompletion_to_continuousLattice` | algebraic → 1972 | `IdealCompletionToContinuousLattice.lean` | **Pass** |
-| `presentation_domains_equiv` | three-way | `PresentationDomains.lean` | **Pass** |
-| `infoSys_constructions_equiv` | constructions | `InfoSysConstructions.lean`, `ScottMapBridge.lean` | **Pass** |
+| Theorem | Direction | Lean module |
+| --- | --- | --- |
+| `continuousLattice_to_neighborhoodSystem` | 1972 → 1980 | `ContinuousLatticeToNeighborhood.lean` |
+| `neighborhoodSystem_to_infoSys` | 1980 → 1982 | `NeighborhoodToInfoSys.lean` |
+| `infoSys_to_neighborhoodSystem` | 1982 → 1980 | `InfoSysToNeighborhood.lean` |
+| `infoSys_to_idealCompletion` | 1982 → algebraic | `InfoSysToIdealCompletion.lean` |
+| `idealCompletion_to_continuousLattice` | algebraic → 1972 | `IdealCompletionToContinuousLattice.lean` |
+| `presentation_domains_equiv` | three-way | `PresentationDomains.lean` |
+| `infoSys_constructions_equiv` | constructions | `InfoSysConstructions.lean`, `ScottMapBridge.lean` |
 
-| Gate | Outcome |
-| --- | --- |
-| **1972 → 1980** | Done (`D ≃o RoundFilter`) without Milner’s coarser-than-Scott hypothesis |
-| **1980 ↔ 1982** | Done constructively under a decidable neighbourhood coding |
-| **1982 standalone** | Assumed complete in `../scott1982` (through Factoid 8.4 / domain equations) |
-| **Equivalence + constructions** | Done (all catalog rows Pass) |
+The sibling packages are **finished dependencies**, not work items of this paper:
+[`scott1972`](https://github.com/catskillsresearch/scott1972),
+[`scott1980`](https://github.com/catskillsresearch/scott1980), and
+[`scott1982`](https://github.com/catskillsresearch/scott1982) (information systems through
+Factoid 8.4 / domain equations). This package only builds the bridges above.
 
-### Lean module map
-
+<!-- mermaid-caption: Lean module map -->
 ```mermaid
 flowchart TD
   CLN["ContinuousLatticeToNeighborhood"]
@@ -290,6 +288,17 @@ Axiom audits: `#print axioms` on the blueprint-facing names
 (`presentation_domains_equiv`, `infoSys_product_domain_equiv`,
 `approximableMap_scottContinuous_equiv`, `scottMap_roundInfoSys_iso`, …).
 
+Acknowledgments (Dana Scott, AI tool cards, artifact URL) are injected before References
+when building `arxiv.tex` via `scripts/ai_model_cards.py` — they are not kept in this file.
+
+Build the arXiv PDF / submission zip (GitHub-link Lean Code appendix, modelled on scott1982):
+
+```bash
+bash scripts/build_arxiv_tex.sh      # arxiv.md → arxiv.tex + figures/
+bash scripts/build_arxiv_pdf.sh      # compile PDF + package dist/arxiv_submit.zip
+# or: bash scripts/package_arxiv_submit.sh
+```
+
 ---
 
 ## References
@@ -307,3 +316,31 @@ Axiom audits: `#print axioms` on the blueprint-facing names
 - **[SR72]** Companion Lean formalization: [`scott1972`](https://github.com/catskillsresearch/scott1972).
 - **[ER80]** Companion Lean formalization: [`scott1980`](https://github.com/catskillsresearch/scott1980).
 - **[SR82]** Companion Lean formalization: [`scott1982`](https://github.com/catskillsresearch/scott1982).
+- **[COPE24]** Committee on Publication Ethics (COPE). *Authorship and AI tools: COPE position statement*. 2024. <https://publicationethics.org/guidance/cope-position/authorship-and-ai-tools>
+<!-- AI_MODEL_REFERENCES -->
+<!-- /AI_MODEL_REFERENCES -->
+
+---
+
+## Lean Code
+
+All Lean 4 modules in the [scott_models](https://github.com/catskillsresearch/scott_models)
+repository are listed below as GitHub links (sources stay on GitHub; nothing is inlined
+in the arXiv PDF). Order matches
+[`ScottModels.lean`](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels.lean).
+
+### Root
+
+* [ScottModels.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels.lean)
+
+### Library (import order)
+
+* [NeighborhoodToInfoSys.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/NeighborhoodToInfoSys.lean)
+* [InfoSysToNeighborhood.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/InfoSysToNeighborhood.lean)
+* [ContinuousLatticeToNeighborhood.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/ContinuousLatticeToNeighborhood.lean)
+* [InfoSysToIdealCompletion.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/InfoSysToIdealCompletion.lean)
+* [IdealCompletionToContinuousLattice.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/IdealCompletionToContinuousLattice.lean)
+* [PresentationDomains.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/PresentationDomains.lean)
+* [InfoSysConstructions.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/InfoSysConstructions.lean)
+* [ScottMapBridge.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/ScottMapBridge.lean)
+* [Equivalence.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/Equivalence.lean)

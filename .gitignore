@@ -8,11 +8,24 @@ __pycache__/
 # Scratch / local junk
 .tmp/
 
-# LaTeX build artifacts (the .tex/.pdf deliverables are kept)
+# Generated from arxiv.md by scripts/build_arxiv_tex.sh (do not commit)
+arxiv_with_code.md
+arxiv.tex
+arxiv.pdf
+appendix.tex
+appendix.pdf
+lean-listings/
+figures/
+dist/
+00README.json
+
+# LaTeX build artifacts (the .tex/.pdf deliverables are kept out of git as generated)
 *.aux
 *.log
 *.out
 *.fls
 *.fdb_latexmk
 *.toc
+*.lof
+*.synctex.gz
 texput.log

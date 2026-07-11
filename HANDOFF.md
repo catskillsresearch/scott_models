@@ -171,3 +171,11 @@ lives in each sibling's `arxiv.md`.
   introduction, catalog, per-bridge proof notes (§3.1–3.7), constructivity table,
   scope of “equivalence”, reproducibility, references.
 - Resume Protocol now treats `arxiv.md` as the durable proof document (not a stub blueprint).
+
+### 2026-07-11 — arXiv TeX / dist package
+
+- Ported scott1982 pipeline: `scripts/build_arxiv_tex.{sh,py}`, `build_arxiv_pdf.sh`,
+  `package_arxiv_submit.sh`, `ai_model_cards.py`, `tex_preamble_arxiv.tex`, `.latexmkrc`.
+- `arxiv.md`: Lean Code appendix (GitHub links), AI reference markers, build commands.
+- Built `arxiv.tex` (9-page PDF), `dist/arxiv_submit.zip` (figures + listings + 00README.json).
+- Generated artifacts gitignored (`arxiv.tex`, `figures/`, `lean-listings/`, `dist/`).
