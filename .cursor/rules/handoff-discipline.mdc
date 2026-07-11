@@ -1,5 +1,5 @@
 ---
-description: HANDOFF/resume discipline and context-cost hygiene for scott_models (Part IV equivalence)
+description: HANDOFF/resume discipline and context-cost hygiene for scott_models (presentation equivalence)
 alwaysApply: true
 ---
 
@@ -10,7 +10,7 @@ state lives in files, not chat memory. Treat `HANDOFF.md` as the source of truth
 
 ## On starting a session
 - Read `HANDOFF.md` **first** (it has a "Resume Protocol" header listing what else to read).
-- This repo's `arxiv.md` is the Part IV **paper** (bridges + dense proof notes) — keep it in
+- This repo's `arxiv.md` is **this article** (bridges + dense proof notes) — keep it in
   sync when closing theorems; read relevant sections on resume.
 - For dependency details, Grep the sibling inventories (`../scott1972/arxiv.md`,
   `../scott1980/arxiv.md`, `../scott1982/arxiv.md`) or read only the relevant Lean module —

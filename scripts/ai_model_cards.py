@@ -29,7 +29,7 @@ MODEL_CARDS: tuple[ModelCard, ...] = (
         label="Cursor",
         cite_key="Cur26",
         tool_note=(
-            "agent-assisted editing in the Cursor IDE: Part IV bridge theorems relating "
+            "agent-assisted editing in the Cursor IDE: bridge theorems relating "
             "Scott's 1972 / 1980 / 1982 presentations in Lean 4 / mathlib, `lake build` "
             "repair, drafting this narrative (`arxiv.md`), and tracking the formalized "
             "inventory. Generated Lean was provisional until it compiled under the pinned "
@@ -60,7 +60,7 @@ MODEL_CARDS: tuple[ModelCard, ...] = (
         label="Cursor Grok 4.5",
         cite_key="Grk45",
         tool_note=(
-            "primary agent model for the scott_models Part IV sessions: bridge theorems "
+            "primary agent model for the scott_models sessions: bridge theorems "
             "(`presentation_domains_equiv`, round filters, constructions), inventory design "
             "in `arxiv.md`, constructivity audits, and adaptation of portable patterns from "
             "prior Scott formalizations. Jointly trained by SpaceXAI and Cursor; used here "

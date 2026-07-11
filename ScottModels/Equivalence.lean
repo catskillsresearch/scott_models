@@ -8,7 +8,7 @@ import ScottModels.InfoSysConstructions
 import ScottModels.ScottMapBridge
 
 /-!
-# Equivalence theorems (Part IV)
+# Equivalence theorems
 
 Bridges between Scott's 1972 continuous-lattice presentation, 1980 neighbourhood systems
 (PRG-19), and 1982 information systems. Sibling packages are finished; this module holds

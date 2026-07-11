@@ -312,15 +312,38 @@ hiding choice in automation.
 
 ## 5. Worked example — S-expressions / trees
 
-We instantiate Scott’s tree domain equation `T ≅ A + (T × T)` (**[Sco82]**, Factoid 8.1;
-`Factoid81.lean`) over the ℕ lower-bound atom system (Factoid 2.4), and run the Part IV
-bridges on that single example. Lean packaging:
+Lean packaging:
 [`WorkedExampleSExpr.lean`](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/WorkedExampleSExpr.lean).
 
-### 5.1 Information system (1982)
+### 5.1 Overview
 
-Atoms are propositions `n ≤ x` on `ℕ` (`lowerBoundSystem`, packaging Factoid 2.4). The tree
-system `SexSys := treeSystem lowerBoundSystem` has inductive tokens `TreeToken ℕ`
+The bridges of §§2–3 are abstract. This section fixes **one** concrete domain — Scott’s
+S-expression / tree equation `T ≅ A + (T × T)` (**[Sco82]**, Factoid 8.1) over the ℕ
+lower-bound atom system (Factoid 2.4) — and asks what that domain looks like in each
+paradigm:
+
+| Paradigm | What an element of `T` is |
+| --- | --- |
+| **1982** | a consistent, deductively closed set of tree tokens |
+| **1980** | a filter of basic opens `[u]` on that token domain |
+| **1972** | a point of an algebraic continuous lattice (ideal of finite elements) |
+
+We build the domain natively as an information system (§5.2), then **read the same
+carrier** as a neighbourhood system (§5.3) and as a continuous lattice (§5.4). Section 5.5
+exhibits the order isomorphisms for this instance — so that, on S-expressions,
+
+`T_1982 ≃o T_1980 ≃o Ideal(K(T))`  and  `Ideal(K(T))` is a continuous lattice,
+
+hence transitively `T_1982 ≃o T_1980` and (via the algebraic ⇒ continuous frontier)
+the 1972 presentation of the same domain. Order isomorphism is an equivalence relation,
+so the three presentations determine one domain up to `≃o`. Section 5.6 records two
+extras that live on top of the carriers: the domain equation at the level of domains,
+and identity as a morphism in both the approximable-map and Scott-continuous languages.
+
+### 5.2 Information system (1982)
+
+Atoms are propositions `n ≤ x` on `ℕ` (`lowerBoundSystem`). The tree system
+`SexSys := treeSystem lowerBoundSystem` has inductive tokens `TreeToken ℕ`
 (`bot` / `atom` / `pairL` / `pairR`). Consistency and entailment are Scott’s sum×product
 clauses; Factoid 8.1 records that this is literally the information system of the
 right-hand side `A + (T × T)`:
@@ -329,40 +352,62 @@ right-hand side `A + (T × T)`:
 - token unfolding `treeUnfold` sends `atom n` to the left summand (`sexUnfold_atom`).
 
 Finite elements include singleton atom closures `sexAtom n = ū` for `u = {atom n}`.
+Elements of `|T|` are the consistent closed sets of tokens — the 1982 presentation of
+the S-expression domain.
 
-### 5.2 Neighbourhood filters (1980)
+### 5.3 Neighbourhood system (1980)
 
-Basic opens `[u] = {x ∈ |T| | ↑u ⊆ x}` form a neighbourhood system on `|T|`. The Part IV
-iso recovers elements as filters:
+From `|T|` one obtains a neighbourhood system whose basic opens are
+`[u] = {x ∈ |T| | ↑u ⊆ x}`. In this paradigm an element of the domain is a
+**filter** of such opens (not a raw set of tokens). Nothing new is invented: it is the
+image of `SexSys` under `InfoSysToNeighborhood`. The concrete iso of §5.5 below is
+exactly “read each token-element as its filter of basic opens.”
 
-`sexNeighborhoodIso : |T| ≃o` filters of `[u]`
-(`InfoSysToNeighborhood.domainOrderIso`).
+### 5.4 Continuous lattice (1972)
 
-### 5.3 Ideal completion (algebraic presentation)
+Finite elements `K(T)` are the closures of consistent finsets. In the algebraic style
+that feeds Scott’s 1972 theory, a domain element is an **ideal** of `K(T)` — the ideal
+completion of the compact basis. That poset of ideals is an algebraic complete lattice,
+hence a continuous lattice (`IsAlgebraicLattice ⇒ IsContinuousLattice`, §3.5). This is
+the 1972 presentation of the same S-expression domain: points ordered by inclusion of
+ideals, with way-below recovered from the compact basis.
 
-Finite elements are closures of consistent finsets. The domain is the ideal completion of
-that poset:
+We do not claim a choice-free `D ≃o RoundFilter` story built from trees alone; the
+round `↟`-filter identification of §3.1 applies once one is already in the
+continuous-lattice setting.
 
-`sexIdealIso : |T| ≃o Ideal (FiniteElement T)`.
+### 5.5 Equivalence for this instance
 
-Composing with the neighbourhood presentation yields the constructive triangle
-`sexNeighborhoodIdealIso` (`neighborhood_ideal_iso`). Passing to a continuous lattice via
-`IsAlgebraicLattice ⇒ IsContinuousLattice` is the classical 1972 frontier
-(§3.5); we do not claim a choice-free `D ≃o RoundFilter` story native to trees alone.
+Specializing the bridges of §3 to `SexSys` yields order isomorphisms of carriers:
 
-### 5.4 Domain equation on domains
+- `sexNeighborhoodIso : |T| ≃o` filters of `[u]`
+  (`InfoSysToNeighborhood.domainOrderIso`) — **1982 ≃o 1980**;
+- `sexIdealIso : |T| ≃o Ideal (FiniteElement T)`
+  (`InfoSysToIdealCompletion.domainOrderIso`) — **1982 ≃o algebraic / 1972 carrier**;
+- `sexNeighborhoodIdealIso` (`neighborhood_ideal_iso`) — the constructive triangle
+  closing **1980 ≃o Ideal(K(T))** without going back through tokens.
 
-Part IV’s product and separated-sum isos lift Factoid 8.1 from tokens to domains:
+Composing any two edges recovers the third: isomorphism is transitive, so on this
+example the three presentations are pairwise equivalent. The only classical step on the
+1972 corner is the algebraic ⇒ continuous implication already flagged in §3.5 / §4;
+the neighbourhood ↔ information ↔ ideal triangle audits to `{propext, Quot.sound}`.
+
+### 5.6 Domain equation and morphisms
+
+Beyond identifying the carriers, the same example exercises constructions and maps.
+
+**Domain equation.** This article’s product and separated-sum isos lift Factoid 8.1 from
+tokens to domains:
 
 `sexDomainEquationIso :
   WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)|`
 
-(classical footprint only through the sum trichotomy).
+(classical footprint only through the sum trichotomy). So the S-expression equation
+holds not only as information systems but as ordered domains.
 
-### 5.5 Morphisms
-
-The identity approximable map `idMap T` (Prop 5.4) transports along Factoid 4.6 to a
-Scott-continuous endomap `sexIdScottContinuous` with `toFun = id` (`sexId_toElement`).
+**Morphisms.** The identity approximable map `idMap T` (Prop 5.4) transports along
+Factoid 4.6 to a Scott-continuous endomap `sexIdScottContinuous` with `toFun = id`
+(`sexId_toElement`) — the same endomap, named once in each morphism language.
 
 **Axioms.** Object-level neighbourhood / ideal isos and Factoid 4.6 for `idMap` audit to
 `{propext, Quot.sound}` up to the usual classical sum iso in `sexDomainEquationIso`.

@@ -1,9 +1,8 @@
 [![Lean 4](https://img.shields.io/github/actions/workflow/status/catskillsresearch/scott_models/build.yml?label=Lean%204)](https://github.com/catskillsresearch/scott_models/actions/workflows/build.yml)
 # scott_models
 
-**Part IV** of the Scott domain theory monograph: equivalence theorems relating the
-1972 continuous-lattice, 1980 neighborhood-system, and 1982 information-system
-presentations.
+Equivalence theorems relating the 1972 continuous-lattice, 1980 neighborhood-system,
+and 1982 information-system presentations of Scott domain theory.
 
 Depends on sibling packages (Lake path deps by default):
 

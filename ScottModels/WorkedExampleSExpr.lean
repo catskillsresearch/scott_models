@@ -15,7 +15,7 @@ import ScottModels.ScottMapBridge
 # Worked example — S-expression / tree domain `T ≅ A + (T × T)`
 
 Scott 1982 Factoid 8.1 (`treeSystem`) over the ℕ lower-bound atom system
-(Factoid 2.4), walked through the Part IV bridges: information system →
+(Factoid 2.4), walked through this package’s bridges: information system →
 neighbourhood filters → ideal completion, plus identity approximable maps as
 Scott-continuous maps (Factoid 4.6).
 -/
@@ -107,7 +107,7 @@ noncomputable abbrev sexNeighborhoodIdealIso :=
 /-! ## Domain equation at the level of domains (1982 constructions) -/
 
 /--
-`WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)|`, composing the Part IV product and
+`WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)|`, composing this package’s product and
 separated-sum isos with Factoid 8.1’s RHS.
 -/
 noncomputable def sexDomainEquationIso :

@@ -10,8 +10,8 @@ compact elements below it — is a continuous lattice in Scott's sense
 (`IsContinuousLattice`). Compact elements are way-below anything they lie under,
 via Scott-openness of `Set.Ici k`.
 
-This is the classical frontier of the Part IV blueprint (`idealCompletion_to_continuousLattice`):
-Scott's `≪` is topological.
+This is the classical frontier of this article’s blueprint
+(`idealCompletion_to_continuousLattice`): Scott's `≪` is topological.
 -/
 
 namespace ScottModels

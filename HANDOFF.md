@@ -1,4 +1,4 @@
-# Handoff — scott_models (Part IV: equivalence of the three presentations)
+# Handoff — scott_models (equivalence of the three presentations)
 
 Bridge theorems relating Scott's **1972** continuous-lattice, **1980** neighbourhood-system,
 and **1982** information-system presentations. Lean library: `ScottModels`. Inventory: `arxiv.md`.
@@ -18,7 +18,7 @@ lives in each sibling's `arxiv.md`.
 ## Resume Protocol (read this first)
 
 1. Read this `HANDOFF.md`.
-2. Read `arxiv.md` in **this** repo (Part IV paper: bridges, proof notes, constructivity).
+2. Read `arxiv.md` in **this** repo (this article: bridges, proof notes, constructivity).
 3. For dependency lemmas, **Grep** the relevant sibling `arxiv.md` / Lean module — do not rely on
    copied status dumps in this repo.
 4. Build: `lake build ScottModels` (filter: `| grep -vE 'LEAN_PATH|trace:' | tail`).
@@ -40,7 +40,7 @@ lives in each sibling's `arxiv.md`.
   `ScottMapBridge.lean`): 1982 product/sum/function-space domain isos;
   `ApproximableMap ≃o ScottContinuous` (Factoid 4.6); `ScottMap` conjugates along
   round-filter / round-InfoSys presentation.
-- Part IV blueprint rows all Pass. Out of scope (documented): identifying
+- Blueprint rows all Pass. Out of scope (documented): identifying
   `ApproximableMap` on `wayBelowNbhdBasis` with `ScottMap` via roundness.
 
 ## On finishing a bridge theorem
@@ -59,9 +59,9 @@ lives in each sibling's `arxiv.md`.
 
 - Deleted stale PRG-19 `HANDOFF.md` dump (copied from `domain_theory` / `scott1980`).
 - Removed unrelated `NEXT.md` and obsolete `system_prompt.md` (`domain_theory` InfoSys prompt).
-- Retargeted `.cursor/rules/handoff-discipline.mdc` to this Part IV package.
+- Retargeted `.cursor/rules/handoff-discipline.mdc` to this package.
 - Confirmed `../scott1982` Lean root imports Def 2.1 through Factoid 8.4 / `DomainEquation`
-  (zero `sorry` in `Scott1982/`); treat the 1982 package as complete for Part IV work.
+  (zero `sorry` in `Scott1982/`); treat the 1982 package as complete for this article’s work.
 
 ### 2026-07-11 — `neighborhoodSystem_to_infoSys`
 
@@ -163,9 +163,9 @@ lives in each sibling's `arxiv.md`.
   `ScottMap` along the round presentation; `infoSys_constructions_equiv` packaging.
 - Separated sum remains classical; Factoid 4.6 ⊆ `{propext, Quot.sound}`;
   ScottMap conjugation inherits `Classical.choice` from 1972 Scott topology.
-- All Part IV blueprint rows Pass.
+- All blueprint rows Pass.
 
-### 2026-07-11 — `arxiv.md` as Part IV paper
+### 2026-07-11 — `arxiv.md` as this article’s paper
 
 - Rewrote `arxiv.md` from terse status table into a paper narrative: abstract,
   introduction, catalog, per-bridge proof notes (§3.1–3.7), constructivity table,
@@ -185,3 +185,13 @@ lives in each sibling's `arxiv.md`.
 - New `ScottModels/WorkedExampleSExpr.lean`: `treeSystem` over Factoid 2.4 atoms;
   neighbourhood / ideal isos; `sexDomainEquationIso`; `idMap` via Factoid 4.6.
 - `arxiv.md` §5 filled; wired into `ScottModels.lean`.
+
+### 2026-07-11 — §5 year tags; paper wording
+
+- `arxiv.md` §5: split out **§5.4 Continuous lattices (1972)**; renumber domain equation / morphisms to 5.5–5.6.
+- Replaced monograph-part labels with “this article” / “this package” in `arxiv.md`, README, Lean module docs, AI model cards.
+
+### 2026-07-11 — §5 overview + equivalence narrative
+
+- Rewrote §5: Overview (goal = same S-expr domain in 1972/1980/1982); per-paradigm
+  presentations; dedicated §5.5 instance equivalences with transitivity; §5.6 extras.
