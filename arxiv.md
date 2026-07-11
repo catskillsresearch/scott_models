@@ -310,37 +310,62 @@ hiding choice in automation.
 
 ---
 
-## 5. Worked example
+## 5. Worked example — S-expressions / trees
 
-This section walks one concrete domain through the three presentations, so the bridge
-theorems are visible on a single example rather than only as abstract isomorphisms.
-The example should be self-contained in [`scott1982`](https://github.com/catskillsresearch/scott1982)
-**[SR82]** (no ad-hoc data invented only for Part IV), nontrivial enough to exercise
-tokens / consistency / entailment and at least one construction, yet small enough to
-serve as tutorial intuition.
+We instantiate Scott’s tree domain equation `T ≅ A + (T × T)` (**[Sco82]**, Factoid 8.1;
+`Factoid81.lean`) over the ℕ lower-bound atom system (Factoid 2.4), and run the Part IV
+bridges on that single example. Lean packaging:
+[`WorkedExampleSExpr.lean`](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/WorkedExampleSExpr.lean).
 
-**Candidate (pending choice).** Scott’s tree / S-expression domain
-`T ≅ A + (T × T)` (`Factoid81.lean`: inductive `TreeToken`, `treeSystem`, unfolding into
-`sumSystem` / `productSystem`) is the leading option: it is the textbook “lists and
-trees” equation, already fully formalized, and connects InfoSys structure to products
-and separated sums. Lighter alternatives in the same package include the ℕ lower-bound
-system (`Factoid24.lean`) and the λ-model `D ≅ A + (D → D)` (`Factoid82.lean`); the
-former may be too thin for a three-presentation tour, the latter heavier than needed
-for a first worked example.
+### 5.1 Information system (1982)
 
-**Planned tour (once the example is fixed).**
+Atoms are propositions `n ≤ x` on `ℕ` (`lowerBoundSystem`, packaging Factoid 2.4). The tree
+system `SexSys := treeSystem lowerBoundSystem` has inductive tokens `TreeToken ℕ`
+(`bot` / `atom` / `pairL` / `pairR`). Consistency and entailment are Scott’s sum×product
+clauses; Factoid 8.1 records that this is literally the information system of the
+right-hand side `A + (T × T)`:
 
-1. **1982 information system** — tokens, `Con` / `Ent`, a few finite elements, and (for
-   trees) the domain equation unfolding.
-2. **1980 neighbourhood system** — basic opens `[u]` via `infoSys_to_neighborhoodSystem`,
-   recovering the same domain as filters.
-3. **Ideal completion / 1972** — finite elements as an ideal completion
-   (`infoSys_to_idealCompletion`); where the example yields an algebraic continuous
-   lattice, the round `↟`-filter presentation via the Part IV bridges.
-4. **Optional morphism** — one approximable / Scott-continuous map on the example
-   (Factoid 4.6), to show morphisms as well as objects.
+- `SexRhs = sumSystem A (productSystem T T)` (`sexRhs_eq_sum_product`);
+- token unfolding `treeUnfold` sends `atom n` to the left summand (`sexUnfold_atom`).
 
-*(Lean module and detailed narrative to be filled in after the example is chosen.)*
+Finite elements include singleton atom closures `sexAtom n = ū` for `u = {atom n}`.
+
+### 5.2 Neighbourhood filters (1980)
+
+Basic opens `[u] = {x ∈ |T| | ↑u ⊆ x}` form a neighbourhood system on `|T|`. The Part IV
+iso recovers elements as filters:
+
+`sexNeighborhoodIso : |T| ≃o` filters of `[u]`
+(`InfoSysToNeighborhood.domainOrderIso`).
+
+### 5.3 Ideal completion (algebraic presentation)
+
+Finite elements are closures of consistent finsets. The domain is the ideal completion of
+that poset:
+
+`sexIdealIso : |T| ≃o Ideal (FiniteElement T)`.
+
+Composing with the neighbourhood presentation yields the constructive triangle
+`sexNeighborhoodIdealIso` (`neighborhood_ideal_iso`). Passing to a continuous lattice via
+`IsAlgebraicLattice ⇒ IsContinuousLattice` is the classical 1972 frontier
+(§3.5); we do not claim a choice-free `D ≃o RoundFilter` story native to trees alone.
+
+### 5.4 Domain equation on domains
+
+Part IV’s product and separated-sum isos lift Factoid 8.1 from tokens to domains:
+
+`sexDomainEquationIso :
+  WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)|`
+
+(classical footprint only through the sum trichotomy).
+
+### 5.5 Morphisms
+
+The identity approximable map `idMap T` (Prop 5.4) transports along Factoid 4.6 to a
+Scott-continuous endomap `sexIdScottContinuous` with `toFun = id` (`sexId_toElement`).
+
+**Axioms.** Object-level neighbourhood / ideal isos and Factoid 4.6 for `idMap` audit to
+`{propext, Quot.sound}` up to the usual classical sum iso in `sexDomainEquationIso`.
 
 ---
 
@@ -386,4 +411,5 @@ in the arXiv PDF). Order matches
 * [PresentationDomains.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/PresentationDomains.lean)
 * [InfoSysConstructions.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/InfoSysConstructions.lean)
 * [ScottMapBridge.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/ScottMapBridge.lean)
+* [WorkedExampleSExpr.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/WorkedExampleSExpr.lean)
 * [Equivalence.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/Equivalence.lean)

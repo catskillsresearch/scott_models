@@ -179,3 +179,9 @@ lives in each sibling's `arxiv.md`.
 - `arxiv.md`: Lean Code appendix (GitHub links), AI reference markers, build commands.
 - Built `arxiv.tex` (9-page PDF), `dist/arxiv_submit.zip` (figures + listings + 00README.json).
 - Generated artifacts gitignored (`arxiv.tex`, `figures/`, `lean-listings/`, `dist/`).
+
+### 2026-07-11 — worked example: S-expressions
+
+- New `ScottModels/WorkedExampleSExpr.lean`: `treeSystem` over Factoid 2.4 atoms;
+  neighbourhood / ideal isos; `sexDomainEquationIso`; `idMap` via Factoid 4.6.
+- `arxiv.md` §5 filled; wired into `ScottModels.lean`.

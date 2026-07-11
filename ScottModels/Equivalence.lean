@@ -29,4 +29,6 @@ the cross-presentation maps. See `arxiv.md` / `HANDOFF.md`.
 * `infoSys_constructions_equiv` — **done** (`InfoSysConstructions.lean` +
   `ScottMapBridge.lean`; 1982 product/sum/function-space domain isos;
   `ApproximableMap ≃o ScottContinuous`; `ScottMap` conjugates along round presentation)
+* worked example — **done** (`WorkedExampleSExpr.lean`; Factoid 8.1 trees through
+  neighbourhood / ideal bridges + domain-equation iso)
 -/
