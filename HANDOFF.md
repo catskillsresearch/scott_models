@@ -29,15 +29,13 @@ lives in each sibling's `arxiv.md`.
 - `neighborhoodSystem_to_infoSys` **Pass** (`NeighborhoodToInfoSys.lean`).
 - `infoSys_to_neighborhoodSystem` **Pass** (`InfoSysToNeighborhood.lean`).
 - `continuousLattice_to_neighborhoodSystem` **Pass** (`ContinuousLatticeToNeighborhood.lean`):
-  `↟a` neighbourhoods + `domainEmbedding : D ↪o |𝒟|` with retract `ofFilter_toFilter`.
-  Full `|𝒟| ≃o D` deferred (round-ideal / HARD). Axioms ⊆ `{propext, Quot.sound}`.
-- `infoSys_to_idealCompletion` **Pass** (`InfoSysToIdealCompletion.lean`):
-  `|A| ≃o Order.Ideal (FiniteElement A)` via Factoids 4.4–4.5.
-- `idealCompletion_to_continuousLattice` **Pass** (`IdealCompletionToContinuousLattice.lean`):
-  algebraic complete lattice ⇒ `IsContinuousLattice` (classical `≪`).
+  `↟a` neighbourhoods; **`D ≃o RoundFilter`** via `domainOrderIso` (roundness required —
+  arbitrary filters properly contain principal ones). Axioms ⊆ `{propext, Quot.sound}`.
+- `infoSys_to_idealCompletion` **Pass** (`InfoSysToIdealCompletion.lean`).
+- `idealCompletion_to_continuousLattice` **Pass** (`IdealCompletionToContinuousLattice.lean`).
 - `presentation_domains_equiv` **Partial** (`PresentationDomains.lean`): 1980↔1982↔ideal
-  triangle; CL corner still embedding-only.
-- Remaining: close CL↔Nbhd to full iso; `infoSys_constructions_equiv`.
+  triangle; CL iso is to *round* `↟`-filters, not raw `|𝒟|`.
+- Remaining: glue round-filter CL corner into full three-way equiv; `infoSys_constructions_equiv`.
 
 ## On finishing a bridge theorem
 
@@ -111,3 +109,12 @@ lives in each sibling's `arxiv.md`.
   `nbhdBasis_ideal_iso` composing 1980↔1982↔ideal completion.
 - Full three-presentation equiv blocked on `|𝒟| ≃o D` for the 1972 corner.
 - Wired into `ScottModels.lean`.
+
+### 2026-07-11 — round filters close CL → Nbhd iso
+
+- Upgraded `ContinuousLatticeToNeighborhood.lean`: `IsRound`, `RoundFilter`,
+  `domainOrderIso : D ≃o RoundFilter`. Documented why raw `|𝒟|` is too big
+  (`{↟a | a ≤ x}` vs `{↟a | a ≪ x}`).
+- `toFilter_ofFilter` for round filters; interpolation ⇒ principal filters are round.
+- `presentation_domains_equiv` still Partial (glue round corner to 1980/1982 domains).
+- Axioms ⊆ `{propext, Quot.sound}`.

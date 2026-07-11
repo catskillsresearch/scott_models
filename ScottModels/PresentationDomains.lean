@@ -7,9 +7,10 @@ import ScottModels.IdealCompletionToContinuousLattice
 /-!
 # Presentation domain equivalences (partial)
 
-Composes the completed constructive legs. Full `presentation_domains_equiv` with the
-1972 continuous-lattice corner still needs `|𝒟| ≃o D` (round filters) beyond the
-existing `domainEmbedding`.
+Composes the completed constructive legs (1980↔1982↔ideal). The 1972 corner is
+`D ≃o RoundFilter` of the `↟`-system (`ContinuousLatticeToNeighborhood.domainOrderIso`),
+not an iso onto raw `|𝒟|`. Full `presentation_domains_equiv` still needs to identify
+that round-filter domain with the 1980/1982 presentations.
 -/
 
 namespace ScottModels
