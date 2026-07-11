@@ -35,10 +35,11 @@ lives in each sibling's `arxiv.md`.
 - `idealCompletion_to_continuousLattice` **Pass** (`IdealCompletionToContinuousLattice.lean`).
 - `presentation_domains_equiv` **Partial** (`PresentationDomains.lean`): 1980↔1982↔ideal
   triangle; CL iso is to *round* `↟`-filters, not raw `|𝒟|`.
-- `infoSys_constructions_equiv` **Partial** (`InfoSysConstructions.lean`): product
-  `|A| × |B| ≃o |A×B|`; separated sum `WithBot (|A| ⊕ |B|) ≃o |A+B|` (classical);
-  function space remains.
-- Remaining: glue round-filter CL into three-way equiv; function-space construction.
+- `infoSys_constructions_equiv` **Partial** (`InfoSysConstructions.lean`): 1982 side
+  complete — product, separated sum (classical), function space `|A→B| ≃o ApproximableMap`.
+  Cross-link to 1972 `ScottMap` / Thm 3.3 still open.
+- Remaining: glue round-filter CL into three-way `presentation_domains_equiv`;
+  optional 1972↔1982 constructions bridge.
 
 ## On finishing a bridge theorem
 
@@ -136,3 +137,10 @@ lives in each sibling's `arxiv.md`.
   `infoSys_sum_domain_equiv : WithBot (|A| ⊕ |B|) ≃o |A+B|` via `inl`/`inr`
   classify/assemble; trichotomy classical (`Classical.choice` in footprint).
 - Product remains choice-free. Function space still open.
+
+### 2026-07-11 — constructions: function-space domain iso
+
+- Extended `InfoSysConstructions.lean`: `functionSpaceDomainIso` /
+  `infoSys_function_space_domain_equiv : ApproximableMap A B ≃o |A→B|` packaging
+  Thm 7.2 `approxMap_toElement` / `element_toApproxMap` with `Le` as `PartialOrder`.
+- Axioms ⊆ `{propext, Quot.sound}`. 1982 construction triangle complete at domain level.

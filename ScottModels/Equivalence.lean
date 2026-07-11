@@ -23,6 +23,6 @@ the cross-presentation maps. See `arxiv.md` / `HANDOFF.md`.
   algebraic complete lattice ⇒ `IsContinuousLattice`; classical `≪`)
 * `presentation_domains_equiv` — **partial** (`PresentationDomains.lean`; constructive
   triangle; CL corner is round-filter iso)
-* `infoSys_constructions_equiv` — **partial** (`InfoSysConstructions.lean`; product +
-  separated sum; function space not yet)
+* `infoSys_constructions_equiv` — **partial** (`InfoSysConstructions.lean`; 1982 product /
+  sum / function-space domain isos; 1972 ScottMap link not yet)
 -/

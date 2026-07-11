@@ -5,14 +5,17 @@ import Scott1982.Theorem72
 import Scott1982.Proposition64
 
 /-!
-# Construction equivalence — products and separated sums
+# Construction equivalence — products, separated sums, and function spaces
 
 * **Product:** `|A × B| ≃o |A| × |B|` via `pairElements` / projections (Prop 6.2).
 * **Separated sum:** `|A + B| ≃o WithBot (|A| ⊕ |B|)` via `inl`/`inr` (Prop 6.4).
   Classification of sum elements uses classical case-split on token polarity
   (`Classical.choice` in the footprint).
+* **Function space:** `|A → B| ≃o ApproximableMap A B` via Theorem 7.2
+  `approxMap_toElement` / `element_toApproxMap`.
 
-1972 counterpart: products of continuous lattices (`proposition_2_9_a`).
+1972 counterpart: products of continuous lattices (`proposition_2_9_a`); function space
+Thm 3.3 in the sibling package.
 -/
 
 namespace ScottModels
@@ -405,6 +408,37 @@ noncomputable def sumDomainIso :
             | inr y' => exact Sum.inr_le_inr_iff.2 ((inrMap_toElement_le_iff A B).1 h)
     · exact assembleSum_mono A B
 
+/-! ## Function space `|A → B| ≃o ApproximableMap A B` -/
+
+/-- Pointwise relation order on approximable maps (Prop 5.3 `Le`). -/
+instance instPartialOrderApproximableMap : PartialOrder (ApproximableMap A B) where
+  le := @Le _ _ _ _ A B
+  le_refl _ _ _ h := h
+  le_trans _ _ _ hfg hgh _ _ hf := hgh (hfg hf)
+  le_antisymm _ _ hfg hgf := ApproximableMap.ext fun _ _ => ⟨fun h => hfg h, fun h => hgf h⟩
+
+theorem approxMap_toElement_le_iff {f g : ApproximableMap A B} :
+    approxMap_toElement A B f ≤ approxMap_toElement A B g ↔ f ≤ g := by
+  constructor
+  · intro h u v hrel
+    have hp : mkFunToken A B u v (f.rel_dom hrel) (f.rel_cod hrel) ∈
+        (approxMap_toElement A B f).carrier :=
+      (mem_approxMap_toElement A B f).2 hrel
+    exact (mem_approxMap_toElement A B g).1 (h hp)
+  · intro hfg p hp
+    exact (mem_approxMap_toElement A B g).2 (hfg ((mem_approxMap_toElement A B f).1 hp))
+
+/-- **Function-space domain iso (1982, Thm 7.2).** `|A → B| ≃o ApproximableMap A B`. -/
+noncomputable def functionSpaceDomainIso :
+    ApproximableMap A B ≃o (functionSystem A B).Element where
+  toFun := approxMap_toElement A B
+  invFun := element_toApproxMap A B
+  left_inv := element_toApproxMap_approxMap_toElement A B
+  right_inv := approxMap_toElement_element_toApproxMap A B
+  map_rel_iff' := by
+    intro f g
+    exact approxMap_toElement_le_iff A B
+
 end InfoSysConstructions
 
 /-- Blueprint-facing name for the 1982 product domain isomorphism. -/
@@ -418,5 +452,11 @@ noncomputable abbrev infoSys_sum_domain_equiv {α β : Type*} [DecidableEq α] [
     (A : InfoSys α) (B : InfoSys β) :
     WithBot (A.Element ⊕ B.Element) ≃o (sumSystem A B).Element :=
   InfoSysConstructions.sumDomainIso A B
+
+/-- Blueprint-facing name for the 1982 function-space domain isomorphism. -/
+noncomputable abbrev infoSys_function_space_domain_equiv {α β : Type*}
+    [DecidableEq α] [DecidableEq β] (A : InfoSys α) (B : InfoSys β) :
+    ApproximableMap A B ≃o (functionSystem A B).Element :=
+  InfoSysConstructions.functionSpaceDomainIso A B
 
 end ScottModels
