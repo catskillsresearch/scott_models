@@ -1,16 +1,17 @@
-import Scott1972.ContinuousLattice.Specialization
-import Scott1980.Neighborhood.Exercise122
-import Scott1982.InfoSys
+import ScottModels.NeighborhoodToInfoSys
 
 /-!
 # Equivalence theorems (Part IV)
 
-Bridges between Scott's 1972 continuous-lattice topology, 1980 neighbourhood-system
-topology (Exercise 1.22), and 1982 information systems.
+Bridges between Scott's 1972 continuous-lattice presentation, 1980 neighbourhood systems
+(PRG-19), and 1982 information systems. Sibling packages are finished; this module holds
+the cross-presentation maps. See `arxiv.md` / `HANDOFF.md`.
 
-Planned results (not yet formalized):
+## Status
 
-* neighbourhood topology on `|𝒟|` from a continuous lattice ↔ Scott topology;
-* approximable maps ↔ Scott-continuous maps;
-* information-system ideals ↔ domain elements of the other presentations.
+* `neighborhoodSystem_to_infoSys` — **done** (`NeighborhoodToInfoSys.lean`):
+  `NbhdBasis.toInfoSys` + `domainOrderIso`.
+* `continuousLattice_to_neighborhoodSystem` — not yet.
+* `infoSys_to_idealCompletion` / `idealCompletion_to_continuousLattice` — not yet.
+* `presentation_domains_equiv`; `infoSys_constructions_equiv` — not yet.
 -/

@@ -1,5 +1,5 @@
 ---
-description: HANDOFF/resume discipline and context-cost hygiene for the Scott PRG-19 Lean project
+description: HANDOFF/resume discipline and context-cost hygiene for scott_models (Part IV equivalence)
 alwaysApply: true
 ---
 
@@ -10,20 +10,24 @@ state lives in files, not chat memory. Treat `HANDOFF.md` as the source of truth
 
 ## On starting a session
 - Read `HANDOFF.md` **first** (it has a "Resume Protocol" header listing what else to read).
-- Do **not** read large files whole. `arxiv.md` (~2.5k lines) is the inventory: use `Grep` or
-  `Read` with `offset`/`limit` to pull only the relevant item's row, never the entire file.
+- This repo's `arxiv.md` is a short Part IV blueprint — read it whole when needed.
+- For dependency details, Grep the sibling inventories (`../scott1972/arxiv.md`,
+  `../scott1980/arxiv.md`, `../scott1982/arxiv.md`) or read only the relevant Lean module —
+  do **not** treat stale status prose in those files as blocking if Lean already ships the result.
+- Sibling packages `scott1972`, `scott1980`, `scott1982` are **finished** sources; this package
+  only builds the equivalence bridges.
 - **Never** read, grep, or search `arxiv_with_code.md` (or other `arxiv_with_code.*` outputs).
-  That file is **auto-generated** from `arxiv.md` + inlined Lean for the PDF pipeline; it is
-  stale between regenerations and duplicates the entire codebase. It is listed in `.cursorignore`.
+  That file is **auto-generated** for the PDF pipeline; it is listed in `.cursorignore` when present.
 
-## On finishing a work item (e.g. a Definition/Theorem/Example)
+## On finishing a work item (bridge theorem / lemma module)
 After the item builds green, do all of the following before ending the turn:
-1. `lake build <module>` is green and zero `sorry`; run an axiom audit
-   (`#print axioms <name>`) and confirm `⊆ {propext, Quot.sound}` unless choice is unavoidable.
+1. `lake build ScottModels` is green and zero `sorry`; run an axiom audit
+   (`#print axioms <name>`) and confirm `⊆ {propext, Quot.sound}` unless choice is unavoidable
+   (classical frontier: document in the proof note).
 2. Append a dated checkpoint to `HANDOFF.md` and update its "Resume Protocol" / status lines.
-3. Update the item's row in `arxiv.md` to **Pass** with a dense proof note. In Markdown tables,
+3. Update the item's row in `arxiv.md` (dense proof note). In Markdown tables,
    **escape literal `|` as `\|`** (e.g. `\|D →⊥ E\|`) or the cell truncates.
-4. Wire any new module into `Domain.lean`.
+4. Wire any new module into `ScottModels.lean`.
 
 ## Context-cost hygiene
 - Filter shell output (`| grep -vE 'LEAN_PATH|trace:' | tail`) so builds don't dump thousands of lines.
@@ -32,4 +36,5 @@ After the item builds green, do all of the following before ending the turn:
 
 ## Choice discipline
 Data constructions must stay choice-free (`[propext, Quot.sound]`). `Classical.choice` is allowed
-only for `Prop`-level results where it is genuinely unavoidable, and must be called out in notes.
+only for `Prop`-level results where it is genuinely unavoidable (esp. 1972 topology / classical
+frontier), and must be called out in notes.
