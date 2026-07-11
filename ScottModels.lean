@@ -7,4 +7,5 @@ import ScottModels.ContinuousLatticeToNeighborhood
 import ScottModels.InfoSysToIdealCompletion
 import ScottModels.IdealCompletionToContinuousLattice
 import ScottModels.PresentationDomains
+import ScottModels.InfoSysConstructions
 import ScottModels.Equivalence

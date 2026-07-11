@@ -35,7 +35,9 @@ lives in each sibling's `arxiv.md`.
 - `idealCompletion_to_continuousLattice` **Pass** (`IdealCompletionToContinuousLattice.lean`).
 - `presentation_domains_equiv` **Partial** (`PresentationDomains.lean`): 1980↔1982↔ideal
   triangle; CL iso is to *round* `↟`-filters, not raw `|𝒟|`.
-- Remaining: glue round-filter CL corner into full three-way equiv; `infoSys_constructions_equiv`.
+- `infoSys_constructions_equiv` **Partial** (`InfoSysConstructions.lean`): product domain
+  `|A| × |B| ≃o |A×B|`; sum / function space remain.
+- Remaining: glue round-filter CL into three-way equiv; sum + function-space constructions.
 
 ## On finishing a bridge theorem
 
@@ -118,3 +120,11 @@ lives in each sibling's `arxiv.md`.
 - `toFilter_ofFilter` for round filters; interpolation ⇒ principal filters are round.
 - `presentation_domains_equiv` still Partial (glue round corner to 1980/1982 domains).
 - Axioms ⊆ `{propext, Quot.sound}`.
+
+### 2026-07-11 — constructions: product domain iso
+
+- New `ScottModels/InfoSysConstructions.lean`: `productDomainIso` /
+  `infoSys_product_domain_equiv : |A| × |B| ≃o |A×B|` from 1982 `pairElements` /
+  `fstMap`/`sndMap` (under `InfoSys.ApproximableMap` namespace).
+- Axioms ⊆ `{propext, Quot.sound}`. Sum / function space still open.
+- Wired into `ScottModels.lean`; `arxiv.md` constructions → Partial.
