@@ -35,9 +35,10 @@ lives in each sibling's `arxiv.md`.
 - `idealCompletion_to_continuousLattice` **Pass** (`IdealCompletionToContinuousLattice.lean`).
 - `presentation_domains_equiv` **Partial** (`PresentationDomains.lean`): 1980↔1982↔ideal
   triangle; CL iso is to *round* `↟`-filters, not raw `|𝒟|`.
-- `infoSys_constructions_equiv` **Partial** (`InfoSysConstructions.lean`): product domain
-  `|A| × |B| ≃o |A×B|`; sum / function space remain.
-- Remaining: glue round-filter CL into three-way equiv; sum + function-space constructions.
+- `infoSys_constructions_equiv` **Partial** (`InfoSysConstructions.lean`): product
+  `|A| × |B| ≃o |A×B|`; separated sum `WithBot (|A| ⊕ |B|) ≃o |A+B|` (classical);
+  function space remains.
+- Remaining: glue round-filter CL into three-way equiv; function-space construction.
 
 ## On finishing a bridge theorem
 
@@ -128,3 +129,10 @@ lives in each sibling's `arxiv.md`.
   `fstMap`/`sndMap` (under `InfoSys.ApproximableMap` namespace).
 - Axioms ⊆ `{propext, Quot.sound}`. Sum / function space still open.
 - Wired into `ScottModels.lean`; `arxiv.md` constructions → Partial.
+
+### 2026-07-11 — constructions: separated-sum domain iso
+
+- Extended `InfoSysConstructions.lean`: `sumDomainIso` /
+  `infoSys_sum_domain_equiv : WithBot (|A| ⊕ |B|) ≃o |A+B|` via `inl`/`inr`
+  classify/assemble; trichotomy classical (`Classical.choice` in footprint).
+- Product remains choice-free. Function space still open.
