@@ -26,11 +26,11 @@ lives in each sibling's `arxiv.md`.
 
 ## Current status (2026-07-11)
 
-- `neighborhoodSystem_to_infoSys` **Pass** (`ScottModels/NeighborhoodToInfoSys.lean`):
-  `NbhdBasis` (decidable exhaustive index of neighbourhoods) → `toInfoSys`, with
-  `domainOrderIso : |𝒟| ≃o |toInfoSys|`. Axioms ⊆ `{propext, Quot.sound}`.
-- Remaining blueprint rows still **Not Yet** (1972→1980, 1982→algebraic→1972, full equiv,
-  constructions).
+- `neighborhoodSystem_to_infoSys` **Pass** (`NeighborhoodToInfoSys.lean`).
+- `infoSys_to_neighborhoodSystem` **Pass** (`InfoSysToNeighborhood.lean`): basic opens
+  `[u]` form a neighbourhood system on `|A|` with `domainOrderIso`.
+  Axioms ⊆ `{propext, Quot.sound}`. **1980 ↔ 1982** constructive pair is in place.
+- Remaining: 1972→1980, 1982→algebraic→1972, full equiv, constructions.
 
 ## On finishing a bridge theorem
 
@@ -61,3 +61,12 @@ lives in each sibling's `arxiv.md`.
 - Constructive: `#print axioms` ⊆ `{propext, Quot.sound}` (avoided `by_cases` / classical `em`
   in `ent_con`).
 - Wired through `ScottModels.lean`; `arxiv.md` row marked Pass.
+
+### 2026-07-11 — `infoSys_to_neighborhoodSystem`
+
+- New `ScottModels/InfoSysToNeighborhood.lean`: Scott §4 basic opens `[u]` as a
+  `NeighborhoodSystem` on `|A|`; `toFilter` / `ofFilter` give `domainOrderIso`.
+- Constructive: `#print axioms` ⊆ `{propext, Quot.sound}` (removed `simp` on
+  `basicOpen_empty` / `funion` which pulled `Classical.choice`).
+- Completes the constructive **1980 ↔ 1982** presentation bridge (with
+  `neighborhoodSystem_to_infoSys`).

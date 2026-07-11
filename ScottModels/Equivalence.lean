@@ -1,4 +1,5 @@
 import ScottModels.NeighborhoodToInfoSys
+import ScottModels.InfoSysToNeighborhood
 
 /-!
 # Equivalence theorems (Part IV)
@@ -9,9 +10,9 @@ the cross-presentation maps. See `arxiv.md` / `HANDOFF.md`.
 
 ## Status
 
-* `neighborhoodSystem_to_infoSys` — **done** (`NeighborhoodToInfoSys.lean`):
-  `NbhdBasis.toInfoSys` + `domainOrderIso`.
-* `continuousLattice_to_neighborhoodSystem` — not yet.
-* `infoSys_to_idealCompletion` / `idealCompletion_to_continuousLattice` — not yet.
-* `presentation_domains_equiv`; `infoSys_constructions_equiv` — not yet.
+* `neighborhoodSystem_to_infoSys` — **done** (`NeighborhoodToInfoSys.lean`)
+* `infoSys_to_neighborhoodSystem` — **done** (`InfoSysToNeighborhood.lean`)
+* `continuousLattice_to_neighborhoodSystem` — not yet
+* `infoSys_to_idealCompletion` / `idealCompletion_to_continuousLattice` — not yet
+* `presentation_domains_equiv`; `infoSys_constructions_equiv` — not yet
 -/

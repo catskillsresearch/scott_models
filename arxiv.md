@@ -34,6 +34,7 @@ Scott notes (1982) that neighborhood systems and information systems are equival
 | ----------------------------------------- | ------------------------------ | ------------------------------------------ | -------------------------------- |
 | `continuousLattice_to_neighborhoodSystem` | 1972 → 1980                    | 1972 **2.11**, **2.12**; Δ as master set | **Not Yet**                      |
 | `neighborhoodSystem_to_infoSys`           | 1980 → 1982                    | 1980 domain-as-filter; decidable nbhd basis | **Pass** — `NbhdBasis.toInfoSys` + `domainOrderIso` (`NeighborhoodToInfoSys.lean`); axioms ⊆ `{propext, Quot.sound}` |
+| `infoSys_to_neighborhoodSystem`           | 1982 → 1980                    | 1982 Factoid 4.6 `basicOpen`             | **Pass** — `[u]`-neighbourhoods on `\|A\|` + `domainOrderIso` (`InfoSysToNeighborhood.lean`); axioms ⊆ `{propext, Quot.sound}` |
 | `infoSys_to_idealCompletion`              | 1982 → algebraic dcpo          | 1982 `InfoSys.Element`                 | **Not Yet**                      |
 | `idealCompletion_to_continuousLattice`    | algebraic CL → 1972            | compact elements, Scott open sets          | **Not Yet** (classical frontier) |
 | `presentation_domains_equiv`              | I ↔ II ↔ III                   | all above                                  | **Not Yet**                      |
