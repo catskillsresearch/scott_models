@@ -414,6 +414,28 @@ Factoid 4.6 to a Scott-continuous endomap `sexIdScottContinuous` with `toFun = i
 
 ---
 
+## Build
+
+```bash
+lake exe cache get
+lake build ScottModels
+```
+
+Pinned: Lean / mathlib via sibling Lake path deps (`scott1972`, `scott1980`, `scott1982`).
+
+Acknowledgments (Dana Scott, AI tool cards, artifact URL) are injected before References
+when building `arxiv.tex` via `scripts/ai_model_cards.py` — they are not kept in this file.
+
+Rebuild this document (PDF with complete Lean source appendix, one subsection per
+module):
+
+```bash
+bash scripts/build_arxiv_pdf.sh            # expand Lean → tex → arxiv.pdf
+bash scripts/build_arxiv_pdf.sh --pdf-only # PDF only when arxiv.tex already current
+```
+
+---
+
 ## References
 
 - **[Sco72]** Dana Scott. *Continuous Lattices*. In F. W. Lawvere (ed.), *Toposes, Algebraic
@@ -438,8 +460,8 @@ Factoid 4.6 to a Scott-continuous endomap `sexIdScottContinuous` with `toFun = i
 ## Lean Code
 
 All Lean 4 modules in the [scott_models](https://github.com/catskillsresearch/scott_models)
-repository are listed below as GitHub links (sources stay on GitHub; nothing is inlined
-in the arXiv PDF). Order matches
+repository, listed for GitHub browsing. In the PDF build this index is replaced by the
+verbatim Lean source (complete appendix, one subsection per module). Order matches
 [`ScottModels.lean`](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels.lean).
 
 ### Root
