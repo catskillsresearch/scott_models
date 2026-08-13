@@ -1,0 +1,13 @@
+name = "LRSODInCIC"
+version = "0.1.0"
+keywords = ["foundations", "domain-theory", "scott", "lean4"]
+defaultTargets = ["LRSODInCIC"]
+
+# Standalone thought exercise: no Mathlib, no scott1972/1980/1982.
+
+[leanOptions]
+pp.unicode.fun = true
+relaxedAutoImplicit = true
+
+[[lean_lib]]
+name = "LRSODInCIC"
