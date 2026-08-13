@@ -38,7 +38,7 @@ PREAMBLE = HERE.parent / "scripts" / "tex_preamble_arxiv.tex"
 # Same front matter as scripts/build_arxiv_tex.py.
 AUTHOR = "Lars Warren Ericson"
 COMPANY = "Catskills Research Company"
-GITHUB_URL = r"https://github.com/catskillsresearch/scott_models"
+GITHUB_URL = r"https://github.com/catskillsresearch/scott_models/tree/main/LRSODInCIC"
 ORCID = "0000-0001-8299-9361"
 EMAIL = "lars.ericson@catskillsresearch.com"
 
