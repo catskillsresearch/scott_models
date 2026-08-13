@@ -11,6 +11,9 @@ __pycache__/
 # Generated from arxiv.md by scripts/build_arxiv_tex.sh (do not commit)
 arxiv_with_code.md
 arxiv.tex
+
+# Generated from LRSODInCIC.md by LRSODInCIC/build_pdf.py (the PDF is the deliverable)
+LRSODInCIC/LRSODInCIC.tex
 appendix.tex
 appendix.pdf
 lean-listings/

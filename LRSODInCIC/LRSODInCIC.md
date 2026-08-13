@@ -35,7 +35,7 @@ Primitive symbols: variables, `¬`, `→`, `∀`, `=`, parentheses. Defined: `�
 
 **R = 2 rules.**
 
-### S — Set theory (Z minus Choice minus Replacement, capped at V\_{ω+2})
+### S — Set theory (Z minus Choice minus Replacement, capped at $V_{ω+2}$)
 
 Added vocabulary: primitive `∈`. Defined: `⊆`, `{x,y}`, `⋃x`, successor, `∅`, `ω` — in the usual way, licensed by S2–S5.
 
