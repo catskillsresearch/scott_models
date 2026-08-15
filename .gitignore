@@ -5,6 +5,11 @@
 __pycache__/
 *.pyc
 
+# Vision OCR venv and page PNGs (large; regenerate with scripts/ocr_pdf_pipeline.py)
+.venv-ocr/
+sources/pages/
+sources/ocr_*.log
+
 # Scratch / local junk
 .tmp/
 
