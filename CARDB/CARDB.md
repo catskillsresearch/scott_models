@@ -343,24 +343,24 @@ While an elementary exact formula does not exist, asymptotic analysis reveals th
 
 The human author retains sole responsibility for the mathematical content, the choice of
 formalization route, and every formal claim in this work. Following standard publisher practice
-(e.g., COPE guidance on authorship and AI tools **[COPE24]**), **no large language model is listed
+(e.g., COPE guidance on authorship and AI tools [8]), **no large language model is listed
 as a co-author** — authorship implies an accountability that automated systems cannot bear.
 
 We gratefully acknowledge assistance from the following tools. None of these models has an official
 Hugging Face model card (they are closed, vendor-hosted systems); the citations below are the
 publisher model cards and the Cursor integration pages.
 
-- **Cursor Grok 4.6 High Fast** **[Grk46]** — primary agent for this note: Lean 4 / Mathlib
+- **Cursor Grok 4.6 High Fast** [9] — primary agent for this note: Lean 4 / Mathlib
   formalization of the fiber identity (`CARDB.lean`), `lake build` repair, and drafting
   `CARDB.md`. Used in the Cursor agent environment at the **High** reasoning tier and **Fast**
   speed variant. Jointly trained by SpaceXAI and Cursor. Generated Lean was provisional until
   it compiled under the pinned toolchain (`leanprover/lean4:v4.30.0`).
-- **Anthropic Claude Sonnet 5** **[ClaS5]** — initial Lean sketch of the fiber identity
+- **Anthropic Claude Sonnet 5** [10] — initial Lean sketch of the fiber identity
   (`IsBasis`, `ValidBasis`, `fiberEquiv`, and the sum over topologies) and an early
   point-set write-up of the Alexandrov minimal-neighborhood argument. The sketch was
   unchecked; subsequent agents repaired it to a sorry-free Mathlib formalization under
   the pinned toolchain. Used in the Cursor agent environment.
-- **Google Gemini 3.7 Flash** **[Gem37]** — exploratory and parallel passes on the same
+- **Google Gemini 3.7 Flash** [11] — exploratory and parallel passes on the same
   combinatorial / point-set material (basis axioms, Alexandrov minimal neighborhoods, and the
   finite-enumeration identity).
 
@@ -385,7 +385,7 @@ Run `cd CARDB && python3 build_pdf.py` to regenerate `CARDB.tex` and `CARDB.pdf`
 5. Kleitman, D. J., & Rothschild, B. L. (1975). Asymptotic enumeration of partial orders on a finite set. *Transactions of the American Mathematical Society*, 205, 205–220.
 6. Stephen, D. (1968). Topology on finite sets. *The American Mathematical Monthly*, 75(7), 739–741.
 7. OEIS Foundation Inc. (2026). The On-Line Encyclopedia of Integer Sequences. Sequences A000798 (*Number of topologies on $n$ labeled points*) and A001035 (*Number of labeled partial orders on $n$ points*). https://oeis.org.
-8. **[COPE24]** Committee on Publication Ethics (COPE). *Authorship and AI tools: COPE position statement*. 2024. <https://publicationethics.org/guidance/cope-position/authorship-and-ai-tools>
-9. **[Grk46]** SpaceXAI and Anysphere, Inc. *Grok 4.6* (High reasoning, Fast variant). Official model card (12 August 2026), <https://media.x.ai/v1/website/card-7f81d41b.pdf>; developer documentation, <https://docs.x.ai/developers/models/grok-4.6>; Cursor model page, <https://cursor.com/docs/models/grok-4-6>; Cursor announcement, <https://cursor.com/blog/grok-4-6> (accessed 2026). No official Hugging Face model card is published for this closed model.
-10. **[ClaS5]** Anthropic. *Claude Sonnet 5*. Official system card (30 June 2026), <https://www.anthropic.com/claude-sonnet-5-system-card>; system-card PDF, <https://www-cdn.anthropic.com/480e0bb54327b9622282e9c39a83a4f490ed377e/Claude%20Sonnet%205%20System%20Card.pdf>; product page, <https://www.anthropic.com/claude/sonnet>; announcement, <https://www.anthropic.com/news/claude-sonnet-5>; Cursor model page, <https://cursor.com/docs/models/claude-sonnet-5> (accessed 2026). No official Hugging Face model card is published for this closed model.
-11. **[Gem37]** Google DeepMind. *Gemini 3.7 Flash*. Official model card (13 August 2026), <https://deepmind.google/models/model-cards/gemini-3-7-flash/>; product announcement, <https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-3-7-flash/>; Gemini API model catalog, <https://ai.google.dev/gemini-api/docs/models> (accessed 2026). No official Hugging Face model card is published for this closed model.
+8. Committee on Publication Ethics (COPE). *Authorship and AI tools: COPE position statement*. 2024. <https://publicationethics.org/guidance/cope-position/authorship-and-ai-tools>
+9. SpaceXAI and Anysphere, Inc. *Grok 4.6* (High reasoning, Fast variant). Official model card (12 August 2026), <https://media.x.ai/v1/website/card-7f81d41b.pdf>; developer documentation, <https://docs.x.ai/developers/models/grok-4.6>; Cursor model page, <https://cursor.com/docs/models/grok-4-6>; Cursor announcement, <https://cursor.com/blog/grok-4-6> (accessed 2026). No official Hugging Face model card is published for this closed model.
+10. Anthropic. *Claude Sonnet 5*. Official system card (30 June 2026), <https://www.anthropic.com/claude-sonnet-5-system-card>; system-card PDF, <https://www-cdn.anthropic.com/480e0bb54327b9622282e9c39a83a4f490ed377e/Claude%20Sonnet%205%20System%20Card.pdf>; product page, <https://www.anthropic.com/claude/sonnet>; announcement, <https://www.anthropic.com/news/claude-sonnet-5>; Cursor model page, <https://cursor.com/docs/models/claude-sonnet-5> (accessed 2026). No official Hugging Face model card is published for this closed model.
+11. Google DeepMind. *Gemini 3.7 Flash*. Official model card (13 August 2026), <https://deepmind.google/models/model-cards/gemini-3-7-flash/>; product announcement, <https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-3-7-flash/>; Gemini API model catalog, <https://ai.google.dev/gemini-api/docs/models> (accessed 2026). No official Hugging Face model card is published for this closed model.
