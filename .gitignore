@@ -19,6 +19,7 @@ arxiv.tex
 
 # Generated from LRSODInCIC.md by LRSODInCIC/build_pdf.py (the PDF is the deliverable)
 LRSODInCIC/LRSODInCIC.tex
+CARDB/CARDB.tex
 appendix.tex
 appendix.pdf
 lean-listings/

@@ -14,11 +14,14 @@ Github:  https://github.com/catskillsresearch/scott_models
 -/
 
 import Mathlib.Topology.AlexandrovDiscrete
-import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Data.Fintype.Powerset
 import Mathlib.Data.Set.Card
 import Mathlib.Data.Set.Finite.Basic
+import Mathlib.Logic.Equiv.Sum
 
 open Set TopologicalSpace
+open scoped BigOperators
 
 variable {α : Type*} [Fintype α] [DecidableEq α]
 
@@ -29,6 +32,27 @@ def IsBasis (B : Set (Set α)) : Prop :=
   ∀ ⦃U V⦄, U ∈ B → V ∈ B → ∀ x ∈ U ∩ V, ∃ W ∈ B, x ∈ W ∧ W ⊆ U ∩ V
 
 def ValidBasis (α : Type*) [Fintype α] := { B : Set (Set α) // IsBasis B }
+
+/-- Open sets of `t`, as a family of subsets. This map is injective, so there
+    are only finitely many topologies on a finite type. -/
+def opensOf (t : TopologicalSpace α) : Set (Set α) := {U | t.IsOpen U}
+
+omit [Fintype α] [DecidableEq α] in
+theorem opensOf_injective :
+    Function.Injective (opensOf : TopologicalSpace α → Set (Set α)) :=
+  leftInverse_generateFrom.injective
+
+noncomputable instance : DecidableEq (TopologicalSpace α) :=
+  opensOf_injective.decidableEq
+
+noncomputable instance : Fintype (TopologicalSpace α) :=
+  Fintype.ofInjective opensOf opensOf_injective
+
+noncomputable instance : DecidablePred (IsBasis : Set (Set α) → Prop) :=
+  fun _ => Classical.dec _
+
+noncomputable instance : Fintype (ValidBasis α) :=
+  Subtype.fintype _
 
 variable (t : TopologicalSpace α)
 
@@ -168,11 +192,28 @@ def fiberEquiv (t : TopologicalSpace α) :
     · intro hU
       exact Or.inr ⟨U, hU, rfl⟩
 
+omit [DecidableEq α] in
+theorem minimalBasis_subset_opens : minimalBasis t ⊆ opensOf t := by
+  rintro _ ⟨x, rfl⟩
+  exact isOpen_minimalOpen t x
+
+omit [DecidableEq α] in
 /-- Main theorem: the number of valid bases on an `N`-element set
     equals the sum over all topologies of `2^(|T| - |M_T|)`. -/
-theorem card_valid_bases
-    [Fintype (ValidBasis α)] [Fintype (TopologicalSpace α)] :
+theorem card_valid_bases :
     Fintype.card (ValidBasis α) =
       ∑ τ : TopologicalSpace α,
-        2 ^ (ncard ({U : Set α | τ.IsOpen U}) - ncard (minimalBasis τ)) := by
-  sorry
+        2 ^ (ncard (opensOf τ) - ncard (minimalBasis τ)) := by
+  classical
+  rw [← Fintype.card_congr
+    (Equiv.sigmaFiberEquiv (fun B : ValidBasis α => generateFrom B.1))]
+  rw [Fintype.card_sigma]
+  refine Finset.sum_congr rfl fun τ _ => ?_
+  rw [Fintype.card_congr (fiberEquiv τ), Fintype.card_set]
+  congr 1
+  rw [← Nat.card_eq_fintype_card]
+  change Nat.card ↥({U : Set α | τ.IsOpen U ∧ U ∉ minimalBasis τ}) = _
+  rw [Nat.card_coe_set_eq,
+    show {U : Set α | τ.IsOpen U ∧ U ∉ minimalBasis τ} = opensOf τ \ minimalBasis τ by
+      ext U; simp [opensOf, mem_diff]]
+  exact ncard_diff (minimalBasis_subset_opens τ)
