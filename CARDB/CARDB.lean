@@ -56,6 +56,10 @@ noncomputable instance : Fintype (ValidBasis α) :=
 
 variable (t : TopologicalSpace α)
 
+/-- Valid bases that generate exactly `t`: the fiber of `generateFrom` over `t`. -/
+abbrev Fiber (t : TopologicalSpace α) :=
+  { B : ValidBasis α // generateFrom B.1 = t }
+
 /-- In a finite topological space, the minimal open neighborhood of `x`. -/
 def minimalOpen (x : α) : Set α :=
   ⋂₀ {U : Set α | t.IsOpen U ∧ x ∈ U}
@@ -156,7 +160,7 @@ theorem isBasis_and_generates_iff (B : Set (Set α)) :
 /-- The fiber over a topology `t` is equivalent to the power set
     of the redundant open sets. -/
 def fiberEquiv (t : TopologicalSpace α) :
-    { B : ValidBasis α // generateFrom B.val = t } ≃
+    Fiber t ≃
       Set { U : Set α // t.IsOpen U ∧ U ∉ minimalBasis t } where
   toFun B := { U | U.1 ∈ B.1.1 }
   invFun S :=
@@ -198,22 +202,35 @@ theorem minimalBasis_subset_opens : minimalBasis t ⊆ opensOf t := by
   exact isOpen_minimalOpen t x
 
 omit [DecidableEq α] in
+/-- One fiber: bases generating `t` are a power set of redundant opens. -/
+theorem card_fiber :
+    Fintype.card (Fiber t) =
+      2 ^ (ncard (opensOf t) - ncard (minimalBasis t)) := by
+  classical
+  rw [Fintype.card_congr (fiberEquiv t), Fintype.card_set]
+  congr 1
+  rw [← Nat.card_eq_fintype_card]
+  change Nat.card ↥({U : Set α | t.IsOpen U ∧ U ∉ minimalBasis t}) = _
+  rw [Nat.card_coe_set_eq,
+    show {U : Set α | t.IsOpen U ∧ U ∉ minimalBasis t} = opensOf t \ minimalBasis t by
+      ext U; simp [opensOf, mem_diff]]
+  exact ncard_diff (minimalBasis_subset_opens t)
+
+omit [DecidableEq α] in
+/-- Partition of all valid bases into fibers. -/
+theorem card_valid_bases_sum_fiber :
+    Fintype.card (ValidBasis α) =
+      ∑ τ : TopologicalSpace α, Fintype.card (Fiber τ) := by
+  rw [← Fintype.card_congr
+    (Equiv.sigmaFiberEquiv (fun B : ValidBasis α => generateFrom B.1))]
+  rw [Fintype.card_sigma]
+
+omit [DecidableEq α] in
 /-- Main theorem: the number of valid bases on an `N`-element set
     equals the sum over all topologies of `2^(|T| - |M_T|)`. -/
 theorem card_valid_bases :
     Fintype.card (ValidBasis α) =
       ∑ τ : TopologicalSpace α,
         2 ^ (ncard (opensOf τ) - ncard (minimalBasis τ)) := by
-  classical
-  rw [← Fintype.card_congr
-    (Equiv.sigmaFiberEquiv (fun B : ValidBasis α => generateFrom B.1))]
-  rw [Fintype.card_sigma]
-  refine Finset.sum_congr rfl fun τ _ => ?_
-  rw [Fintype.card_congr (fiberEquiv τ), Fintype.card_set]
-  congr 1
-  rw [← Nat.card_eq_fintype_card]
-  change Nat.card ↥({U : Set α | τ.IsOpen U ∧ U ∉ minimalBasis τ}) = _
-  rw [Nat.card_coe_set_eq,
-    show {U : Set α | τ.IsOpen U ∧ U ∉ minimalBasis τ} = opensOf τ \ minimalBasis τ by
-      ext U; simp [opensOf, mem_diff]]
-  exact ncard_diff (minimalBasis_subset_opens τ)
+  rw [card_valid_bases_sum_fiber]
+  exact Finset.sum_congr rfl fun τ _ => card_fiber τ
