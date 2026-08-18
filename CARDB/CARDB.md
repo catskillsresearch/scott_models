@@ -94,40 +94,38 @@ $$U_x = \bigcap \{ U \in \mathcal{T} \mid x \in U \}$$
 
 The collection:
 $$\mathcal{M}_\mathcal{T} = \{ U_x \mid x \in S \}$$
-is called the **canonical minimal basis** of $\mathcal{T}$.
+is called the **canonical minimal basis** of $\mathcal{T}$. In Mathlib this is the neighborhoods kernel `nhdsKer {x}` (`Mathlib.Topology.NhdsKer`); finiteness supplies `AlexandrovDiscrete`, so `isOpen_nhdsKer` applies.
 
 ```lean
 variable (t : TopologicalSpace α)
 
-/-- In a finite topological space, the minimal open neighborhood of `x`. -/
-def minimalOpen (x : α) : Set α :=
-  ⋂₀ {U : Set α | t.IsOpen U ∧ x ∈ U}
+/-- In a finite topological space, the minimal open neighborhood of `x`
+    (Mathlib's `nhdsKer {x}` at topology `t`). -/
+abbrev minimalOpen (x : α) : Set α :=
+  @nhdsKer α t {x}
 
 /-- The minimal basis `M_T` is the collection of all minimal open neighborhoods. -/
 def minimalBasis : Set (Set α) :=
   range (minimalOpen t)
 ```
 
-By construction $x \in U_x$, and if $U$ is open with $x \in U$ then $U_x \subseteq U$. On a finite space the intersection of all open neighborhoods is itself open, so $U_x$ is open, and the $U_x$ generate $\mathcal{T}$: every open $U$ is $\bigcup_{x \in U} U_x$.
+By construction $x \in U_x$, and if $U$ is open with $x \in U$ then $U_x \subseteq U$. On a finite space $U_x$ is open, and the $U_x$ generate $\mathcal{T}$: every open $U$ is $\bigcup_{x \in U} U_x$.
 
 ```lean
 omit [Fintype α] [DecidableEq α] in
-theorem mem_minimalOpen_self (x : α) : x ∈ minimalOpen t x := by
-  simp [minimalOpen]
+theorem mem_minimalOpen_self (x : α) : x ∈ minimalOpen t x :=
+  @subset_nhdsKer α t {x} x (mem_singleton x)
 
 omit [Fintype α] [DecidableEq α] in
 theorem minimalOpen_subset_of_isOpen {x : α} {U : Set α}
-    (hU : t.IsOpen U) (hx : x ∈ U) : minimalOpen t x ⊆ U := by
-  intro y hy
-  exact hy U ⟨hU, hx⟩
+    (hU : t.IsOpen U) (hx : x ∈ U) : minimalOpen t x ⊆ U :=
+  @nhdsKer_minimal α t {x} U (singleton_subset_iff.mpr hx) hU
 
 omit [DecidableEq α] in
-/-- In a finite space, arbitrary intersections of open sets are finite intersections,
-    hence `minimalOpen` is genuinely open. -/
-theorem isOpen_minimalOpen (x : α) : t.IsOpen (minimalOpen t x) := by
+/-- Finite spaces are Alexandrov-discrete, so `nhdsKer {x}` is open. -/
+theorem isOpen_minimalOpen (x : α) : t.IsOpen (minimalOpen t x) :=
   letI := t
-  have : {U : Set α | IsOpen U ∧ x ∈ U}.Finite := Set.toFinite _
-  exact this.isOpen_sInter fun U hU => hU.1
+  isOpen_nhdsKer
 
 omit [DecidableEq α] in
 /-- The minimal basis alone generates the topology `t`. -/
