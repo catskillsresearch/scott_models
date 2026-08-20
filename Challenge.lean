@@ -6,6 +6,7 @@ Authors: Lars Warren Ericson.
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.CompleteLattice.Basic
+import Mathlib.Order.ConditionallyCompleteLattice.Basic
 import Mathlib.Order.Directed
 import Mathlib.Order.Hom.Basic
 import Mathlib.Order.UpperLower.Basic

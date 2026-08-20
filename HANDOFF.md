@@ -22,7 +22,12 @@ lives in each sibling's `arxiv.md`.
 3. For dependency lemmas, **Grep** the relevant sibling `arxiv.md` / Lean module — do not rely on
    copied status dumps in this repo.
 4. Build: `lake build ScottModels` (filter: `| grep -vE 'LEAN_PATH|trace:' | tail`).
-5. Follow `.cursor/rules/handoff-discipline.mdc`.
+5. Palomar type check (green `lake build` is not enough): from repo root,
+   `bash scripts/compare_challenge_solution_types.sh`.
+   It `#check`s every `comparator.json` name from Challenge and from Solution
+   with `pp.all` / `pp.explicit` and diffs. A non-empty diff means Palomar
+   Comparator will fail (instance-name / instance-path mismatch), as on cardb.
+6. Follow `.cursor/rules/handoff-discipline.mdc`.
 
 ## Current status (2026-07-11)
 
@@ -208,3 +213,14 @@ lives in each sibling's `arxiv.md`.
   scott1982 `7ed95c16db5be1131f79af84cdf29ba18f07646a`.
 - Paper of record for Palomar metadata: `view.pdf`. `arxiv.md` is the math source.
 - Did not register; did not re-prove; did not vendor the siblings; not LRSOD.
+
+### 2026-08-19 — Palomar `pp.all` type diff
+
+- Recipe: `bash scripts/compare_challenge_solution_types.sh` (also Resume Protocol §5).
+- Named instances `instPartialOrderElement` already matched. The script caught a
+  **different** instance-path bug: `presentation_domains_equiv`'s `D ≃o _`
+  elaborated `CompleteSemilatticeInf.toPartialOrder` in Challenge vs the longer
+  `ConditionallyCompleteLattice` chain in Solution. Fixed by importing
+  `Mathlib.Order.ConditionallyCompleteLattice.Basic` in `Challenge.lean`.
+- Re-run the script before submitting; a non-empty diff fails Palomar even if
+  `lake build` is green.
