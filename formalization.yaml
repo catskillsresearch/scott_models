@@ -23,8 +23,8 @@ project:
     repository. The Lean source was written by AI agents under the
     direction and review of the author. There is no sorry outside the
     deliberate holes in Challenge.lean, no project-defined axiom, and
-    the Solution depends on pinned git revisions of the three sibling
-    paper libraries.
+    the Solution depends on in-tree vendor/ copies of the author's three
+    sibling paper libraries (frozen SHAs in vendor/FROZEN.txt).
   authors:
     - "Lars Warren Ericson"
   license: "Apache-2.0"
@@ -89,8 +89,8 @@ fidelity:
     InfoSys.basicOpen; informal ↟a is wayBelowUp. DecidableEq on tokens
     (and on D for the ↟-coding) is required so InfoSys can use the
     choice-free Finset prelude. The sibling packages remain the
-    per-paper developments; this package adapts their type surface and
-    proves the maps between them.
+    per-paper remotes; this snapshot vendors them in vendor/ and proves
+    the maps between them.
 
 # ---------------------------------------------------------------------------
 # Mathematical sources.
@@ -165,30 +165,50 @@ sources:
       of categories.
 
 related_formalizations:
-  - id: "https://github.com/catskillsresearch/scott1972/tree/36bf01f99f00fcb78b999052212372ba026521ba"
-    relationship: builds-on
+  - id: "https://github.com/catskillsresearch/domain_theory"
+    relationship: supersedes
     note: >-
-      Finished per-paper Lean development of Scott 1972 continuous
-      lattices, pinned at 36bf01f99f00fcb78b999052212372ba026521ba.
-      This package is the cross-presentation maps; that repository
-      remains the 1972 development.
+      Archived earlier combined formalization by the same author
+      (Apache-2.0). Split because each paper’s Lean outgrew one tree
+      (scott1972 / scott1980 / scott1982 / scott_models). This package
+      plus vendor/ is the continuation, not a reimplementation by
+      someone else. The archive is historical and is not vendored.
+
+  - id: "https://github.com/catskillsresearch/scott1972/tree/36bf01f99f00fcb78b999052212372ba026521ba"
+    relationship: other
+    note: >-
+      Same-author per-paper home for Scott 1972 continuous lattices,
+      frozen at 36bf01f99f00fcb78b999052212372ba026521ba and copied
+      into vendor/scott1972 for this Palomar snapshot. The remote
+      remains the 1972 development; this tree is an in-tree convenience
+      archive of that checkout, not a replacement.
 
   - id: "https://github.com/catskillsresearch/scott1980/tree/f6cbc2d62a636ab24e60d185f80c0f61daf73fe1"
-    relationship: builds-on
+    relationship: other
     note: >-
-      Finished per-paper Lean development of PRG-19 neighbourhood
-      systems, pinned at f6cbc2d62a636ab24e60d185f80c0f61daf73fe1.
-      This package is the cross-presentation maps; that repository
-      remains the 1980 development.
+      Same-author per-paper home for PRG-19 neighbourhood systems,
+      frozen at f6cbc2d62a636ab24e60d185f80c0f61daf73fe1 and copied
+      into vendor/scott1980. The remote remains the 1980 development.
 
   - id: "https://github.com/catskillsresearch/scott1982/tree/7ed95c16db5be1131f79af84cdf29ba18f07646a"
-    relationship: builds-on
+    relationship: other
     note: >-
-      Finished per-paper Lean development of Scott 1982 information
-      systems (through Factoid 8.4 / domain equations), pinned at
-      7ed95c16db5be1131f79af84cdf29ba18f07646a. This package is the
-      cross-presentation maps; that repository remains the 1982
-      development.
+      Same-author per-paper home for Scott 1982 information systems
+      (through Factoid 8.4 / domain equations), frozen at
+      7ed95c16db5be1131f79af84cdf29ba18f07646a and copied into
+      vendor/scott1982. The remote remains the 1982 development.
+
+  - id: "https://github.com/Vilin97/lean-pool/tree/main/LeanPool/DomainTheory"
+    relationship: other
+    note: >-
+      Public downstream ingest of catskillsresearch/domain_theory
+      (candidates/provenance.jsonl: repo catskillsresearch/domain_theory,
+      authors Catskills Research Company). Apache-2.0 permitted the
+      copy. Incomplete relative to this snapshot (ContinuousLattice +
+      Neighborhood + a short InfoSys; no full scott1982, no bridges).
+      Not prior work this formalization follows; a later copy of an
+      earlier repo of the same author. This SHA is the complete source
+      to copy.
 
 # ---------------------------------------------------------------------------
 # How this was produced.
@@ -218,8 +238,9 @@ automation:
       role: >-
         Palomar packaging of the existing bridges: Challenge.lean,
         Solution.lean, comparator.json, formalization.yaml, and
-        conversion of sibling Lake path dependencies to pinned git
-        revisions. Did not re-prove the compared isos.
+        conversion of sibling Lake dependencies. Did not re-prove the
+        compared isos. Later session vendored the three paper repos
+        into vendor/ for one Palomar SHA.
     - method: agent
       models: ["Claude Sonnet 5 (Anthropic)", "Claude Opus 4.8 (Anthropic)", "Gemini 3.5 Flash (Google DeepMind)"]
       framework: "Cursor"

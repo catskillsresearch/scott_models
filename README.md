@@ -7,15 +7,19 @@ and 1982 information-system presentations of Scott domain theory.
 The **Palomar statement of record** is the small family of presentation-bridge
 isos (`neighborhoodSystem_to_infoSys`, `infoSys_to_neighborhoodSystem` /
 `InfoSysToNeighborhood.domainOrderIso`, `presentation_domains_equiv` :
-`D ≃o RoundInfoSysElement`), not a dump of the three source papers. The
-sibling repositories remain the per-paper developments:
+`D ≃o RoundInfoSysElement`), not a dump of the three source papers.
 
-- [`scott1972`](https://github.com/catskillsresearch/scott1972) — continuous lattices
-- [`scott1980`](https://github.com/catskillsresearch/scott1980) — neighbourhood systems (PRG-19)
-- [`scott1982`](https://github.com/catskillsresearch/scott1982) — information systems
-
-Lake pins those repos at explicit git SHAs in `lakefile.toml`. The paper of
-record for the bridges is `view.pdf` (source `arxiv.md`).
+Work started as one repo,
+[`domain_theory`](https://github.com/catskillsresearch/domain_theory)
+(archived), and was split by paper size into
+[`scott1972`](https://github.com/catskillsresearch/scott1972),
+[`scott1980`](https://github.com/catskillsresearch/scott1980),
+[`scott1982`](https://github.com/catskillsresearch/scott1982), and this
+bridges package. This snapshot copies those three paper trees into
+`vendor/` (frozen SHAs in `vendor/FROZEN.txt`) so one Palomar SHA has the
+complete development; the remotes remain the per-paper homes. See
+`PROVENANCE.md`. The paper of record for the bridges is `view.pdf`
+(source `arxiv.md`).
 
 ## Build
 
@@ -29,4 +33,5 @@ lake build
 as `sorry`. `Solution.lean` re-exports the sorry-free `ScottModels/` proofs.
 
 Narrative inventory: `arxiv.md`. Palomar metadata: `comparator.json`,
-`formalization.yaml`. Session resume: `HANDOFF.md`.
+`formalization.yaml`. Split / vendor story: `PROVENANCE.md`.
+Session resume: `HANDOFF.md`.

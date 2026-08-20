@@ -89,8 +89,8 @@ The sibling packages are **finished dependencies**, not work items of this paper
 [`scott1972`](https://github.com/catskillsresearch/scott1972),
 [`scott1980`](https://github.com/catskillsresearch/scott1980), and
 [`scott1982`](https://github.com/catskillsresearch/scott1982) (information systems through
-Factoid 8.4 / domain equations). This package does **not** vendor their Lean sources;
-Lake pins them at explicit git revisions (see `lakefile.toml`). The Palomar statement
+Factoid 8.4 / domain equations). They are vendored in `vendor/` at frozen SHAs
+(see `vendor/FROZEN.txt` / `lakefile.toml`); the remotes remain the per-paper homes. The Palomar statement
 of record is the presentation-bridge family in the catalog below (`Challenge.lean` /
 `comparator.json`), not a formalization of the three papers. Figure~2 is left-to-right: sibling packages on the
 left, local `ScottModels/` modules on the right, with arrows for **direct** imports
@@ -423,7 +423,8 @@ lake exe cache get
 lake build ScottModels
 ```
 
-Pinned: Lean / mathlib v4.30.0; sibling packages via git SHA in `lakefile.toml`
+Pinned: Lean / mathlib v4.30.0; sibling packages via in-tree `vendor/` path deps
+(frozen SHAs in `vendor/FROZEN.txt`)
 (`scott1972`, `scott1980`, `scott1982`). Palomar compared family: `Challenge.lean`,
 `Solution.lean`, `comparator.json`; paper of record for that packaging is `view.pdf`.
 

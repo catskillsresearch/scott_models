@@ -4,8 +4,9 @@ keywords = ["domain-theory", "scott", "equivalence", "lean4"]
 defaultTargets = ["ScottModels", "Challenge", "Solution"]
 
 # ScottModels is the proof library. Challenge / Solution are the Palomar
-# Comparator pair. Sibling paper libraries are pinned git revisions (Palomar
-# checks one repo at one commit; path deps to ../scott19xx would fail).
+# Comparator pair. Sibling paper libraries live in vendor/ (in-tree path
+# deps) so one Palomar SHA has the complete split. Remotes remain the
+# per-paper homes; see vendor/FROZEN.txt and PROVENANCE.md.
 
 [leanOptions]
 pp.unicode.fun = true
@@ -18,18 +19,15 @@ rev = "v4.30.0"
 
 [[require]]
 name = "scott1972"
-git = "https://github.com/catskillsresearch/scott1972"
-rev = "36bf01f99f00fcb78b999052212372ba026521ba"
+path = "vendor/scott1972"
 
 [[require]]
 name = "scott1980"
-git = "https://github.com/catskillsresearch/scott1980"
-rev = "f6cbc2d62a636ab24e60d185f80c0f61daf73fe1"
+path = "vendor/scott1980"
 
 [[require]]
 name = "scott1982"
-git = "https://github.com/catskillsresearch/scott1982"
-rev = "7ed95c16db5be1131f79af84cdf29ba18f07646a"
+path = "vendor/scott1982"
 
 [[lean_lib]]
 name = "ScottModels"

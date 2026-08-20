@@ -3,14 +3,14 @@
 Bridge theorems relating Scott's **1972** continuous-lattice, **1980** neighbourhood-system,
 and **1982** information-system presentations. Lean library: `ScottModels`. Inventory: `arxiv.md`.
 
-Sibling packages (Lake path deps; treat as **finished** sources of truth — do not trust stale
-status prose elsewhere):
+Sibling packages (in-tree `vendor/` copies of the author’s remotes; treat as
+**finished** sources of truth — do not trust stale status prose elsewhere):
 
 | Package | Path | Role |
 | --- | --- | --- |
-| `scott1972` | `../scott1972` | Continuous lattices (`IsContinuousLattice`, Thm 2.12, …) |
-| `scott1980` | `../scott1980` | Neighbourhood systems + approximable maps (PRG-19) |
-| `scott1982` | `../scott1982` | Information systems through Factoid 8.4 / domain equations |
+| `scott1972` | `vendor/scott1972` | Continuous lattices (`IsContinuousLattice`, Thm 2.12, …) |
+| `scott1980` | `vendor/scott1980` | Neighbourhood systems + approximable maps (PRG-19) |
+| `scott1982` | `vendor/scott1982` | Information systems through Factoid 8.4 / domain equations |
 
 Source MD transcriptions live in each sibling's `sources/` directory. Per-paper proof structure
 lives in each sibling's `arxiv.md`.
@@ -207,7 +207,8 @@ lives in each sibling's `arxiv.md`.
 - Compared family: `neighborhoodSystem_to_infoSys`, `infoSys_to_neighborhoodSystem`,
   `InfoSysToNeighborhood.domainOrderIso`, `presentation_domains_equiv`
   (`D ≃o RoundInfoSysElement`). Supporting holes only as Comparator needs them.
-- `lakefile.toml`: sibling requires are git+SHA (not `../scott19xx` path deps).
+- `lakefile.toml`: sibling requires were git+SHA, then retargeted to
+  in-tree `vendor/` path deps (same frozen SHAs).
   Pins: scott1972 `36bf01f99f00fcb78b999052212372ba026521ba`,
   scott1980 `f6cbc2d62a636ab24e60d185f80c0f61daf73fe1`,
   scott1982 `7ed95c16db5be1131f79af84cdf29ba18f07646a`.
@@ -224,3 +225,10 @@ lives in each sibling's `arxiv.md`.
   `Mathlib.Order.ConditionallyCompleteLattice.Basic` in `Challenge.lean`.
 - Re-run the script before submitting; a non-empty diff fails Palomar even if
   `lake build` is green.
+
+### 2026-08-20 — vendor/ the three paper repos
+
+- Copied `../scott1972|1980|1982` into `vendor/` at the frozen HEADs (no `.git` /
+  `.lake`). `lakefile.toml` path deps are in-tree. `PROVENANCE.md` + YAML +
+  README record the domain_theory split, the remotes, and the Lean Pool
+  downstream ingest. Brian’s Ericson/ clone is a PROVENANCE sentence only.
