@@ -40,6 +40,7 @@ open Order
 open scoped Scott1972.ContinuousLattice
 open ContinuousLatticeToNeighborhood
 
+section InfoSysTriangle
 variable {α : Type*} [DecidableEq α]
 
 /-- Neighbourhood filters of `|A|` ↔ ideals of finite elements (via `|A|`). -/
@@ -60,9 +61,12 @@ noncomputable def nbhdBasis_ideal_iso (B : NbhdBasis ι β) :
 noncomputable abbrev presentation_domains_equiv_infoSys (A : InfoSys α) :=
   neighborhood_ideal_iso A
 
+end InfoSysTriangle
+
 /-! ## Continuous lattice presentations via round `↟`-filters -/
 
-variable {D : Type*} [CompleteLattice D] [DecidableEq D]
+universe u
+variable {D : Type u} [CompleteLattice D] [DecidableEq D]
 
 /-- Decidable coding of the `↟`-neighbourhood system: tokens are elements of `D`. -/
 def wayBelowNbhdBasis : NbhdBasis D D where

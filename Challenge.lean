@@ -329,7 +329,8 @@ open Scott1982.InfoSys
 open Order
 
 section Continuous
-variable {D : Type*} [CompleteLattice D] [DecidableEq D]
+universe u
+variable {D : Type u} [CompleteLattice D] [DecidableEq D]
 
 /-- Tokens = elements of `D`; neighbourhoods = `↟a`. Supporting hole. -/
 noncomputable def wayBelowNbhdBasis : NbhdBasis D D :=

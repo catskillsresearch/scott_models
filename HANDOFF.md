@@ -267,3 +267,10 @@ lives in each sibling's `arxiv.md`.
 - `lakefile.toml` now compiles `vendor/` as this package's `lean_lib`s
   (`srcDir`). Manifest no longer lists the three path packages.
 - Confirmed `lake build Challenge Solution` with vendor dirs `a-w`.
+
+### 2026-08-20 — Palomar: universe names on `exists_presentation_domains_equiv`
+
+- Comparator compares `ConstantVal` including `levelParams`. Challenge
+  had `.{u_1}`, Solution `.{u_4}` because PresentationDomains still had
+  `{α, ι, β : Type*}` in scope. Both sides now use `universe u` /
+  `{D : Type u}` for the continuous-lattice section.
