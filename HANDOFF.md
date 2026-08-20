@@ -282,3 +282,13 @@ lives in each sibling's `arxiv.md`.
   deriving with a handwritten `instDecidableEqTreeToken` on `{α : Type u}`
   in Challenge and `vendor/scott1982`. Listed that instance (and the
   sum/product ones) in `definition_names`.
+
+### 2026-08-20 — Palomar: `IsContinuousLattice` definition hole
+
+- Comparator walked `IsContinuousLattice` (used in
+  `exists_presentation_domains_equiv`) and compared the full constant,
+  including the elaborated body. Challenge imports
+  ConditionallyCompleteLattice so `IsLUB` / `≪` instance paths differ
+  from `vendor/scott1972`. Types already match; listed
+  `IsContinuousLattice`, `WayBelow`, and `ScottOpen` as definition
+  holes.

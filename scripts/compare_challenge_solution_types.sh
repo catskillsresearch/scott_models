@@ -35,6 +35,9 @@ NAMES=(
   Scott1982.InfoSys.instDecidableEqTreeToken
   Scott1982.InfoSys.instDecidableEqSumToken
   Scott1982.InfoSys.instDecidableEqProdToken
+  Scott1972.ContinuousLattice.IsContinuousLattice
+  Scott1972.ContinuousLattice.WayBelow
+  Scott1972.ContinuousLattice.ScottOpen
 )
 
 tmp="$(mktemp -d)"
