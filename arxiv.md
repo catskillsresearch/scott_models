@@ -90,7 +90,9 @@ The sibling packages are **finished dependencies**, not work items of this paper
 [`scott1980`](https://github.com/catskillsresearch/scott1980), and
 [`scott1982`](https://github.com/catskillsresearch/scott1982) (information systems through
 Factoid 8.4 / domain equations). This package does **not** vendor their Lean sources;
-Lake path dependencies pull them in. Figure~2 is left-to-right: sibling packages on the
+Lake pins them at explicit git revisions (see `lakefile.toml`). The Palomar statement
+of record is the presentation-bridge family in the catalog below (`Challenge.lean` /
+`comparator.json`), not a formalization of the three papers. Figure~2 is left-to-right: sibling packages on the
 left, local `ScottModels/` modules on the right, with arrows for **direct** imports
 (transitive imports inside the siblings are omitted). `Equivalence` re-exports the
 bridges; only the `ScottMapBridge → Equivalence` edge is drawn to avoid clutter.
@@ -421,7 +423,9 @@ lake exe cache get
 lake build ScottModels
 ```
 
-Pinned: Lean / mathlib via sibling Lake path deps (`scott1972`, `scott1980`, `scott1982`).
+Pinned: Lean / mathlib v4.30.0; sibling packages via git SHA in `lakefile.toml`
+(`scott1972`, `scott1980`, `scott1982`). Palomar compared family: `Challenge.lean`,
+`Solution.lean`, `comparator.json`; paper of record for that packaging is `view.pdf`.
 
 Acknowledgments (Dana Scott, AI tool cards, artifact URL) are injected before References
 when building `arxiv.tex` via `scripts/ai_model_cards.py` — they are not kept in this file.

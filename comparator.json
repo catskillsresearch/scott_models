@@ -1,0 +1,20 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [],
+  "definition_names": [
+    "ScottModels.neighborhoodSystem_to_infoSys",
+    "ScottModels.infoSys_to_neighborhoodSystem",
+    "ScottModels.InfoSysToNeighborhood.domainOrderIso",
+    "ScottModels.presentation_domains_equiv",
+    "ScottModels.NbhdBasis.toInfoSys",
+    "ScottModels.NbhdBasis.domainOrderIso",
+    "ScottModels.InfoSysToNeighborhood.toNeighborhoodSystem",
+    "ScottModels.wayBelowNbhdBasis",
+    "ScottModels.ContinuousLatticeToNeighborhood.toNeighborhoodSystem",
+    "ScottModels.IsRoundInfoSysElement",
+    "Scott1982.InfoSys.instPartialOrderElement",
+    "Scott1980.Neighborhood.NeighborhoodSystem.instPartialOrderElement"
+  ],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}

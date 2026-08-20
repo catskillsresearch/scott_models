@@ -195,3 +195,16 @@ lives in each sibling's `arxiv.md`.
 
 - Rewrote §5: Overview (goal = same S-expr domain in 1972/1980/1982); per-paradigm
   presentations; dedicated §5.5 instance equivalences with transitivity; §5.6 extras.
+
+### 2026-08-19 — Palomar packaging (bridges, not the three papers)
+
+- Added root `Challenge.lean`, `Solution.lean`, `comparator.json`, `formalization.yaml`.
+- Compared family: `neighborhoodSystem_to_infoSys`, `infoSys_to_neighborhoodSystem`,
+  `InfoSysToNeighborhood.domainOrderIso`, `presentation_domains_equiv`
+  (`D ≃o RoundInfoSysElement`). Supporting holes only as Comparator needs them.
+- `lakefile.toml`: sibling requires are git+SHA (not `../scott19xx` path deps).
+  Pins: scott1972 `36bf01f99f00fcb78b999052212372ba026521ba`,
+  scott1980 `f6cbc2d62a636ab24e60d185f80c0f61daf73fe1`,
+  scott1982 `7ed95c16db5be1131f79af84cdf29ba18f07646a`.
+- Paper of record for Palomar metadata: `view.pdf`. `arxiv.md` is the math source.
+- Did not register; did not re-prove; did not vendor the siblings; not LRSOD.
