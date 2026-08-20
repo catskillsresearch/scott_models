@@ -100,24 +100,21 @@ fidelity:
 # ---------------------------------------------------------------------------
 # Mathematical sources.
 #
-# The compared claim is the machine-checked bridges, first written up in
-# this repository's view.pdf (original-proof). Scott's three papers and
-# the folklore equivalence are background for those presentations. An
-# original-proof source list may only use background or other.
+# The compared claim independently proves a known equivalence (Scott /
+# folklore), not a first presentation of that result. view.pdf is the
+# formalization's write-up (`other`), not an original-proof source.
 # ---------------------------------------------------------------------------
 sources:
   - title: "Equivalence of Scott's Three Presentations of Domain Theory"
     authors: ["Lars Warren Ericson"]
-    type: "original-proof"
+    type: "notes"
     id: "https://github.com/catskillsresearch/scott_models/blob/main/view.pdf"
     relationship: other
     author_endorsement: participated
     note: >-
-      Original write-up in this repository (view.pdf; source arxiv.md),
-      not an external source being formalized. Relationship is `other`
-      because Palomar reserves `formalizes` for following an existing
-      source. The note carries the catalog of bridges, the round-filter
-      identification D ≃o RoundFilter, and the three-presentation iso
+      Write-up of this formalization (view.pdf; source arxiv.md), not a
+      claim that the equivalence is original. It catalogs the named
+      bridges, the round-filter identification D ≃o RoundFilter, and
       D ≃o RoundInfoSysElement. Challenge.lean is checked against those
       named results, not against a transcription of Scott 1972 / 1981 /
       1982 in full.
@@ -149,23 +146,26 @@ sources:
     location: "ICALP 1982, LNCS 140, Springer, 1982"
     relationship: background
     note: >-
-      Source of InfoSys (Definition 2.1) and of the remark that
-      neighbourhood systems and information systems are equivalent “in
-      a precise sense.” Background for the 1982 corner; the compared
-      claim is the coding and the domain iso, not a formalization of
-      the ICALP paper.
+      Source of InfoSys (Definition 2.1), Factoid 8.1 (T ≅ A + (T × T)),
+      and the remark that neighbourhood systems and information systems
+      are equivalent “in a precise sense.” Background for the 1982
+      presentation; the compared claim independently proves that known
+      equivalence as named order isomorphisms, and does not formalize
+      the ICALP paper in full.
 
   - title: "Folklore equivalence of the three presentations"
     authors: []
     type: "folklore"
-    relationship: background
+    relationship: independently-proves
     note: >-
-      The stronger folklore that continuous lattices, neighbourhood
-      systems, and information systems determine the same class of
-      domains (via ideal completion and the Scott topology). Cited as
-      background; the compared claim is the named order isomorphisms
-      (including D ≃o RoundFilter), not a functorial equivalence of
-      categories.
+      Prior result: continuous lattices, neighbourhood systems, and
+      information systems determine the same class of domains (via
+      ideal completion and the Scott topology), as already remarked by
+      Scott (1982) for the neighbourhood / information pair. This
+      package independently proves the named order isomorphisms
+      (including D ≃o RoundFilter ≃o RoundInfoSysElement), not a
+      functorial equivalence of categories. The equivalence is not
+      claimed as original.
 
 related_formalizations:
   - id: "https://github.com/catskillsresearch/domain_theory"
@@ -264,11 +264,9 @@ automation:
     The compared isos were developed in earlier Cursor agent sessions
     and are already sorry-free in ScottModels/. Palomar Challenge /
     Solution / comparator / formalization.yaml packaging was added
-    later by an agent under the author's direction. A search of
-    Mathlib, Tau Ceti, and public Lean domain-theory repositories did
-    not locate a prior Lean development of the cross-presentation
-    bridges of all three presentations; related_formalizations records
-    only the three per-paper siblings.
+    later by an agent under the author's direction. related_formalizations
+    records the three per-paper siblings and the archived combined
+    tree; see limitations for the separate Lean-search remark.
 
 review:
   status: self-assessed
@@ -285,11 +283,14 @@ known_gaps: []
 
 limitations:
   - >-
-    No novelty is claimed, and Palomar is not a novelty stamp. A search
-    for a prior Lean formalization of the bridges of all three
-    presentations did not find one; that search can be empty in the
-    sense that no such development was located, not that none exists
-    unpublished.
+    The mathematical equivalence of the three presentations is prior
+    (Scott 1982; folklore) and is not claimed as original. Separately:
+    a search of Mathlib, Tau Ceti, and public Lean domain-theory
+    repositories did not locate a prior Lean development of the
+    cross-presentation bridges of all three presentations. That is a
+    search note about Lean treatment, not a provenance claim, and it
+    can be empty in the sense that no such development was located,
+    not that none exists unpublished. Palomar is not a novelty stamp.
   - >-
     The compared declarations are permitted to depend on propext,
     Quot.sound and Classical.choice. The 1980 ↔ 1982 maps,

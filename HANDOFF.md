@@ -312,3 +312,15 @@ lives in each sibling's `arxiv.md`.
   `SexSys.Element ≃o SexRhs.Element`; `SexDomainEquation.lean` is wired
   into `ScottModels.lean` and the Lean Code appendix. Rebuild
   `arxiv.pdf` / `view.pdf` with `bash scripts/build_arxiv_pdf.sh`.
+
+### 2026-08-20 — Palomar metadata: drop `original-proof`
+
+- Review: mechanical verification passed; provenance conflicted because
+  `original-proof` sat next to an account that the equivalence was
+  already known.
+- `formalization.yaml`: removed `original-proof`. `view.pdf` is `notes`
+  / `other` (write-up of this formalization). Folklore three-presentation
+  equivalence is `independently-proves`. Scott 1972 / PRG-19 / ICALP
+  stay `background`.
+- First-Lean-treatment language is only in `limitations` as a search
+  note, not a provenance claim. `arxiv.md` §1 says the same.

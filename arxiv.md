@@ -27,11 +27,13 @@ and in the trichotomy for separated sums.
 Scott notes in the 1982 ICALP paper that neighbourhood systems and information systems
 are equivalent “in a precise sense.” The mathematical folklore is stronger still: all
 three presentations carve out the same class of domains, related by ideal completion
-and the Scott topology. Until the bridges are checked in a proof assistant, that claim
-lives in the gap between three separately formalized libraries.
+and the Scott topology. That equivalence is already known; this article is the write-up
+of a machine-checked proof of the named bridges, not a first presentation of the result.
+Until the bridges are checked in a proof assistant, the claim lives in the gap between
+three separately formalized libraries.
 
-This article closes that gap. We do **not** re-prove Scott's internal theorems; we import
-the finished sibling packages and build cross-presentation maps:
+This article closes that Lean gap. We do **not** re-prove Scott's internal theorems; we
+import the finished sibling packages and build cross-presentation maps:
 
 | Presentation | Lean package | Characteristic object |
 | --- | --- | --- |
