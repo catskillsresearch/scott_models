@@ -1,7 +1,6 @@
 {
   "lean4.projectRoots": [
     ".",
-    "LRSODInCIC",
-    "CARDB"
+    "LRSODInCIC"
   ]
 }

@@ -1,34 +1,8 @@
-# CARDB (standalone)
+# CARDB has moved
 
-Thought exercise: the number of distinct topological bases of a finite set of
-size \(N\) — Mathlib only, no scott1972/1980/1982.
+The CARDB package (count of topological bases on a finite set, Lean 4 /
+Mathlib, and the paper PDF) now lives in its own repository:
 
-| File | Role |
-|---|---|
-| `CARDB.md` | Paper (identity, fiber lemma, small-\(N\) table) — the source of truth |
-| `CARDB.lean` | Sorry-free formalization of the sum identity |
-| `build_pdf.py` | `CARDB.md` → `CARDB.tex` → `CARDB.pdf`, with the Lean file inlined as an appendix |
-| `CARDB.pdf` | Built paper, committed as the readable deliverable |
+<https://github.com/catskillsresearch/cardb>
 
-Check the Lean:
-
-```bash
-cd CARDB
-lake build
-```
-
-Build the paper (needs `pandoc` and `latexmk`; reuses the glyph table in
-`../scripts/tex_preamble_arxiv.tex`):
-
-```bash
-python3 build_pdf.py
-```
-
-`CARDB.tex` is generated and git-ignored; `CARDB.pdf` is the committed
-deliverable, matching `LRSODInCIC/` and the repo-root `arxiv.pdf`. The title
-page lists the author, Catskills Research Company, and
-<https://github.com/catskillsresearch/scott_models/tree/main/CARDB>.
-The appendix pulls in `CARDB.lean` with `\lstinputlisting` at compile time.
-
-Open `CARDB.lean` in Cursor; the Lean server uses **this** package's
-`lakefile.toml`, not the parent `ScottModels` workspace.
+Local checkout: `../cardb` next to this repo.
