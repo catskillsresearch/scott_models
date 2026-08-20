@@ -8,9 +8,9 @@ project:
     continuous lattices (1972), neighbourhood systems (PRG-19), and
     information systems (1982) — including the round identification
     D ≃o RoundFilter ≃o RoundInfoSysElement and the S-expression
-    equation T ≅ A + (T × T) as WithBot (|A| ⊕ (|T| × |T|)) ≃o
-    |A + (T × T)|. Not a formalization of the three papers. Account:
-    view.pdf.
+    equation T ≅ A + (T × T) as |T| ≃o |A + (T × T)|
+    (SexSys.Element ≃o SexRhs.Element). Not a formalization of the
+    three papers. Account: view.pdf.
   authors:
     - "Lars Warren Ericson"
   license: "Apache-2.0"
@@ -80,7 +80,7 @@ status:
     - declaration: "ScottModels.sexDomainEquationIso"
       file: "Solution.lean"
       sorry_count: 0
-      axioms: ["propext", "Quot.sound", "Classical.choice"]
+      axioms: ["propext", "Quot.sound"]
       comparator_config: "comparator.json"
       literature_dependencies: []
 
@@ -293,11 +293,10 @@ limitations:
   - >-
     The compared declarations are permitted to depend on propext,
     Quot.sound and Classical.choice. The 1980 ↔ 1982 maps,
-    presentation_domains_equiv, sexNeighborhoodIso, and sexIdealIso
-    audit to {propext, Quot.sound}. sexDomainEquationIso uses
-    Classical.choice via the 1982 sum trichotomy; Classical.choice is
-    also listed because the 1972 topological definition of ≪ is the
-    classical frontier elsewhere in the library. There is no sorry
+    presentation_domains_equiv, sexNeighborhoodIso, sexIdealIso, and
+    sexDomainEquationIso audit to {propext, Quot.sound}.
+    Classical.choice is listed because the 1972 topological definition
+    of ≪ is the classical frontier elsewhere in the library. There is no sorry
     outside the deliberate holes in Challenge.lean, no project-defined
     axiom, and no native_decide.
   - >-
@@ -359,10 +358,12 @@ alignment:
       status: proved
       note: Instance of InfoSysToIdealCompletion.domainOrderIso at SexSys.
 
-    - source: "WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)| (view.pdf, §5.6)"
+    - source: "|T| ≃o |A + (T × T)| (view.pdf, §5.6)"
       lean: "sexDomainEquationIso"
       module: "Challenge (statement), Solution / ScottModels.WorkedExampleSExpr (proof)"
       status: proved
       note: >-
-        Domain-level lift of Factoid 8.1. Classical.choice enters only
-        through the 1982 separated-sum trichotomy.
+        Order isomorphism SexSys.Element ≃o SexRhs.Element induced by
+        treeUnfold / treeFold (treeDomainIso). The generic semantic
+        factor WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)| remains as
+        the uncompared sexRhsSemanticIso.

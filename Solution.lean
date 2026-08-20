@@ -20,7 +20,8 @@ bridge modules supplies
 * `InfoSysToNeighborhood.domainOrderIso` (`|A| ≃o` basic-open filters)
 * `presentation_domains_equiv` (`D ≃o RoundInfoSysElement`)
 * `sexNeighborhoodIso` / `sexIdealIso` / `sexDomainEquationIso` (Factoid 8.1
-  instance `T ≅ A + (T × T)`)
+  instance: `|T| ≃o` filters, `|T| ≃o Ideal(K(T))`, and
+  `|T| ≃o |A + (T × T)|`)
 
 and the supporting names those types mention (`NbhdBasis`, `InfoSys`,
 `NeighborhoodSystem`, `IsContinuousLattice`, `RoundFilter`, `IsRound`,
@@ -31,8 +32,8 @@ and the `exists_*` theorems (`Nonempty` of each compared `OrderIso`).
 
 There is no `sorry` in the `ScottModels/` proof modules. The compared
 1980 ↔ 1982 maps, `presentation_domains_equiv`, and the S-expression
-carrier isos use `propext` and `Quot.sound` only. `sexDomainEquationIso`
-uses `Classical.choice` via the 1982 sum trichotomy. `Classical.choice`
-is also permitted for 1972 topological `≪` elsewhere and is listed in
-`comparator.json`.
+carrier isos — including `sexDomainEquationIso` (`|T| ≃o |A + (T × T)|`
+via `treeUnfold`) — use `propext` and `Quot.sound` only.
+`Classical.choice` is permitted for 1972 topological `≪` elsewhere and
+is listed in `comparator.json`.
 -/

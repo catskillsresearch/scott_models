@@ -93,6 +93,7 @@ def role_for(path: str) -> str:
         "InfoSysConstructions",
         "ScottMapBridge",
         "WorkedExampleSExpr",
+        "SexDomainEquation",
     }:
         return "Bridge / packaging"
     return name

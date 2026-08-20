@@ -435,18 +435,24 @@ theorem TreeCon_empty : TreeCon A (∅ : Finset (TreeToken α)) :=
   TreeCon.left _ (by rw [atomFinset_empty]; exact A.con_empty)
     pairLFinset_empty pairRFinset_empty
 
-/-- Payload of tree entailment (Scott §8 (8)–(12)), recursive on the token. -/
+/-- Payload of tree entailment (Scott §8 (8)–(12)), recursive on the token.
+
+The extra disjuncts for `pairL bot` / `pairR bot` match official product
+`ent_bot`: any nonempty pair-set entails the unique product bottom, which
+`treeUnfold` identifies as both constructors. Without them, closed tree
+elements could contain one encoding of `(Δ,Δ)` but not the other, and
+`|T|` would fail to be order-isomorphic to `|A + (T × T)|`. -/
 def TreeEntPayload (u : Finset (TreeToken α)) : TreeToken α → Prop
   | .bot => True
   | .atom x => atomFinset u ≠ ∅ ∧ A.Ent (atomFinset u) x
   | .pairL t =>
-      atomFinset u = ∅ ∧ pairLFinset u ≠ ∅ ∧
-        (TreeCon A (pairLFinset u) ∧ TreeEntPayload (pairLFinset u) t) ∧
-          TreeCon A (pairRFinset u)
+      atomFinset u = ∅ ∧ TreeCon A (pairLFinset u) ∧ TreeCon A (pairRFinset u) ∧
+        ((pairLFinset u ≠ ∅ ∧ TreeEntPayload (pairLFinset u) t) ∨
+          (t = .bot ∧ pairRFinset u ≠ ∅))
   | .pairR t =>
-      atomFinset u = ∅ ∧ pairRFinset u ≠ ∅ ∧
-        (TreeCon A (pairRFinset u) ∧ TreeEntPayload (pairRFinset u) t) ∧
-          TreeCon A (pairLFinset u)
+      atomFinset u = ∅ ∧ TreeCon A (pairRFinset u) ∧ TreeCon A (pairLFinset u) ∧
+        ((pairRFinset u ≠ ∅ ∧ TreeEntPayload (pairRFinset u) t) ∨
+          (t = .bot ∧ pairLFinset u ≠ ∅))
 
 /-- Entailment for trees. -/
 def TreeEnt (u : Finset (TreeToken α)) (p : TreeToken α) : Prop :=
@@ -520,35 +526,38 @@ theorem TreeEntPayload_of_mem {u : Finset (TreeToken α)} {p : TreeToken α}
     have ht : t ∈ pairLFinset u := mem_pairLFinset.2 hp
     have hne := Finset.ne_empty_of_mem ht
     have hAt := TreeCon_atoms_empty_of_right A hu (Or.inl hne)
-    exact ⟨hAt, hne, ⟨TreeCon_pairL_of_right A hu hAt,
-      ih (TreeCon_pairL_of_right A hu hAt) ht⟩, TreeCon_pairR_of_right A hu hAt⟩
+    exact ⟨hAt, TreeCon_pairL_of_right A hu hAt, TreeCon_pairR_of_right A hu hAt,
+      Or.inl ⟨hne, ih (TreeCon_pairL_of_right A hu hAt) ht⟩⟩
   | pairR t ih =>
     have ht : t ∈ pairRFinset u := mem_pairRFinset.2 hp
     have hne := Finset.ne_empty_of_mem ht
     have hAt := TreeCon_atoms_empty_of_right A hu (Or.inr hne)
-    exact ⟨hAt, hne, ⟨TreeCon_pairR_of_right A hu hAt,
-      ih (TreeCon_pairR_of_right A hu hAt) ht⟩, TreeCon_pairL_of_right A hu hAt⟩
+    exact ⟨hAt, TreeCon_pairR_of_right A hu hAt, TreeCon_pairL_of_right A hu hAt,
+      Or.inl ⟨hne, ih (TreeCon_pairR_of_right A hu hAt) ht⟩⟩
 
 theorem TreeEnt_of_mem {u : Finset (TreeToken α)} {p : TreeToken α}
     (hu : TreeCon A u) (hp : p ∈ u) : TreeEnt A u p :=
   ⟨hu, TreeEntPayload_of_mem A hu hp⟩
 
+theorem TreeCon_insert_bot {u : Finset (TreeToken α)} (hu : TreeCon A u) :
+    TreeCon A (insert .bot u) := by
+  cases hu with
+  | left _ hA hL hR =>
+    exact TreeCon.left _
+      (by rw [atomFinset_insert_bot]; exact hA)
+      (by rw [pairLFinset_insert_bot]; exact hL)
+      (by rw [pairRFinset_insert_bot]; exact hR)
+  | right _ hA hL hR =>
+    exact TreeCon.right _
+      (by rw [atomFinset_insert_bot]; exact hA)
+      (by rw [pairLFinset_insert_bot]; exact hL)
+      (by rw [pairRFinset_insert_bot]; exact hR)
+
 theorem TreeCon_insert_of_ent {u : Finset (TreeToken α)} {p : TreeToken α}
     (h : TreeEnt A u p) : TreeCon A (insert p u) := by
   induction p generalizing u with
   | bot =>
-    rcases h with ⟨hu, _⟩
-    cases hu with
-    | left _ hA hL hR =>
-      exact TreeCon.left _
-        (by rw [atomFinset_insert_bot]; exact hA)
-        (by rw [pairLFinset_insert_bot]; exact hL)
-        (by rw [pairRFinset_insert_bot]; exact hR)
-    | right _ hA hL hR =>
-      exact TreeCon.right _
-        (by rw [atomFinset_insert_bot]; exact hA)
-        (by rw [pairLFinset_insert_bot]; exact hL)
-        (by rw [pairRFinset_insert_bot]; exact hR)
+    exact TreeCon_insert_bot A h.1
   | atom x =>
     rcases h with ⟨hu, hne, hA⟩
     have hLR := TreeCon_pairs_empty_of_left A hu hne
@@ -557,17 +566,92 @@ theorem TreeCon_insert_of_ent {u : Finset (TreeToken α)} {p : TreeToken α}
       (by rw [pairLFinset_insert_atom]; exact hLR.1)
       (by rw [pairRFinset_insert_atom]; exact hLR.2)
   | pairL t ih =>
-    rcases h with ⟨_, hAt, _, hEntL, hConR⟩
-    exact TreeCon.right _
-      (by rw [atomFinset_insert_pairL]; exact hAt)
-      (by rw [pairLFinset_insert_pairL]; exact ih hEntL)
+    rcases h with ⟨_, hAt, hConL, hConR, hOr⟩
+    refine TreeCon.right _
+      (by rw [atomFinset_insert_pairL]; exact hAt) ?_
       (by rw [pairRFinset_insert_pairL]; exact hConR)
+    rw [pairLFinset_insert_pairL]
+    rcases hOr with ⟨_, hPay⟩ | ⟨rfl, _⟩
+    · exact ih ⟨hConL, hPay⟩
+    · exact TreeCon_insert_bot A hConL
   | pairR t ih =>
-    rcases h with ⟨_, hAt, _, hEntR, hConL⟩
-    exact TreeCon.right _
+    rcases h with ⟨_, hAt, hConR, hConL, hOr⟩
+    refine TreeCon.right _
       (by rw [atomFinset_insert_pairR]; exact hAt)
-      (by rw [pairLFinset_insert_pairR]; exact hConL)
-      (by rw [pairRFinset_insert_pairR]; exact ih hEntR)
+      (by rw [pairLFinset_insert_pairR]; exact hConL) ?_
+    rw [pairRFinset_insert_pairR]
+    rcases hOr with ⟨_, hPay⟩ | ⟨rfl, _⟩
+    · exact ih ⟨hConR, hPay⟩
+    · exact TreeCon_insert_bot A hConR
+
+theorem TreeEntPayload_of_no_atoms_no_pairs {u : Finset (TreeToken α)} {t : TreeToken α}
+    (hAt : atomFinset u = ∅) (hL : pairLFinset u = ∅) (hR : pairRFinset u = ∅)
+    (h : TreeEntPayload A u t) : t = .bot := by
+  cases t with
+  | bot => rfl
+  | atom x => exact False.elim (h.1 hAt)
+  | pairL t =>
+    rcases h with ⟨_, _, _, hOr⟩
+    rcases hOr with ⟨hne, _⟩ | ⟨_, hRne⟩
+    · exact False.elim (hne hL)
+    · exact False.elim (hRne hR)
+  | pairR t =>
+    rcases h with ⟨_, _, _, hOr⟩
+    rcases hOr with ⟨hne, _⟩ | ⟨_, hLne⟩
+    · exact False.elim (hne hR)
+    · exact False.elim (hLne hL)
+
+theorem pairL_ne_or_subset_bot {u v : Finset (TreeToken α)}
+    (hEnts : ∀ y ∈ pairLFinset u, TreeEnt A v (.pairL y)) :
+    pairLFinset v ≠ ∅ ∨ pairLFinset u ⊆ {.bot} := by
+  revert hEnts
+  induction pairLFinset u using Finset.induction with
+  | empty =>
+    intro; exact Or.inr (Finset.empty_subset _)
+  | insert y s hys ih =>
+    intro hEnts
+    have hy := hEnts y (Finset.mem_insert_self _ _)
+    rcases hy.2.2.2.2 with ⟨hneV, _⟩ | ⟨rfl, _⟩
+    · exact Or.inl hneV
+    · rcases ih (fun z hz => hEnts z (Finset.mem_insert_of_mem hz)) with h | hsub
+      · exact Or.inl h
+      · refine Or.inr ?_
+        intro z hz
+        rcases Finset.mem_insert.1 hz with rfl | hz
+        · exact Finset.mem_singleton_self _
+        · exact hsub hz
+
+theorem pairR_ne_or_subset_bot {u v : Finset (TreeToken α)}
+    (hEnts : ∀ y ∈ pairRFinset u, TreeEnt A v (.pairR y)) :
+    pairRFinset v ≠ ∅ ∨ pairRFinset u ⊆ {.bot} := by
+  revert hEnts
+  induction pairRFinset u using Finset.induction with
+  | empty =>
+    intro; exact Or.inr (Finset.empty_subset _)
+  | insert y s hys ih =>
+    intro hEnts
+    have hy := hEnts y (Finset.mem_insert_self _ _)
+    rcases hy.2.2.2.2 with ⟨hneV, _⟩ | ⟨rfl, _⟩
+    · exact Or.inl hneV
+    · rcases ih (fun z hz => hEnts z (Finset.mem_insert_of_mem hz)) with h | hsub
+      · exact Or.inl h
+      · refine Or.inr ?_
+        intro z hz
+        rcases Finset.mem_insert.1 hz with rfl | hz
+        · exact Finset.mem_singleton_self _
+        · exact hsub hz
+
+theorem eq_singleton_bot_of_subset {s : Finset (TreeToken α)}
+    (hne : s ≠ ∅) (hsub : s ⊆ {.bot}) : s = {.bot} := by
+  ext y
+  constructor
+  · exact fun hy => hsub hy
+  · intro hy
+    have : y = .bot := Finset.mem_singleton.1 hy
+    subst this
+    obtain ⟨z, hz⟩ := Finset.nonempty_of_ne_empty hne
+    have hzbot : z = .bot := Finset.mem_singleton.1 (hsub hz)
+    exact hzbot ▸ hz
 
 theorem TreeEntPayload_trans {u v : Finset (TreeToken α)} {c : TreeToken α}
     (hv : TreeCon A v) (hu : TreeCon A u)
@@ -586,39 +670,75 @@ theorem TreeEntPayload_trans {u v : Finset (TreeToken α)} {c : TreeToken α}
     exact ⟨hne', A.ent_trans (TreeCon_atom_con_of_atoms A hv hne')
       (TreeCon_atom_con_of_atoms A hu hne) hlft hA⟩
   | pairL t ih =>
-    rcases hPay with ⟨hAt, hne, ⟨hConL, hPayL⟩, _⟩
-    have hAtv : atomFinset v = ∅ := by
-      obtain ⟨s, hs⟩ := Finset.nonempty_of_ne_empty hne
-      exact (hEnts _ (mem_pairLFinset.1 hs)).2.1
-    have hne' : pairLFinset v ≠ ∅ := by
-      obtain ⟨s, hs⟩ := Finset.nonempty_of_ne_empty hne
-      exact (hEnts _ (mem_pairLFinset.1 hs)).2.2.1
-    have hEntsL : ∀ y ∈ pairLFinset u, TreeEnt A (pairLFinset v) y := by
-      intro y hy
-      have hEy := hEnts _ (mem_pairLFinset.1 hy)
-      exact ⟨hEy.2.2.2.1.1, hEy.2.2.2.1.2⟩
-    have hConRv : TreeCon A (pairRFinset v) := by
-      obtain ⟨s, hs⟩ := Finset.nonempty_of_ne_empty hne
-      exact (hEnts _ (mem_pairLFinset.1 hs)).2.2.2.2
-    refine ⟨hAtv, hne', ⟨TreeCon_pairL_of_right A hv hAtv, ?_⟩, hConRv⟩
-    exact ih (TreeCon_pairL_of_right A hv hAtv) hConL hEntsL hPayL
+    rcases hPay with ⟨hAt, hConL, hConR, hOr⟩
+    rcases hOr with ⟨hne, hPayL⟩ | ⟨rfl, hRne⟩
+    · obtain ⟨s, hs⟩ := Finset.nonempty_of_ne_empty hne
+      have hEy := hEnts _ (mem_pairLFinset.1 hs)
+      have hAtv : atomFinset v = ∅ := hEy.2.1
+      have hConLv : TreeCon A (pairLFinset v) := TreeCon_pairL_of_right A hv hAtv
+      have hConRv : TreeCon A (pairRFinset v) := hEy.2.2.2.1
+      have hEntsL : ∀ y ∈ pairLFinset u, TreeEnt A (pairLFinset v) y := by
+        intro y hy
+        have hEy' := hEnts _ (mem_pairLFinset.1 hy)
+        rcases hEy'.2.2.2.2 with ⟨_, hPay'⟩ | ⟨rfl, _⟩
+        · exact ⟨hEy'.2.2.1, hPay'⟩
+        · exact ⟨hConLv, trivial⟩
+      refine ⟨hAtv, hConLv, hConRv, ?_⟩
+      have hEntsPair : ∀ y ∈ pairLFinset u, TreeEnt A v (.pairL y) :=
+        fun y hy => hEnts _ (mem_pairLFinset.1 hy)
+      rcases pairL_ne_or_subset_bot A hEntsPair with hneV | hsub
+      · exact Or.inl ⟨hneV, ih hConLv hConL hEntsL hPayL⟩
+      · have huBot : pairLFinset u = {.bot} :=
+          eq_singleton_bot_of_subset hne hsub
+        have ht : t = .bot :=
+          TreeEntPayload_of_no_atoms_no_pairs A
+            atomFinset_singleton_bot pairLFinset_singleton_bot
+            pairRFinset_singleton_bot (huBot ▸ hPayL)
+        rcases hEy.2.2.2.2 with ⟨hneV, _⟩ | ⟨_, hR⟩
+        · exact Or.inl ⟨hneV, ih hConLv hConL hEntsL hPayL⟩
+        · exact Or.inr ⟨ht, hR⟩
+    · obtain ⟨s, hs⟩ := Finset.nonempty_of_ne_empty hRne
+      have hEy := hEnts _ (mem_pairRFinset.1 hs)
+      have hAtv : atomFinset v = ∅ := hEy.2.1
+      refine ⟨hAtv, TreeCon_pairL_of_right A hv hAtv, hEy.2.2.1, ?_⟩
+      rcases hEy.2.2.2.2 with ⟨hneR, _⟩ | ⟨_, hneL⟩
+      · exact Or.inr ⟨rfl, hneR⟩
+      · exact Or.inl ⟨hneL, trivial⟩
   | pairR t ih =>
-    rcases hPay with ⟨hAt, hne, ⟨hConR, hPayR⟩, _⟩
-    have hAtv : atomFinset v = ∅ := by
-      obtain ⟨s, hs⟩ := Finset.nonempty_of_ne_empty hne
-      exact (hEnts _ (mem_pairRFinset.1 hs)).2.1
-    have hne' : pairRFinset v ≠ ∅ := by
-      obtain ⟨s, hs⟩ := Finset.nonempty_of_ne_empty hne
-      exact (hEnts _ (mem_pairRFinset.1 hs)).2.2.1
-    have hEntsR : ∀ y ∈ pairRFinset u, TreeEnt A (pairRFinset v) y := by
-      intro y hy
-      have hEy := hEnts _ (mem_pairRFinset.1 hy)
-      exact ⟨hEy.2.2.2.1.1, hEy.2.2.2.1.2⟩
-    have hConLv : TreeCon A (pairLFinset v) := by
-      obtain ⟨s, hs⟩ := Finset.nonempty_of_ne_empty hne
-      exact (hEnts _ (mem_pairRFinset.1 hs)).2.2.2.2
-    refine ⟨hAtv, hne', ⟨TreeCon_pairR_of_right A hv hAtv, ?_⟩, hConLv⟩
-    exact ih (TreeCon_pairR_of_right A hv hAtv) hConR hEntsR hPayR
+    rcases hPay with ⟨hAt, hConR, hConL, hOr⟩
+    rcases hOr with ⟨hne, hPayR⟩ | ⟨rfl, hLne⟩
+    · obtain ⟨s, hs⟩ := Finset.nonempty_of_ne_empty hne
+      have hEy := hEnts _ (mem_pairRFinset.1 hs)
+      have hAtv : atomFinset v = ∅ := hEy.2.1
+      have hConRv : TreeCon A (pairRFinset v) := TreeCon_pairR_of_right A hv hAtv
+      have hConLv : TreeCon A (pairLFinset v) := hEy.2.2.2.1
+      have hEntsR : ∀ y ∈ pairRFinset u, TreeEnt A (pairRFinset v) y := by
+        intro y hy
+        have hEy' := hEnts _ (mem_pairRFinset.1 hy)
+        rcases hEy'.2.2.2.2 with ⟨_, hPay'⟩ | ⟨rfl, _⟩
+        · exact ⟨hEy'.2.2.1, hPay'⟩
+        · exact ⟨hConRv, trivial⟩
+      refine ⟨hAtv, hConRv, hConLv, ?_⟩
+      have hEntsPair : ∀ y ∈ pairRFinset u, TreeEnt A v (.pairR y) :=
+        fun y hy => hEnts _ (mem_pairRFinset.1 hy)
+      rcases pairR_ne_or_subset_bot A hEntsPair with hneV | hsub
+      · exact Or.inl ⟨hneV, ih hConRv hConR hEntsR hPayR⟩
+      · have huBot : pairRFinset u = {.bot} :=
+          eq_singleton_bot_of_subset hne hsub
+        have ht : t = .bot :=
+          TreeEntPayload_of_no_atoms_no_pairs A
+            atomFinset_singleton_bot pairLFinset_singleton_bot
+            pairRFinset_singleton_bot (huBot ▸ hPayR)
+        rcases hEy.2.2.2.2 with ⟨hneV, _⟩ | ⟨_, hL⟩
+        · exact Or.inl ⟨hneV, ih hConRv hConR hEntsR hPayR⟩
+        · exact Or.inr ⟨ht, hL⟩
+    · obtain ⟨s, hs⟩ := Finset.nonempty_of_ne_empty hLne
+      have hEy := hEnts _ (mem_pairLFinset.1 hs)
+      have hAtv : atomFinset v = ∅ := hEy.2.1
+      refine ⟨hAtv, TreeCon_pairR_of_right A hv hAtv, hEy.2.2.1, ?_⟩
+      rcases hEy.2.2.2.2 with ⟨hneL, _⟩ | ⟨_, hneR⟩
+      · exact Or.inr ⟨rfl, hneL⟩
+      · exact Or.inl ⟨hneR, trivial⟩
 
 theorem TreeEnt_trans {u v : Finset (TreeToken α)} {c : TreeToken α}
     (hv : TreeCon A v) (hu : TreeCon A u)
@@ -686,6 +806,15 @@ def treeUnfold (t : TreeToken α) :
 theorem treeUnfold_bot : treeUnfold A treeBot = SumToken.bot := rfl
 
 theorem treeUnfold_atom (x : α) : treeUnfold A (.atom x) = SumToken.left x := rfl
+
+theorem treeUnfold_pairL (t : TreeToken α) :
+    treeUnfold A (.pairL t) = .right ⟨(t, treeBot), Or.inr rfl⟩ := rfl
+
+theorem treeUnfold_pairR (t : TreeToken α) :
+    treeUnfold A (.pairR t) = .right ⟨(treeBot, t), Or.inl rfl⟩ := rfl
+
+theorem treeUnfold_pairL_bot_eq_pairR_bot :
+    treeUnfold A (.pairL treeBot) = treeUnfold A (.pairR treeBot) := rfl
 
 /-- The right-hand side of the domain equation is the official sum of products. -/
 def treeRhs : InfoSys (SumToken α (ProdToken (treeSystem A) (treeSystem A))) :=

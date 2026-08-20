@@ -17,6 +17,7 @@ import ScottModels.InfoSysToIdealCompletion
 import ScottModels.PresentationDomains
 import ScottModels.InfoSysConstructions
 import ScottModels.ScottMapBridge
+import ScottModels.SexDomainEquation
 
 /-!
 # Worked example — S-expression / tree domain `T ≅ A + (T × T)`
@@ -114,10 +115,10 @@ noncomputable abbrev sexNeighborhoodIdealIso :=
 /-! ## Domain equation at the level of domains (1982 constructions) -/
 
 /--
-`WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)|`, composing this package’s product and
-separated-sum isos with Factoid 8.1’s RHS.
+Semantic factor: `|A + (T × T)| ≃o WithBot (|A| ⊕ (|T| × |T|))` via the generic
+product and separated-sum isos. Not the fixed-point equation itself.
 -/
-noncomputable def sexDomainEquationIso :
+noncomputable def sexRhsSemanticIso :
     WithBot (lowerBoundSystem.Element ⊕ (SexSys.Element × SexSys.Element)) ≃o
       SexRhs.Element :=
   let ιProd := InfoSysConstructions.productDomainIso SexSys SexSys
@@ -125,6 +126,25 @@ noncomputable def sexDomainEquationIso :
   let mid :=
     (OrderIso.refl lowerBoundSystem.Element).sumCongr ιProd |>.withBotCongr
   mid.trans ιSum
+
+/--
+**S-expression fixed-point equation.** `|T| ≃o |A + (T × T)|`, the order
+isomorphism of `SexSys.Element` with `SexRhs.Element` induced by
+`treeUnfold` / `treeFold` (`treeDomainIso`).
+-/
+noncomputable def sexDomainEquationIso :
+    SexSys.Element ≃o SexRhs.Element :=
+  treeDomainIso lowerBoundSystem
+
+theorem sexDomainEquationIso_unfold (x : SexSys.Element) :
+    (sexDomainEquationIso x).carrier =
+      treeUnfold lowerBoundSystem '' x.carrier :=
+  rfl
+
+theorem sexDomainEquationIso_fold (y : SexRhs.Element) :
+    (sexDomainEquationIso.symm y).carrier =
+      treeUnfold lowerBoundSystem ⁻¹' y.carrier :=
+  rfl
 
 theorem exists_sexNeighborhoodIso :
     Nonempty (SexSys.Element ≃o
@@ -137,9 +157,7 @@ theorem exists_sexIdealIso :
   ⟨sexIdealIso⟩
 
 theorem exists_sexDomainEquationIso :
-    Nonempty
-      (WithBot (lowerBoundSystem.Element ⊕ (SexSys.Element × SexSys.Element)) ≃o
-        SexRhs.Element) :=
+    Nonempty (SexSys.Element ≃o SexRhs.Element) :=
   ⟨sexDomainEquationIso⟩
 
 /-! ## Morphisms: identity is Scott-continuous (Factoid 4.6) -/

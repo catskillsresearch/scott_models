@@ -8,8 +8,9 @@ The **Palomar statement of record** is the family of presentation-bridge
 isos (`neighborhoodSystem_to_infoSys`, `infoSys_to_neighborhoodSystem` /
 `InfoSysToNeighborhood.domainOrderIso`, `presentation_domains_equiv` :
 `D ≃o RoundInfoSysElement`) together with the S-expression instance
-`T ≅ A + (T × T)` (`sexNeighborhoodIso`, `sexIdealIso`,
-`sexDomainEquationIso`), not a dump of the three source papers.
+`T ≅ A + (T × T)` as `|T| ≃o |A + (T × T)|` (`sexNeighborhoodIso`,
+`sexIdealIso`, `sexDomainEquationIso`), not a dump of the three source
+papers.
 
 [`domain_theory`](https://github.com/catskillsresearch/domain_theory)
 preceded this work and was archived as the per-paper split progressed

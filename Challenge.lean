@@ -54,13 +54,13 @@ machine-checked **bridges** (`view.pdf` / `arxiv.md`):
 4. On Scott’s S-expression domain `T ≅ A + (T × T)` (Factoid 8.1 over the
    ℕ lower-bound atoms), the same carrier is an InfoSys, a neighbourhood
    filter domain, and an ideal completion (`sexNeighborhoodIso`,
-   `sexIdealIso`), and the equation holds as an order isomorphism of
-   domains (`sexDomainEquationIso`).
+   `sexIdealIso`), and the equation holds as an order isomorphism
+   `|T| ≃o |A + (T × T)|` of `SexSys.Element` with `SexRhs.Element`
+   (`sexDomainEquationIso`), via the Factoid 8.1 unfolding.
 
 The 1980 ↔ 1982 maps, the round continuous-lattice corner, and the
-S-expression carrier isos audit to `{propext, Quot.sound}`.
-`sexDomainEquationIso` uses `Classical.choice` via the 1982 sum
-trichotomy. `Classical.choice` is also permitted for the 1972
+S-expression carrier isos — including `sexDomainEquationIso` — audit to
+`{propext, Quot.sound}`. `Classical.choice` is permitted for the 1972
 topological `≪` frontier elsewhere in the library.
 -/
 
@@ -426,11 +426,9 @@ noncomputable def sexIdealIso :
     SexSys.Element ≃o Ideal (InfoSysToIdealCompletion.FiniteElement SexSys) :=
   sorry
 
-/-- **Domain equation** at domain level:
-`WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)|`. -/
+/-- **S-expression fixed-point equation:** `|T| ≃o |A + (T × T)|`. -/
 noncomputable def sexDomainEquationIso :
-    WithBot (lowerBoundSystem.Element ⊕ (SexSys.Element × SexSys.Element)) ≃o
-      SexRhs.Element :=
+    SexSys.Element ≃o SexRhs.Element :=
   sorry
 
 theorem exists_sexNeighborhoodIso :
@@ -444,9 +442,7 @@ theorem exists_sexIdealIso :
   sorry
 
 theorem exists_sexDomainEquationIso :
-    Nonempty
-      (WithBot (lowerBoundSystem.Element ⊕ (SexSys.Element × SexSys.Element)) ≃o
-        SexRhs.Element) :=
+    Nonempty (SexSys.Element ≃o SexRhs.Element) :=
   sorry
 
 end ScottModels

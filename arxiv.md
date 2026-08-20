@@ -84,6 +84,7 @@ theorems.
 | `idealCompletion_to_continuousLattice` | algebraic → 1972 | `IdealCompletionToContinuousLattice.lean` |
 | `presentation_domains_equiv` | three-way | `PresentationDomains.lean` |
 | `infoSys_constructions_equiv` | constructions | `InfoSysConstructions.lean`, `ScottMapBridge.lean` |
+| `sexNeighborhoodIso` / `sexIdealIso` / `sexDomainEquationIso` | S-expression instance | `WorkedExampleSExpr.lean`, `SexDomainEquation.lean` |
 
 The sibling packages are **finished dependencies**, not work items of this paper:
 [`scott1972`](https://github.com/catskillsresearch/scott1972),
@@ -121,6 +122,7 @@ flowchart LR
     P53["Proposition53"]
     P64["Proposition64"]
     T72["Theorem72"]
+    F81["Factoid81"]
   end
   subgraph local["ScottModels"]
     direction LR
@@ -132,10 +134,13 @@ flowchart LR
       I2Id["InfoSysToIdealCompletion"]
       Id2CL["IdealCompletionToContinuousLattice"]
       IC["InfoSysConstructions"]
+      SDE["SexDomainEquation"]
+      WE["WorkedExampleSExpr"]
     end
     PD["PresentationDomains"]
     SMB["ScottMapBridge"]
     Eq["Equivalence"]
+    SDE --> WE
     CLN --> PD
     N2I --> PD
     I2N --> PD
@@ -158,6 +163,7 @@ flowchart LR
   F45 --> I2Id
   T72 --> IC
   P64 --> IC
+  F81 --> SDE
   FS --> SMB
   F46 --> SMB
   F36 --> SMB
@@ -315,9 +321,13 @@ hiding choice in automation.
 ## 5. Worked example — S-expressions / trees
 
 Lean packaging:
-[`WorkedExampleSExpr.lean`](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/WorkedExampleSExpr.lean).
+[`WorkedExampleSExpr.lean`](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/WorkedExampleSExpr.lean),
+[`SexDomainEquation.lean`](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/SexDomainEquation.lean).
 The Palomar compared family includes `sexNeighborhoodIso`, `sexIdealIso`,
-and `sexDomainEquationIso` (Challenge / `comparator.json`).
+and `sexDomainEquationIso` (Challenge / `comparator.json`). The compared
+domain-equation declaration is the order isomorphism
+`SexSys.Element ≃o SexRhs.Element` (`|T| ≃o |A + (T × T)|`), not the
+generic semantic factor `WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)|`.
 
 ### 5.1 Overview
 
@@ -353,7 +363,11 @@ clauses; Factoid 8.1 records that this is literally the information system of th
 right-hand side `A + (T × T)`:
 
 - `SexRhs = sumSystem A (productSystem T T)` (`sexRhs_eq_sum_product`);
-- token unfolding `treeUnfold` sends `atom n` to the left summand (`sexUnfold_atom`).
+- token unfolding `treeUnfold` sends `atom n` to the left summand (`sexUnfold_atom`)
+  and is a retraction onto the official sum-of-product carrier, with section `treeFold`;
+- TreeEnt matches official product `ent_bot` on the two encodings of `(Δ,Δ)`
+  (`pairL Δ` and `pairR Δ`), so closed elements are saturated for
+  `ker(treeUnfold)`.
 
 Finite elements include singleton atom closures `sexAtom n = ū` for `u = {atom n}`.
 Elements of `|T|` are the consistent closed sets of tokens — the 1982 presentation of
@@ -400,21 +414,28 @@ the neighbourhood ↔ information ↔ ideal triangle audits to `{propext, Quot.s
 
 Beyond identifying the carriers, the same example exercises constructions and maps.
 
-**Domain equation.** This article’s product and separated-sum isos lift Factoid 8.1 from
-tokens to domains:
+**Domain equation.** Factoid 8.1’s token unfolding `treeUnfold` (section `treeFold`)
+lifts to an order isomorphism of the tree domain with the official RHS domain:
 
-`sexDomainEquationIso :
-  WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)|`
+`sexDomainEquationIso : SexSys.Element ≃o SexRhs.Element`
 
-(classical footprint only through the sum trichotomy). So the S-expression equation
-holds not only as information systems but as ordered domains.
+(`treeDomainIso`; `|T| ≃o |A + (T × T)|`). The maps are verified unfolding: the
+carrier of `sexDomainEquationIso x` is `treeUnfold '' x.carrier`, and the carrier
+of the inverse is the preimage `treeUnfold ⁻¹' y.carrier`
+(`sexDomainEquationIso_unfold` / `sexDomainEquationIso_fold`). The only
+non-injectivity of `treeUnfold` is Scott’s two encodings of the product bottom
+(`pairL Δ` and `pairR Δ`); after the `ent_bot` match, closed elements are
+saturated for that kernel, so image and preimage invert. The generic semantic
+factor `WithBot (|A| ⊕ (|T| × |T|)) ≃o SexRhs.Element` is the uncompared
+`sexRhsSemanticIso` (classical only through the 1982 sum trichotomy); it is
+**not** the compared fixed-point equation.
 
 **Morphisms.** The identity approximable map `idMap T` (Prop 5.4) transports along
 Factoid 4.6 to a Scott-continuous endomap `sexIdScottContinuous` with `toFun = id`
 (`sexId_toElement`) — the same endomap, named once in each morphism language.
 
-**Axioms.** Object-level neighbourhood / ideal isos and Factoid 4.6 for `idMap` audit to
-`{propext, Quot.sound}` up to the usual classical sum iso in `sexDomainEquationIso`.
+**Axioms.** Object-level neighbourhood / ideal isos, `sexDomainEquationIso`, and
+Factoid 4.6 for `idMap` audit to `{propext, Quot.sound}`.
 
 ---
 
@@ -485,5 +506,6 @@ verbatim Lean source (complete appendix, one subsection per module). Order match
 * [PresentationDomains.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/PresentationDomains.lean)
 * [InfoSysConstructions.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/InfoSysConstructions.lean)
 * [ScottMapBridge.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/ScottMapBridge.lean)
+* [SexDomainEquation.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/SexDomainEquation.lean)
 * [WorkedExampleSExpr.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/WorkedExampleSExpr.lean)
 * [Equivalence.lean](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/Equivalence.lean)

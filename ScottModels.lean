@@ -16,5 +16,6 @@ import ScottModels.IdealCompletionToContinuousLattice
 import ScottModels.PresentationDomains
 import ScottModels.InfoSysConstructions
 import ScottModels.ScottMapBridge
+import ScottModels.SexDomainEquation
 import ScottModels.WorkedExampleSExpr
 import ScottModels.Equivalence

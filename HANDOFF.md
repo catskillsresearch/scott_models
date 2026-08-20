@@ -292,3 +292,23 @@ lives in each sibling's `arxiv.md`.
   from `vendor/scott1972`. Types already match; listed
   `IsContinuousLattice`, `WayBelow`, and `ScottOpen` as definition
   holes.
+
+### 2026-08-20 — Palomar review: `|T| ≃o |A + (T × T)|`
+
+- Editorial request: the compared `sexDomainEquationIso` was only the
+  generic `WithBot (|A| ⊕ (|T| × |T|)) ≃o SexRhs.Element`, not the
+  S-expression fixed-point equation.
+- `TreeEnt` now matches official product `ent_bot` on the two encodings
+  of `(Δ,Δ)` (`pairL bot` / `pairR bot`), so closed tree elements are
+  saturated for `ker(treeUnfold)`.
+- Compared declaration is now
+  `sexDomainEquationIso : SexSys.Element ≃o SexRhs.Element`
+  (`treeDomainIso` via image/preimage of `treeUnfold`). Unfolding
+  lemmas: `sexDomainEquationIso_unfold` / `_fold`. The old semantic
+  factor is the uncompared `sexRhsSemanticIso`.
+- Axioms of the compared iso: `{propext, Quot.sound}` (no sum
+  trichotomy).
+- `arxiv.md` §5 / catalog / module map now state the compared iso as
+  `SexSys.Element ≃o SexRhs.Element`; `SexDomainEquation.lean` is wired
+  into `ScottModels.lean` and the Lean Code appendix. Rebuild
+  `arxiv.pdf` / `view.pdf` with `bash scripts/build_arxiv_pdf.sh`.
