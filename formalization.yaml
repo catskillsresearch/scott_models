@@ -168,11 +168,12 @@ related_formalizations:
   - id: "https://github.com/catskillsresearch/domain_theory"
     relationship: supersedes
     note: >-
-      Archived earlier combined formalization by the same author
-      (Apache-2.0). Split because each paper’s Lean outgrew one tree
-      (scott1972 / scott1980 / scott1982 / scott_models). This package
-      plus vendor/ is the continuation, not a reimplementation by
-      someone else. The archive is historical and is not vendored.
+      Same-author combined formalization that preceded this work
+      (Apache-2.0). It was archived as the per-paper split progressed
+      (scott1972 / scott1980 / scott1982 / scott_models), because each
+      paper’s Lean outgrew one tree. This package plus vendor/ is the
+      continuation, not a reimplementation by someone else. The archive
+      is historical and is not vendored.
 
   - id: "https://github.com/catskillsresearch/scott1972/tree/36bf01f99f00fcb78b999052212372ba026521ba"
     relationship: other

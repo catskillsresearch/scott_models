@@ -1,8 +1,8 @@
 # Provenance
 
-Work started as one public Apache-2.0 repository,
 [`catskillsresearch/domain_theory`](https://github.com/catskillsresearch/domain_theory)
-(now archived). It was split because each paper’s Lean outgrew a single
+(public, Apache-2.0) preceded this work. It was archived as the
+per-paper split progressed, because each paper’s Lean outgrew a single
 tree:
 
 | Remote | Presentation |
