@@ -13,18 +13,23 @@ project:
     InfoSys on the codes (neighborhoodSystem_to_infoSys); an information
     system A induces the basic-open neighbourhood system of [u] =
     {x ∈ |A| | ↑u ⊆ x} (infoSys_to_neighborhoodSystem) with
-    InfoSysToNeighborhood.domainOrderIso : |A| ≃o those filters; and,
-    under IsContinuousLattice D and DecidableEq D,
+    InfoSysToNeighborhood.domainOrderIso : |A| ≃o those filters; under
+    IsContinuousLattice D and DecidableEq D,
     presentation_domains_equiv : D ≃o RoundInfoSysElement, i.e.
     D ≃o RoundFilter ≃o RoundInfoSysElement via the ↟-coding
-    wayBelowNbhdBasis. Raw |𝒟| and the full InfoSys domain are properly
-    larger than D; the identification is the round corner. The informal
-    account is the companion note view.pdf (source arxiv.md) in this
-    repository. The Lean source was written by AI agents under the
-    direction and review of the author. There is no sorry outside the
-    deliberate holes in Challenge.lean, no project-defined axiom, and
-    the Solution depends on in-tree vendor/ copies of the author's three
-    sibling paper libraries (frozen SHAs in vendor/FROZEN.txt).
+    wayBelowNbhdBasis; and on Scott’s S-expression domain
+    T ≅ A + (T × T) (Factoid 8.1 over ℕ lower-bound atoms),
+    sexNeighborhoodIso / sexIdealIso identify |T| with basic-open
+    filters and with Ideal(K(T)), while sexDomainEquationIso lifts the
+    equation to WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)|. Raw |𝒟|
+    and the full InfoSys domain are properly larger than D; the
+    identification is the round corner. The informal account is the
+    companion note view.pdf (source arxiv.md) in this repository. The
+    Lean source was written by AI agents under the direction and review
+    of the author. There is no sorry outside the deliberate holes in
+    Challenge.lean, no project-defined axiom, and the Solution depends
+    on in-tree vendor/ copies of the author's three sibling paper
+    libraries (frozen SHAs in vendor/FROZEN.txt).
   authors:
     - "Lars Warren Ericson"
   license: "Apache-2.0"
@@ -41,12 +46,13 @@ classification:
 status:
   scope: >-
     Complete for the compared family, with no unproved step in the
-    ScottModels proof modules. The 1980 ↔ 1982 coding and the round
-    continuous-lattice identification D ≃o RoundInfoSysElement are
-    stated and proved. The rest of the ScottModels library (ideal
-    completion, constructions, ScottMap conjugation, S-expression
-    example, LRSOD) is out of the compared family. Nothing in the
-    compared statements is imported from a prior Palomar entry.
+    ScottModels proof modules. The 1980 ↔ 1982 coding, the round
+    continuous-lattice identification D ≃o RoundInfoSysElement, and
+    the S-expression instance (sexNeighborhoodIso, sexIdealIso,
+    sexDomainEquationIso) are stated and proved. The rest of the
+    ScottModels library (general constructions, ScottMap conjugation,
+    LRSOD) is out of the compared family. Nothing in the compared
+    statements is imported from a prior Palomar entry.
   # The proof development contains no sorry at all. The only sorries in the
   # repository that belong to this snapshot are the deliberate placeholders
   # in Challenge.lean, which these counts exclude by convention.
@@ -76,6 +82,24 @@ status:
       file: "Solution.lean"
       sorry_count: 0
       axioms: ["propext", "Quot.sound"]
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+    - declaration: "ScottModels.sexNeighborhoodIso"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Quot.sound"]
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+    - declaration: "ScottModels.sexIdealIso"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Quot.sound"]
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+    - declaration: "ScottModels.sexDomainEquationIso"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Quot.sound", "Classical.choice"]
       comparator_config: "comparator.json"
       literature_dependencies: []
 
@@ -289,19 +313,22 @@ limitations:
     unpublished.
   - >-
     The compared declarations are permitted to depend on propext,
-    Quot.sound and Classical.choice. The 1980 ↔ 1982 maps and
-    presentation_domains_equiv audit to {propext, Quot.sound};
-    Classical.choice is listed because the 1972 topological definition
-    of ≪ is the classical frontier elsewhere in the library. There is
-    no sorry outside the deliberate holes in Challenge.lean, no
-    project-defined axiom, and no native_decide.
+    Quot.sound and Classical.choice. The 1980 ↔ 1982 maps,
+    presentation_domains_equiv, sexNeighborhoodIso, and sexIdealIso
+    audit to {propext, Quot.sound}. sexDomainEquationIso uses
+    Classical.choice via the 1982 sum trichotomy; Classical.choice is
+    also listed because the 1972 topological definition of ≪ is the
+    classical frontier elsewhere in the library. There is no sorry
+    outside the deliberate holes in Challenge.lean, no project-defined
+    axiom, and no native_decide.
   - >-
     Challenge.lean states the family but does not prove it; that is the
     Comparator convention. Solution.lean re-exports the ScottModels
-    proofs. Challenge restates the small type surface (InfoSys,
-    NeighborhoodSystem, NbhdBasis, IsContinuousLattice, round filters)
-    under the sibling namespaces so that Comparator can match names and
-    types; it is not a copy of the ScottModels proof modules.
+    proofs. Challenge restates the type surface (InfoSys,
+    NeighborhoodSystem, NbhdBasis, IsContinuousLattice, round filters,
+    TreeToken / SumToken / ProdToken, treeSystem) under the sibling
+    namespaces so that Comparator can match names and types; it is not
+    a copy of the ScottModels proof modules.
   - >-
     The compared claim is the named bridges, not “we formalized Scott
     1972 / PRG-19 / ICALP 1982,” not LRSOD / D∞ ≅ [D∞ → D∞], and not a
@@ -337,3 +364,25 @@ alignment:
       note: >-
         Compared by Comparator as a definition. The ↟-system's NbhdBasis
         supplies the 1980↔1982 coding. Raw |𝒟| / full |A| remain larger.
+
+    - source: "|T| ≃o filters of [u] on the S-expression domain (view.pdf, §5.5)"
+      lean: "sexNeighborhoodIso"
+      module: "Challenge (statement), Solution / ScottModels.WorkedExampleSExpr (proof)"
+      status: proved
+      note: >-
+        Instance of InfoSysToNeighborhood.domainOrderIso at Factoid 8.1
+        SexSys. Compared by Comparator as a definition.
+
+    - source: "|T| ≃o Ideal(K(T)) on the S-expression domain (view.pdf, §5.5)"
+      lean: "sexIdealIso"
+      module: "Challenge (statement), Solution / ScottModels.WorkedExampleSExpr (proof)"
+      status: proved
+      note: Instance of InfoSysToIdealCompletion.domainOrderIso at SexSys.
+
+    - source: "WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)| (view.pdf, §5.6)"
+      lean: "sexDomainEquationIso"
+      module: "Challenge (statement), Solution / ScottModels.WorkedExampleSExpr (proof)"
+      status: proved
+      note: >-
+        Domain-level lift of Factoid 8.1. Classical.choice enters only
+        through the 1982 separated-sum trichotomy.

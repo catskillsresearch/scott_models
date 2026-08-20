@@ -7,6 +7,7 @@ import ScottModels.NeighborhoodToInfoSys
 import ScottModels.InfoSysToNeighborhood
 import ScottModels.ContinuousLatticeToNeighborhood
 import ScottModels.PresentationDomains
+import ScottModels.WorkedExampleSExpr
 
 /-!
 # Solutions to the Challenge
@@ -18,14 +19,19 @@ bridge modules supplies
 * `infoSys_to_neighborhoodSystem` / `InfoSysToNeighborhood.toNeighborhoodSystem`
 * `InfoSysToNeighborhood.domainOrderIso` (`|A| ≃o` basic-open filters)
 * `presentation_domains_equiv` (`D ≃o RoundInfoSysElement`)
+* `sexNeighborhoodIso` / `sexIdealIso` / `sexDomainEquationIso` (Factoid 8.1
+  instance `T ≅ A + (T × T)`)
 
 and the supporting names those types mention (`NbhdBasis`, `InfoSys`,
 `NeighborhoodSystem`, `IsContinuousLattice`, `RoundFilter`, `IsRound`,
-`wayBelowNbhdBasis`, `domainOrderIso`, `Element`), with the same names and
+`wayBelowNbhdBasis`, `domainOrderIso`, `Element`, `TreeToken`, `treeSystem`,
+`FiniteElement`, `lowerBoundSystem`), with the same names and
 types as in the Challenge module. Comparator compares those declarations.
 
 There is no `sorry` in the `ScottModels/` proof modules. The compared
-1980 ↔ 1982 maps and `presentation_domains_equiv` use `propext` and
-`Quot.sound` only. `Classical.choice` is permitted (1972 topological `≪`
-elsewhere in the library) and is listed in `comparator.json`.
+1980 ↔ 1982 maps, `presentation_domains_equiv`, and the S-expression
+carrier isos use `propext` and `Quot.sound` only. `sexDomainEquationIso`
+uses `Classical.choice` via the 1982 sum trichotomy. `Classical.choice`
+is also permitted for 1972 topological `≪` elsewhere and is listed in
+`comparator.json`.
 -/

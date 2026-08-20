@@ -5,10 +5,13 @@ Authors: Lars Warren Ericson.
 -/
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Sum.Order
 import Mathlib.Order.CompleteLattice.Basic
 import Mathlib.Order.ConditionallyCompleteLattice.Basic
 import Mathlib.Order.Directed
 import Mathlib.Order.Hom.Basic
+import Mathlib.Order.Hom.WithTopBot
+import Mathlib.Order.Ideal
 import Mathlib.Order.UpperLower.Basic
 
 /-!
@@ -16,8 +19,10 @@ import Mathlib.Order.UpperLower.Basic
 
 This module states the compared family: the 1980 ↔ 1982 coding of a neighbourhood
 system as an information system, the converse basic-open neighbourhood system
-with `|A| ≃o` its filters, and the round three-presentation iso
-`D ≃o RoundInfoSysElement` under `IsContinuousLattice`.
+with `|A| ≃o` its filters, the round three-presentation iso
+`D ≃o RoundInfoSysElement` under `IsContinuousLattice`, and Scott’s
+S-expression instance `T ≅ A + (T × T)` (`sexNeighborhoodIso`,
+`sexIdealIso`, `sexDomainEquationIso`).
 
 It imports only Mathlib. The sorry-free proofs live in `ScottModels/` and are
 exposed to Comparator through `Solution.lean`. Challenge is allowed `sorry`;
@@ -45,11 +50,17 @@ machine-checked **bridges** (`view.pdf` / `arxiv.md`):
    `D ≃o RoundFilter ≃o RoundInfoSysElement` via the `↟`-coding
    `wayBelowNbhdBasis`. Raw `|𝒟|` and the full InfoSys domain are larger;
    the identification is the **round** corner.
+4. On Scott’s S-expression domain `T ≅ A + (T × T)` (Factoid 8.1 over the
+   ℕ lower-bound atoms), the same carrier is an InfoSys, a neighbourhood
+   filter domain, and an ideal completion (`sexNeighborhoodIso`,
+   `sexIdealIso`), and the equation holds as an order isomorphism of
+   domains (`sexDomainEquationIso`).
 
-The 1980 ↔ 1982 maps and the round continuous-lattice corner audit to
-`{propext, Quot.sound}`. `Classical.choice` is permitted (1972 topological
-`≪` / classical frontier elsewhere in the library) and is not required by
-these three compared declarations.
+The 1980 ↔ 1982 maps, the round continuous-lattice corner, and the
+S-expression carrier isos audit to `{propext, Quot.sound}`.
+`sexDomainEquationIso` uses `Classical.choice` via the 1982 sum
+trichotomy. `Classical.choice` is also permitted for the 1972
+topological `≪` frontier elsewhere in the library.
 -/
 
 /-! ## 1980 neighbourhood systems (`Scott1980.Neighborhood`) -/
@@ -110,6 +121,9 @@ structure InfoSys (α : Type*) [DecidableEq α] where
 
 namespace InfoSys
 
+set_option linter.unusedSectionVars false
+
+section Element
 variable {α : Type*} [DecidableEq α] (sys : InfoSys α)
 
 structure Element where
@@ -127,6 +141,80 @@ instance : PartialOrder sys.Element where
     cases y
     subst hc
     rfl
+
+/-- Entailment closure of a consistent set (Factoid 3.5). Supporting hole. -/
+noncomputable def closure (u : Finset α) (hu : u ∈ sys.Con) : sys.Element :=
+  let _ := u
+  let _ := hu
+  sorry
+
+end Element
+
+/-- Tokens of the tree / S-expression system (Scott 1982, Factoid 8.1). -/
+inductive TreeToken (α : Type*) where
+  | bot : TreeToken α
+  | atom : α → TreeToken α
+  | pairL : TreeToken α → TreeToken α
+  | pairR : TreeToken α → TreeToken α
+  deriving DecidableEq
+
+section
+variable {α β : Type*} [DecidableEq α] [DecidableEq β]
+
+/-- Token type of the separated sum `A + B` (Scott 6.3). -/
+inductive SumToken (α β : Type*) where
+  | left : α → SumToken α β
+  | right : β → SumToken α β
+  | bot : SumToken α β
+
+instance : DecidableEq (SumToken α β)
+  | .left a, .left b =>
+      if h : a = b then isTrue (h ▸ rfl)
+      else isFalse fun h' => h (SumToken.left.inj h')
+  | .right a, .right b =>
+      if h : a = b then isTrue (h ▸ rfl)
+      else isFalse fun h' => h (SumToken.right.inj h')
+  | .bot, .bot => isTrue rfl
+  | .left _, .right _ => isFalse fun h => nomatch h
+  | .left _, .bot => isFalse fun h => nomatch h
+  | .right _, .left _ => isFalse fun h => nomatch h
+  | .right _, .bot => isFalse fun h => nomatch h
+  | .bot, .left _ => isFalse fun h => nomatch h
+  | .bot, .right _ => isFalse fun h => nomatch h
+
+/-- Scott 6.1(i): a product token is `(X, Δ_B)` or `(Δ_A, Y)`. -/
+def IsProdToken (A : InfoSys α) (B : InfoSys β) (p : α × β) : Prop :=
+  p.1 = A.bot ∨ p.2 = B.bot
+
+instance (A : InfoSys α) (B : InfoSys β) (p : α × β) : Decidable (IsProdToken A B p) :=
+  if h1 : p.1 = A.bot then isTrue (Or.inl h1)
+  else if h2 : p.2 = B.bot then isTrue (Or.inr h2)
+  else isFalse fun h => h.elim h1 h2
+
+/-- Token type of the product system `A × B`. -/
+def ProdToken (A : InfoSys α) (B : InfoSys β) : Type _ :=
+  {p : α × β // IsProdToken A B p}
+
+instance (A : InfoSys α) (B : InfoSys β) : DecidableEq (ProdToken A B) :=
+  Subtype.instDecidableEq
+
+end
+
+section
+variable {α : Type*} [DecidableEq α] (A : InfoSys α)
+
+/-- Factoid 8.1 tree system. Supporting hole. -/
+noncomputable def treeSystem : InfoSys (TreeToken α) :=
+  let _ := A
+  sorry
+
+/-- Official RHS `A + (T × T)`. Supporting hole. -/
+noncomputable def treeRhs :
+    InfoSys (SumToken α (ProdToken (treeSystem A) (treeSystem A))) :=
+  let _ := A
+  sorry
+
+end
 
 end InfoSys
 
@@ -236,7 +324,10 @@ abbrev RoundFilter : Type _ :=
 end ContinuousLatticeToNeighborhood
 
 open ContinuousLatticeToNeighborhood
+open Scott1982.InfoSys
+open Order
 
+section Continuous
 variable {D : Type*} [CompleteLattice D] [DecidableEq D]
 
 /-- Tokens = elements of `D`; neighbourhoods = `↟a`. Supporting hole. -/
@@ -262,6 +353,49 @@ include hD
 noncomputable def presentation_domains_equiv :
     D ≃o RoundInfoSysElement (D := D) :=
   let _ := hD
+  sorry
+
+end Continuous
+
+/-! ## Worked example: S-expressions (`T ≅ A + (T × T)`) -/
+
+/-- ℕ lower-bound atom system (Factoid 2.4). Supporting hole. -/
+noncomputable def lowerBoundSystem : InfoSys ℕ :=
+  sorry
+
+/-- Tree / S-expression information system over lower-bound atoms. -/
+noncomputable abbrev SexSys : InfoSys (TreeToken ℕ) :=
+  treeSystem lowerBoundSystem
+
+/-- Official right-hand side `A + (T × T)`. -/
+noncomputable abbrev SexRhs : InfoSys (SumToken ℕ (ProdToken SexSys SexSys)) :=
+  treeRhs lowerBoundSystem
+
+namespace InfoSysToIdealCompletion
+
+variable {α : Type*} [DecidableEq α] (A : InfoSys α)
+
+/-- Finite (compact) elements: closures of consistent finite token sets. -/
+abbrev FiniteElement : Type _ :=
+  { x : A.Element // ∃ (u : Finset α) (hu : u ∈ A.Con), x = A.closure u hu }
+
+end InfoSysToIdealCompletion
+
+/-- **1982 ≃o 1980** on this instance: `|T| ≃o` filters of `[u]`. -/
+noncomputable def sexNeighborhoodIso :
+    SexSys.Element ≃o (InfoSysToNeighborhood.toNeighborhoodSystem SexSys).Element :=
+  sorry
+
+/-- **1982 ≃o ideal completion** on this instance: `|T| ≃o Ideal (K(T))`. -/
+noncomputable def sexIdealIso :
+    SexSys.Element ≃o Ideal (InfoSysToIdealCompletion.FiniteElement SexSys) :=
+  sorry
+
+/-- **Domain equation** at domain level:
+`WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)|`. -/
+noncomputable def sexDomainEquationIso :
+    WithBot (lowerBoundSystem.Element ⊕ (SexSys.Element × SexSys.Element)) ≃o
+      SexRhs.Element :=
   sorry
 
 end ScottModels

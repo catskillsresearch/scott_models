@@ -47,6 +47,8 @@ lives in each sibling's `arxiv.md`.
   round-filter / round-InfoSys presentation.
 - Blueprint rows all Pass. Out of scope (documented): identifying
   `ApproximableMap` on `wayBelowNbhdBasis` with `ScottMap` via roundness.
+- Palomar compared family also includes the Factoid 8.1 instance
+  `sexNeighborhoodIso`, `sexIdealIso`, `sexDomainEquationIso`.
 
 ## On finishing a bridge theorem
 
@@ -232,3 +234,13 @@ lives in each sibling's `arxiv.md`.
   `.lake`). `lakefile.toml` path deps are in-tree. `PROVENANCE.md` + YAML +
   README record the domain_theory split, the remotes, and the Lean Pool
   downstream ingest. Brian’s Ericson/ clone is a PROVENANCE sentence only.
+
+### 2026-08-19 — Palomar: S-expression instance (Factoid 8.1)
+
+- Compared family now also includes `sexNeighborhoodIso`, `sexIdealIso`,
+  and `sexDomainEquationIso` (`WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)|`).
+- Challenge restates `TreeToken` / `SumToken` / `IsProdToken` / `ProdToken`
+  and holes `treeSystem`, `treeRhs`, `lowerBoundSystem`, `FiniteElement`.
+- `Solution.lean` imports `ScottModels.WorkedExampleSExpr`.
+- `sexDomainEquationIso` axioms include `Classical.choice` (1982 sum
+  trichotomy). Carrier isos remain `{propext, Quot.sound}`.

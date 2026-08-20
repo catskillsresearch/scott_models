@@ -316,6 +316,8 @@ hiding choice in automation.
 
 Lean packaging:
 [`WorkedExampleSExpr.lean`](https://github.com/catskillsresearch/scott_models/blob/main/ScottModels/WorkedExampleSExpr.lean).
+The Palomar compared family includes `sexNeighborhoodIso`, `sexIdealIso`,
+and `sexDomainEquationIso` (Challenge / `comparator.json`).
 
 ### 5.1 Overview
 

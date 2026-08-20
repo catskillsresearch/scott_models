@@ -10,6 +10,9 @@ NAMES=(
   ScottModels.infoSys_to_neighborhoodSystem
   ScottModels.InfoSysToNeighborhood.domainOrderIso
   ScottModels.presentation_domains_equiv
+  ScottModels.sexNeighborhoodIso
+  ScottModels.sexIdealIso
+  ScottModels.sexDomainEquationIso
   ScottModels.NbhdBasis.toInfoSys
   ScottModels.NbhdBasis.domainOrderIso
   ScottModels.InfoSysToNeighborhood.toNeighborhoodSystem
@@ -18,6 +21,13 @@ NAMES=(
   ScottModels.IsRoundInfoSysElement
   Scott1982.InfoSys.instPartialOrderElement
   Scott1980.Neighborhood.NeighborhoodSystem.instPartialOrderElement
+  Scott1982.InfoSys.treeSystem
+  Scott1982.InfoSys.treeRhs
+  ScottModels.lowerBoundSystem
+  ScottModels.SexSys
+  ScottModels.SexRhs
+  ScottModels.InfoSysToIdealCompletion.FiniteElement
+  Scott1982.InfoSys.closure
 )
 
 tmp="$(mktemp -d)"
