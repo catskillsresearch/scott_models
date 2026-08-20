@@ -153,6 +153,11 @@ noncomputable def presentation_domains_equiv :
     D ≃o RoundInfoSysElement (D := D) :=
   continuousLattice_roundInfoSys_iso hD
 
+/-- The three presentations determine the same domain (round corner). -/
+theorem exists_presentation_domains_equiv :
+    Nonempty (D ≃o RoundInfoSysElement (D := D)) :=
+  ⟨presentation_domains_equiv hD⟩
+
 /-- Extended form through ideal completion of finite elements of the `↟`-InfoSys. -/
 noncomputable def presentation_domains_equiv_ideal :
     D ≃o

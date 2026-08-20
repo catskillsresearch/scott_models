@@ -244,3 +244,11 @@ lives in each sibling's `arxiv.md`.
 - `Solution.lean` imports `ScottModels.WorkedExampleSExpr`.
 - `sexDomainEquationIso` axioms include `Classical.choice` (1982 sum
   trichotomy). Carrier isos remain `{propext, Quot.sound}`.
+
+### 2026-08-19 — Palomar browser-check: theorems + original-proof sources
+
+- `theorem_names` now lists `exists_presentation_domains_equiv` and the
+  three `exists_sex*` theorems (`Nonempty` of each compared `OrderIso`).
+- With an `original-proof` source, other `sources[]` relationships are
+  `background` (Scott 1972 / PRG-19 / ICALP / folklore), not `adapts` /
+  `independently-proves`.

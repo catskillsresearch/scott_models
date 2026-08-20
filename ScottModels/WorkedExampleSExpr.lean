@@ -126,6 +126,22 @@ noncomputable def sexDomainEquationIso :
     (OrderIso.refl lowerBoundSystem.Element).sumCongr ιProd |>.withBotCongr
   mid.trans ιSum
 
+theorem exists_sexNeighborhoodIso :
+    Nonempty (SexSys.Element ≃o
+      (InfoSysToNeighborhood.toNeighborhoodSystem SexSys).Element) :=
+  ⟨sexNeighborhoodIso⟩
+
+theorem exists_sexIdealIso :
+    Nonempty (SexSys.Element ≃o
+      Ideal (InfoSysToIdealCompletion.FiniteElement SexSys)) :=
+  ⟨sexIdealIso⟩
+
+theorem exists_sexDomainEquationIso :
+    Nonempty
+      (WithBot (lowerBoundSystem.Element ⊕ (SexSys.Element × SexSys.Element)) ≃o
+        SexRhs.Element) :=
+  ⟨sexDomainEquationIso⟩
+
 /-! ## Morphisms: identity is Scott-continuous (Factoid 4.6) -/
 
 /-- Identity approximable map on `T`, as a Scott-continuous endomap. -/

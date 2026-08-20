@@ -26,8 +26,9 @@ S-expression instance `T ≅ A + (T × T)` (`sexNeighborhoodIso`,
 
 It imports only Mathlib. The sorry-free proofs live in `ScottModels/` and are
 exposed to Comparator through `Solution.lean`. Challenge is allowed `sorry`;
-the compared declarations are `def`s (`OrderIso` is data), so they appear in
-`comparator.json` as `definition_names`.
+the compared isomorphisms are `def`s (`OrderIso` is data) and appear in
+`comparator.json` as `definition_names`. The corresponding `Nonempty`
+existence claims are `theorem`s in `theorem_names`.
 
 The type surface below uses the same fully-qualified names as the sibling
 packages and `ScottModels`, so Comparator can identify the constants used in
@@ -355,6 +356,12 @@ noncomputable def presentation_domains_equiv :
   let _ := hD
   sorry
 
+/-- The three presentations determine the same domain (round corner). -/
+theorem exists_presentation_domains_equiv :
+    Nonempty (D ≃o RoundInfoSysElement (D := D)) :=
+  let _ := hD
+  sorry
+
 end Continuous
 
 /-! ## Worked example: S-expressions (`T ≅ A + (T × T)`) -/
@@ -396,6 +403,22 @@ noncomputable def sexIdealIso :
 noncomputable def sexDomainEquationIso :
     WithBot (lowerBoundSystem.Element ⊕ (SexSys.Element × SexSys.Element)) ≃o
       SexRhs.Element :=
+  sorry
+
+theorem exists_sexNeighborhoodIso :
+    Nonempty (SexSys.Element ≃o
+      (InfoSysToNeighborhood.toNeighborhoodSystem SexSys).Element) :=
+  sorry
+
+theorem exists_sexIdealIso :
+    Nonempty (SexSys.Element ≃o
+      Ideal (InfoSysToIdealCompletion.FiniteElement SexSys)) :=
+  sorry
+
+theorem exists_sexDomainEquationIso :
+    Nonempty
+      (WithBot (lowerBoundSystem.Element ⊕ (SexSys.Element × SexSys.Element)) ≃o
+        SexRhs.Element) :=
   sorry
 
 end ScottModels

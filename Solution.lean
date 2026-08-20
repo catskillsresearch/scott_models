@@ -26,7 +26,8 @@ and the supporting names those types mention (`NbhdBasis`, `InfoSys`,
 `NeighborhoodSystem`, `IsContinuousLattice`, `RoundFilter`, `IsRound`,
 `wayBelowNbhdBasis`, `domainOrderIso`, `Element`, `TreeToken`, `treeSystem`,
 `FiniteElement`, `lowerBoundSystem`), with the same names and
-types as in the Challenge module. Comparator compares those declarations.
+types as in the Challenge module. Comparator compares those declarations
+and the `exists_*` theorems (`Nonempty` of each compared `OrderIso`).
 
 There is no `sorry` in the `ScottModels/` proof modules. The compared
 1980 ↔ 1982 maps, `presentation_domains_equiv`, and the S-expression

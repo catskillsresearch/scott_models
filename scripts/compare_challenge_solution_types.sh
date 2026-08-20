@@ -6,6 +6,10 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 NAMES=(
+  ScottModels.exists_presentation_domains_equiv
+  ScottModels.exists_sexNeighborhoodIso
+  ScottModels.exists_sexIdealIso
+  ScottModels.exists_sexDomainEquationIso
   ScottModels.neighborhoodSystem_to_infoSys
   ScottModels.infoSys_to_neighborhoodSystem
   ScottModels.InfoSysToNeighborhood.domainOrderIso

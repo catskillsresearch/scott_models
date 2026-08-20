@@ -1,7 +1,12 @@
 {
   "challenge_module": "Challenge",
   "solution_module": "Solution",
-  "theorem_names": [],
+  "theorem_names": [
+    "ScottModels.exists_presentation_domains_equiv",
+    "ScottModels.exists_sexNeighborhoodIso",
+    "ScottModels.exists_sexIdealIso",
+    "ScottModels.exists_sexDomainEquationIso"
+  ],
   "definition_names": [
     "ScottModels.neighborhoodSystem_to_infoSys",
     "ScottModels.infoSys_to_neighborhoodSystem",
