@@ -32,6 +32,9 @@ NAMES=(
   ScottModels.SexRhs
   ScottModels.InfoSysToIdealCompletion.FiniteElement
   Scott1982.InfoSys.closure
+  Scott1982.InfoSys.instDecidableEqTreeToken
+  Scott1982.InfoSys.instDecidableEqSumToken
+  Scott1982.InfoSys.instDecidableEqProdToken
 )
 
 tmp="$(mktemp -d)"

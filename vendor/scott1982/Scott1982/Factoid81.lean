@@ -26,17 +26,45 @@ namespace InfoSys
 
 set_option linter.unusedSectionVars false
 
-variable {α : Type*} [DecidableEq α]
+universe u
 
 /-! ## Tokens (Scott §8 (1)–(3)) -/
 
 /-- Tokens of the tree system: sum tagging of atoms and product left/right copies. -/
-inductive TreeToken (α : Type*) where
+inductive TreeToken (α : Type u) where
   | bot : TreeToken α
   | atom : α → TreeToken α
   | pairL : TreeToken α → TreeToken α
   | pairR : TreeToken α → TreeToken α
-  deriving DecidableEq
+
+instance instDecidableEqTreeToken {α : Type u} [DecidableEq α] :
+    DecidableEq (TreeToken α)
+  | .bot, .bot => isTrue rfl
+  | .atom a, .atom b =>
+      if h : a = b then isTrue (h ▸ rfl)
+      else isFalse fun h' => h (TreeToken.atom.inj h')
+  | .pairL a, .pairL b =>
+      match instDecidableEqTreeToken a b with
+      | isTrue h => isTrue (h ▸ rfl)
+      | isFalse h => isFalse fun h' => h (TreeToken.pairL.inj h')
+  | .pairR a, .pairR b =>
+      match instDecidableEqTreeToken a b with
+      | isTrue h => isTrue (h ▸ rfl)
+      | isFalse h => isFalse fun h' => h (TreeToken.pairR.inj h')
+  | .bot, .atom _ => isFalse fun h => nomatch h
+  | .bot, .pairL _ => isFalse fun h => nomatch h
+  | .bot, .pairR _ => isFalse fun h => nomatch h
+  | .atom _, .bot => isFalse fun h => nomatch h
+  | .atom _, .pairL _ => isFalse fun h => nomatch h
+  | .atom _, .pairR _ => isFalse fun h => nomatch h
+  | .pairL _, .bot => isFalse fun h => nomatch h
+  | .pairL _, .atom _ => isFalse fun h => nomatch h
+  | .pairL _, .pairR _ => isFalse fun h => nomatch h
+  | .pairR _, .bot => isFalse fun h => nomatch h
+  | .pairR _, .atom _ => isFalse fun h => nomatch h
+  | .pairR _, .pairL _ => isFalse fun h => nomatch h
+
+variable {α : Type*} [DecidableEq α]
 
 /-- Tree bottom `Δ_T`. -/
 def treeBot : TreeToken α := .bot

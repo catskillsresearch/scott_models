@@ -151,13 +151,41 @@ noncomputable def closure (u : Finset α) (hu : u ∈ sys.Con) : sys.Element :=
 
 end Element
 
+universe u
+
 /-- Tokens of the tree / S-expression system (Scott 1982, Factoid 8.1). -/
-inductive TreeToken (α : Type*) where
+inductive TreeToken (α : Type u) where
   | bot : TreeToken α
   | atom : α → TreeToken α
   | pairL : TreeToken α → TreeToken α
   | pairR : TreeToken α → TreeToken α
-  deriving DecidableEq
+
+instance instDecidableEqTreeToken {α : Type u} [DecidableEq α] :
+    DecidableEq (TreeToken α)
+  | .bot, .bot => isTrue rfl
+  | .atom a, .atom b =>
+      if h : a = b then isTrue (h ▸ rfl)
+      else isFalse fun h' => h (TreeToken.atom.inj h')
+  | .pairL a, .pairL b =>
+      match instDecidableEqTreeToken a b with
+      | isTrue h => isTrue (h ▸ rfl)
+      | isFalse h => isFalse fun h' => h (TreeToken.pairL.inj h')
+  | .pairR a, .pairR b =>
+      match instDecidableEqTreeToken a b with
+      | isTrue h => isTrue (h ▸ rfl)
+      | isFalse h => isFalse fun h' => h (TreeToken.pairR.inj h')
+  | .bot, .atom _ => isFalse fun h => nomatch h
+  | .bot, .pairL _ => isFalse fun h => nomatch h
+  | .bot, .pairR _ => isFalse fun h => nomatch h
+  | .atom _, .bot => isFalse fun h => nomatch h
+  | .atom _, .pairL _ => isFalse fun h => nomatch h
+  | .atom _, .pairR _ => isFalse fun h => nomatch h
+  | .pairL _, .bot => isFalse fun h => nomatch h
+  | .pairL _, .atom _ => isFalse fun h => nomatch h
+  | .pairL _, .pairR _ => isFalse fun h => nomatch h
+  | .pairR _, .bot => isFalse fun h => nomatch h
+  | .pairR _, .atom _ => isFalse fun h => nomatch h
+  | .pairR _, .pairL _ => isFalse fun h => nomatch h
 
 section
 variable {α β : Type*} [DecidableEq α] [DecidableEq β]
@@ -329,7 +357,6 @@ open Scott1982.InfoSys
 open Order
 
 section Continuous
-universe u
 variable {D : Type u} [CompleteLattice D] [DecidableEq D]
 
 /-- Tokens = elements of `D`; neighbourhoods = `↟a`. Supporting hole. -/

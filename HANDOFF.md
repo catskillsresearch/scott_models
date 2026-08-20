@@ -274,3 +274,11 @@ lives in each sibling's `arxiv.md`.
   had `.{u_1}`, Solution `.{u_4}` because PresentationDomains still had
   `{α, ι, β : Type*}` in scope. Both sides now use `universe u` /
   `{D : Type u}` for the continuous-lattice section.
+
+### 2026-08-20 — Palomar: `instDecidableEqTreeToken`
+
+- Comparator walked the generated `deriving DecidableEq` instance and
+  required identical `ConstantInfo` (universe names + body). Replaced
+  deriving with a handwritten `instDecidableEqTreeToken` on `{α : Type u}`
+  in Challenge and `vendor/scott1982`. Listed that instance (and the
+  sum/product ones) in `definition_names`.
