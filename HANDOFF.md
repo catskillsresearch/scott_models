@@ -258,3 +258,12 @@ lives in each sibling's `arxiv.md`.
 - Shortened `formalization.yaml` `project.description` to the public
   blurb (bridges + round corner + S-expression equation). Vendor / AI /
   sorry detail stays in limitations and automation.
+
+### 2026-08-20 — Palomar landrun: no path-dep writes under vendor/
+
+- Comparator `safeLakeBuild` landrun is `--rwx` only on the project
+  `.lake/` (plus `/dev`). Path requires tried to write
+  `vendor/scott19xx/.lake` → four `permission denied (error code: 13)`.
+- `lakefile.toml` now compiles `vendor/` as this package's `lean_lib`s
+  (`srcDir`). Manifest no longer lists the three path packages.
+- Confirmed `lake build Challenge Solution` with vendor dirs `a-w`.

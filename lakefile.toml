@@ -4,9 +4,12 @@ keywords = ["domain-theory", "scott", "equivalence", "lean4"]
 defaultTargets = ["ScottModels", "Challenge", "Solution"]
 
 # ScottModels is the proof library. Challenge / Solution are the Palomar
-# Comparator pair. Sibling paper libraries live in vendor/ (in-tree path
-# deps) so one Palomar SHA has the complete split. Remotes remain the
-# per-paper homes; see vendor/FROZEN.txt and PROVENANCE.md.
+# Comparator pair. Sibling paper libraries live in vendor/ so one Palomar
+# SHA has the complete split. They are compiled as this package's
+# lean_libs (srcDir), not as Lake path deps: Comparator's landrun sandbox
+# may write only under .lake/, and path packages try to write
+# vendor/<pkg>/.lake (EACCES). Remotes remain the per-paper homes; see
+# vendor/FROZEN.txt and PROVENANCE.md.
 
 [leanOptions]
 pp.unicode.fun = true
@@ -17,17 +20,17 @@ name = "mathlib"
 scope = "leanprover-community"
 rev = "v4.30.0"
 
-[[require]]
-name = "scott1972"
-path = "vendor/scott1972"
+[[lean_lib]]
+name = "Scott1972"
+srcDir = "vendor/scott1972"
 
-[[require]]
-name = "scott1980"
-path = "vendor/scott1980"
+[[lean_lib]]
+name = "Scott1980"
+srcDir = "vendor/scott1980"
 
-[[require]]
-name = "scott1982"
-path = "vendor/scott1982"
+[[lean_lib]]
+name = "Scott1982"
+srcDir = "vendor/scott1982"
 
 [[lean_lib]]
 name = "ScottModels"

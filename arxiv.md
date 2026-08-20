@@ -425,8 +425,8 @@ lake exe cache get
 lake build ScottModels
 ```
 
-Pinned: Lean / mathlib v4.30.0; sibling packages via in-tree `vendor/` path deps
-(frozen SHAs in `vendor/FROZEN.txt`)
+Pinned: Lean / mathlib v4.30.0; sibling libraries compiled from in-tree
+`vendor/` (`srcDir`; frozen SHAs in `vendor/FROZEN.txt`)
 (`scott1972`, `scott1980`, `scott1982`). Palomar compared family: `Challenge.lean`,
 `Solution.lean`, `comparator.json`; paper of record for that packaging is `view.pdf`.
 
