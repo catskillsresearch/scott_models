@@ -252,3 +252,9 @@ lives in each sibling's `arxiv.md`.
 - With an `original-proof` source, other `sources[]` relationships are
   `background` (Scott 1972 / PRG-19 / ICALP / folklore), not `adapts` /
   `independently-proves`.
+
+### 2026-08-19 — Palomar registry card
+
+- Shortened `formalization.yaml` `project.description` to the public
+  blurb (bridges + round corner + S-expression equation). Vendor / AI /
+  sorry detail stays in limitations and automation.

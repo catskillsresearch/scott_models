@@ -4,32 +4,13 @@ version: "v0.4"
 project:
   name: "Equivalence of Scott's three presentations of domain theory"
   description: >-
-    A Lean formalization of the presentation-bridge isos relating Scott's
-    three presentations of the same class of domains: continuous lattices
-    (1972), neighbourhood systems (PRG-19 / 1980–81), and information
-    systems (1982). The compared family is not a dump of those three
-    papers. It is the small cross-presentation maps: a neighbourhood
-    system with a decidable exhaustive coding NbhdBasis induces an
-    InfoSys on the codes (neighborhoodSystem_to_infoSys); an information
-    system A induces the basic-open neighbourhood system of [u] =
-    {x ∈ |A| | ↑u ⊆ x} (infoSys_to_neighborhoodSystem) with
-    InfoSysToNeighborhood.domainOrderIso : |A| ≃o those filters; under
-    IsContinuousLattice D and DecidableEq D,
-    presentation_domains_equiv : D ≃o RoundInfoSysElement, i.e.
-    D ≃o RoundFilter ≃o RoundInfoSysElement via the ↟-coding
-    wayBelowNbhdBasis; and on Scott’s S-expression domain
-    T ≅ A + (T × T) (Factoid 8.1 over ℕ lower-bound atoms),
-    sexNeighborhoodIso / sexIdealIso identify |T| with basic-open
-    filters and with Ideal(K(T)), while sexDomainEquationIso lifts the
-    equation to WithBot (|A| ⊕ (|T| × |T|)) ≃o |A + (T × T)|. Raw |𝒟|
-    and the full InfoSys domain are properly larger than D; the
-    identification is the round corner. The informal account is the
-    companion note view.pdf (source arxiv.md) in this repository. The
-    Lean source was written by AI agents under the direction and review
-    of the author. There is no sorry outside the deliberate holes in
-    Challenge.lean, no project-defined axiom, and the Solution depends
-    on in-tree vendor/ copies of the author's three sibling paper
-    libraries (frozen SHAs in vendor/FROZEN.txt).
+    Order isomorphisms relating Scott’s three presentations of domains —
+    continuous lattices (1972), neighbourhood systems (PRG-19), and
+    information systems (1982) — including the round identification
+    D ≃o RoundFilter ≃o RoundInfoSysElement and the S-expression
+    equation T ≅ A + (T × T) as WithBot (|A| ⊕ (|T| × |T|)) ≃o
+    |A + (T × T)|. Not a formalization of the three papers. Account:
+    view.pdf.
   authors:
     - "Lars Warren Ericson"
   license: "Apache-2.0"
