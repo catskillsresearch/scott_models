@@ -15,10 +15,12 @@ the same domains (up to isomorphism), including products, separated sums, and fu
 spaces at the information-system level, with a transport of 1972 Scott maps along the
 round presentation.
 
-The Lean development is sorry-free. The **1980 ↔ 1982** bridges and the round continuous
-lattice corner target `#print axioms ⊆ {propext, Quot.sound}`. Classical choice appears
-where Scott's 1972 topology is unavoidable (algebraic ⇒ continuous; ScottMap conjugation)
-and in the trichotomy for separated sums.
+The Lean development is sorry-free. The continuous-lattice identification
+`D ≃o RoundFilter` audits to `{propext, Quot.sound}`. Every InfoSys-facing
+declaration inherits `Classical.choice` from Mathlib 4.33’s `Finset` instances,
+even when the proof term extracts no witness. Genuine classical frontiers remain
+Scott’s 1972 topological definition of `≪` (algebraic ⇒ continuous; ScottMap
+conjugation) and trichotomy for separated sums.
 
 ---
 
@@ -27,13 +29,13 @@ and in the trichotomy for separated sums.
 Scott notes in the 1982 ICALP paper that neighbourhood systems and information systems
 are equivalent “in a precise sense.” The mathematical folklore is stronger still: all
 three presentations carve out the same class of domains, related by ideal completion
-and the Scott topology. That equivalence is already known; this article is the write-up
-of a machine-checked proof of the named bridges, not a first presentation of the result.
-Until the bridges are checked in a proof assistant, the claim lives in the gap between
-three separately formalized libraries.
+and the Scott topology. That equivalence is already known; this article is the write-up of a
+machine-checked proof of the named bridges, not a first presentation of the
+result. The three presentations were formalized in separate libraries; the maps
+between them are the content of this package.
 
-This article closes that Lean gap. We do **not** re-prove Scott's internal theorems; we
-import the finished sibling packages and build cross-presentation maps:
+We do **not** re-prove Scott's internal theorems; we import the finished sibling
+packages and build cross-presentation maps:
 
 | Presentation | Lean package | Characteristic object |
 | --- | --- | --- |
@@ -77,16 +79,16 @@ theorems.
 
 ## 2. Catalog of bridge theorems
 
-| Theorem | Direction | Lean module |
-| --- | --- | --- |
-| `continuousLattice_to_neighborhoodSystem` | 1972 → 1980 | `ContinuousLatticeToNeighborhood.lean` |
-| `neighborhoodSystem_to_infoSys` | 1980 → 1982 | `NeighborhoodToInfoSys.lean` |
-| `infoSys_to_neighborhoodSystem` | 1982 → 1980 | `InfoSysToNeighborhood.lean` |
-| `infoSys_to_idealCompletion` | 1982 → algebraic | `InfoSysToIdealCompletion.lean` |
-| `idealCompletion_to_continuousLattice` | algebraic → 1972 | `IdealCompletionToContinuousLattice.lean` |
-| `presentation_domains_equiv` | three-way | `PresentationDomains.lean` |
-| `infoSys_constructions_equiv` | constructions | `InfoSysConstructions.lean`, `ScottMapBridge.lean` |
-| `sexNeighborhoodIso` / `sexIdealIso` / `sexDomainEquationIso` | S-expression instance | `WorkedExampleSExpr.lean`, `SexDomainEquation.lean` |
+| Theorem | Direction | Lean module | Scope |
+| --- | --- | --- | --- |
+| `continuousLattice_to_neighborhoodSystem` | 1972 → 1980 | `ContinuousLatticeToNeighborhood.lean` | library |
+| `neighborhoodSystem_to_infoSys` | 1980 → 1982 | `NeighborhoodToInfoSys.lean` | compared |
+| `infoSys_to_neighborhoodSystem` | 1982 → 1980 | `InfoSysToNeighborhood.lean` | compared |
+| `infoSys_to_idealCompletion` | 1982 → algebraic | `InfoSysToIdealCompletion.lean` | library |
+| `idealCompletion_to_continuousLattice` | algebraic → 1972 | `IdealCompletionToContinuousLattice.lean` | library |
+| `presentation_domains_equiv` | three-way | `PresentationDomains.lean` | compared |
+| `infoSys_constructions_equiv` | constructions | `InfoSysConstructions.lean`, `ScottMapBridge.lean` | library |
+| `sexNeighborhoodIso` / `sexIdealIso` / `sexDomainEquationIso` | S-expression instance | `WorkedExampleSExpr.lean`, `SexDomainEquation.lean` | compared |
 
 The sibling packages are **finished dependencies**, not work items of this paper:
 [`scott1972`](https://github.com/catskillsresearch/scott1972),
@@ -94,13 +96,26 @@ The sibling packages are **finished dependencies**, not work items of this paper
 [`scott1982`](https://github.com/catskillsresearch/scott1982) (information systems through
 Factoid 8.4 / domain equations). They are vendored in `vendor/` at frozen SHAs
 (see `vendor/FROZEN.txt` / `lakefile.toml`), with the local modifications
-recorded there and in `formalization.yaml`; the remotes remain the per-paper homes. The Palomar statement
-of record is the presentation-bridge family in the catalog below (`Challenge.lean` /
-`comparator.json`), not a formalization of the three papers. Figure~2 is left-to-right: sibling packages on the
-left, local `ScottModels/` modules on the right, with arrows for **direct** imports
-(transitive imports inside the siblings are omitted). `Equivalence` re-exports the
-bridges; only the `ScottMapBridge → Equivalence` edge is drawn to avoid clutter.
-Root `ScottModels.lean` also opens 1972 `ContinuousLattice.Specialization`, 1980
+recorded there and in `formalization.yaml`; the remotes remain the per-paper homes.
+The compared family (Palomar `Challenge.lean` / `comparator.json`) is the 1980 ↔ 1982
+coding, the round three-way identification, and the Factoid 8.1 instance; the other
+catalog rows are proved in `ScottModels/` but are not Comparator targets. This
+package was verified and registered in the Palomar registry as
+[PALOMAR-2026-08-25-000003](https://palomar-registry.org/entry?id=PALOMAR-2026-08-25-000003&version=1)
+v1 **[PALOMAR26]**. What Palomar verified is the claim:
+
+> Order isomorphisms relating Scott’s three presentations of domains — continuous
+> lattices (1972), neighbourhood systems (PRG-19), and information systems (1982) —
+> including the round identification `D ≃o RoundFilter ≃o RoundInfoSysElement` and
+> the S-expression equation `T ≅ A + (T × T)` as `|T| ≃o |A + (T × T)|`
+> (`SexSys.Element ≃o SexRhs.Element`).
+
+This document (`view.pdf`) is the narrative account, not a formalization of the three
+papers. The module map below is left-to-right: sibling packages on the left, local
+`ScottModels/` modules on the right, with arrows for **direct** imports (transitive
+imports inside the siblings are omitted). `Equivalence` re-exports the bridges; only
+the `ScottMapBridge → Equivalence` edge is drawn to avoid clutter. Root
+`ScottModels.lean` also opens 1972 `ContinuousLattice.Specialization`, 1980
 `Neighborhood.Basic`, and 1982 `InfoSys`.
 
 <!-- mermaid-caption: Lean module map -->
@@ -208,7 +223,8 @@ neighbourhood system correspond to InfoSys elements via the coding.
 
 **Constructivity.** `DecidableEq ι` is required so `InfoSys` can use the choice-free
 `Finset` prelude from `scott1982`. The proof of `ent_con` avoids classical `by_cases` /
-`em`. Axioms ⊆ `{propext, Quot.sound}`.
+`em`. The maps extract no witnesses; the kernel audit still reports inherited
+`Classical.choice` from the Mathlib 4.33 `Finset` instance frontier (§4).
 
 ### 3.3 Information systems → neighbourhood systems
 
@@ -218,8 +234,9 @@ neighbourhood system correspond to InfoSys elements via the coding.
 
 **Proof note.** Scott’s Factoid 4.6 supplies the basic-open vocabulary. The Lean proof
 initially pulled `Classical.choice` through `simp` on `basicOpen_empty` / finset unions;
-those simps were removed so the footprint stays `{propext, Quot.sound}`. Together with
-§3.2 this is the constructive **1980 ↔ 1982** equivalence under coding.
+those simps were removed so the construction extracts no witnesses. The kernel audit
+still reports inherited `Classical.choice` through `InfoSys`/`Finset` (§4). Together
+with §3.2 this is the **1980 ↔ 1982** equivalence under coding.
 
 ### 3.4 Information systems → ideal completion
 
@@ -228,8 +245,9 @@ consistent finsets (`Factoid 3.5`).
 
 **Construction.** `toIdeal x` is the ideal of finite approximants of `x`; `ofIdeal`
 takes directed suprema of finite elements (1982 Factoids 4.4–4.5:
-`directedSup`, `eq_directedSup_finiteApproximants`, `compact_closure`). Axioms ⊆
-`{propext, Quot.sound}`.
+`directedSup`, `eq_directedSup_finiteApproximants`, `compact_closure`). The maps
+extract no witnesses; the kernel audit inherits `Classical.choice` through
+`InfoSys`/`Finset` (§4).
 
 ### 3.5 Algebraic complete lattices → continuous lattices
 
@@ -418,9 +436,10 @@ Specializing the bridges of §3 to `SexSys` yields order isomorphisms of carrier
   closing **1980 ≃o Ideal(K(T))** without going back through tokens.
 
 Composing any two edges recovers the third: isomorphism is transitive, so on this
-example the three presentations are pairwise equivalent. The only classical step on the
-1972 corner is the algebraic ⇒ continuous implication already flagged in §3.5 / §4;
-the neighbourhood ↔ information ↔ ideal triangle audits to `{propext, Quot.sound}`.
+example the three presentations are pairwise equivalent. The 1972 corner uses the
+algebraic ⇒ continuous implication already flagged in §3.5 / §4. The neighbourhood
+↔ information ↔ ideal triangle inherits `Classical.choice` only through the `Finset`
+instance frontier of §4.
 
 ### 5.6 Domain equation and morphisms
 
@@ -447,7 +466,9 @@ Factoid 4.6 to a Scott-continuous endomap `sexIdScottContinuous` with `toFun = i
 (`sexId_toElement`) — the same endomap, named once in each morphism language.
 
 **Axioms.** Object-level neighbourhood / ideal isos, `sexDomainEquationIso`, and
-Factoid 4.6 for `idMap` audit to `{propext, Quot.sound}`.
+Factoid 4.6 for `idMap` audit to `{propext, Classical.choice, Quot.sound}` through
+the InfoSys/`Finset` frontier of §4. The uncompared semantic factor
+`sexRhsSemanticIso` additionally uses the 1982 sum trichotomy.
 
 ---
 
@@ -458,13 +479,13 @@ lake exe cache get
 lake build ScottModels
 ```
 
-Pinned: Lean / mathlib v4.30.0; sibling libraries compiled from in-tree
-`vendor/` (`srcDir`; frozen SHAs in `vendor/FROZEN.txt`)
-(`scott1972`, `scott1980`, `scott1982`). Palomar compared family: `Challenge.lean`,
-`Solution.lean`, `comparator.json`; paper of record for that packaging is `view.pdf`.
-Compared instances (`instPartialOrderElement`, `instDecidableEqSumToken`,
-`instDecidableEqProdToken`, `instDecidableEqTreeToken`) are explicitly named so
-Verso can emit declaration anchors.
+Pinned: Lean / mathlib v4.33.0. Sibling libraries are compiled from in-tree
+`vendor/` (`srcDir`; frozen revisions and local patches in `vendor/FROZEN.txt`):
+`scott1972` `278ba1745b6fb023fc3e9ffe53b7106ce60222c1`,
+`scott1980` `ef6c05671582b7883ecd40b7081b642ce5351963`,
+`scott1982` `d3221eec09505aa75e1b818aabc73f1f04339bdc`.
+Palomar compared family: `Challenge.lean`, `Solution.lean`, `comparator.json`.
+The narrative paper of record is this document (`view.pdf`).
 
 Acknowledgments (Dana Scott, AI tool cards, artifact URL) are injected before References
 when building `arxiv.tex` via `scripts/ai_model_cards.py` — they are not kept in this file.
@@ -494,6 +515,13 @@ bash scripts/build_arxiv_pdf.sh --pdf-only # PDF only when arxiv.tex already cur
 - **[SR72]** Companion Lean formalization: [`scott1972`](https://github.com/catskillsresearch/scott1972).
 - **[ER80]** Companion Lean formalization: [`scott1980`](https://github.com/catskillsresearch/scott1980).
 - **[SR82]** Companion Lean formalization: [`scott1982`](https://github.com/catskillsresearch/scott1982).
+- **[PALOMAR26]** Palomar Registry. Entry `PALOMAR-2026-08-25-000003`, version 1.
+  Verified claim: order isomorphisms relating Scott’s three presentations of domains —
+  continuous lattices (1972), neighbourhood systems (PRG-19), and information systems
+  (1982) — including the round identification `D ≃o RoundFilter ≃o RoundInfoSysElement`
+  and the S-expression equation `T ≅ A + (T × T)` as `|T| ≃o |A + (T × T)|`
+  (`SexSys.Element ≃o SexRhs.Element`).
+  <https://palomar-registry.org/entry?id=PALOMAR-2026-08-25-000003&version=1>
 - **[COPE24]** Committee on Publication Ethics (COPE). *Authorship and AI tools: COPE position statement*. 2024. <https://publicationethics.org/guidance/cope-position/authorship-and-ai-tools>
 <!-- AI_MODEL_REFERENCES -->
 <!-- /AI_MODEL_REFERENCES -->

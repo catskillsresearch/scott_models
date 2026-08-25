@@ -51,6 +51,10 @@ lives in each sibling's `arxiv.md`.
   `ApproximableMap` on `wayBelowNbhdBasis` with `ScottMap` via roundness.
 - Palomar compared family also includes the Factoid 8.1 instance
   `sexNeighborhoodIso`, `sexIdealIso`, `sexDomainEquationIso`.
+- Palomar automated review on `f0d6af25a06008457d399562ef6e26c11616ac51`
+  (2026-08-25): no problems identified. Registered as
+  [PALOMAR-2026-08-25-000003](https://palomar-registry.org/entry?id=PALOMAR-2026-08-25-000003&version=1)
+  v1.
 
 ## On finishing a bridge theorem
 
@@ -410,3 +414,41 @@ lives in each sibling's `arxiv.md`.
   strip on all three; named 1980 instance; 1982 Factoid 8.1 bridge
   patch, Lean 4.33 compatibility, and named Comparator instances).
 - Preflight checks that those `/tree/<rev>` URLs match `FROZEN.txt`.
+
+### 2026-08-25 — Palomar automated review passed
+
+- Submission SHA `f0d6af25a06008457d399562ef6e26c11616ac51`: reviewer
+  reported no problems. Named-instance anchors and vendor-revision
+  provenance were the last requested fixes; both are on this commit.
+- No repository change is required for that review. Next action is
+  registration if the author wants a public Palomar entry.
+
+### 2026-08-25 — `arxiv.md` finished-product pass
+
+- Abstract / §3 / §5 axiom claims now match Mathlib 4.33 audits: only
+  `D ≃o RoundFilter` is `{propext, Quot.sound}`; InfoSys-facing isos
+  inherit `Classical.choice` through `Finset`.
+- Intro no longer treats the Lean gap as open. Catalog marks compared vs
+  library rows. Build pin is Lean / mathlib v4.33.0 with frozen vendor
+  SHAs. Palomar Verso-anchor packaging chatter removed from the paper.
+
+### 2026-08-25 — rebuild `arxiv.pdf` / `view.pdf`
+
+- Regenerated the TeX appendix and compiled `arxiv.pdf` (57 pages, all
+  fonts embedded). `view.pdf` is a copy of that file.
+
+### 2026-08-25 — `everything.lean`
+
+- Single-file flatten of the ten `ScottModels/` bridge modules plus the
+  31 vendor modules in their import closure. Headline bridges sit at
+  the end. Regenerate with `python3 scripts/generate_everything.py`.
+  `lake build everything` is green (not a default Lake target).
+
+### 2026-08-25 — Palomar registry citation
+
+- `arxiv.md` §2 and References record registration
+  `PALOMAR-2026-08-25-000003` v1 and the compared claim Palomar verified.
+
+### 2026-08-25 — rebuild PDFs after Palomar citation
+
+- Regenerated `arxiv.pdf` / `view.pdf` (57 pages, all fonts embedded).

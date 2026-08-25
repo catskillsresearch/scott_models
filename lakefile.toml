@@ -36,6 +36,9 @@ srcDir = "vendor/scott1982"
 name = "ScottModels"
 
 [[lean_lib]]
+name = "everything"
+
+[[lean_lib]]
 name = "Challenge"
 
 [[lean_lib]]
