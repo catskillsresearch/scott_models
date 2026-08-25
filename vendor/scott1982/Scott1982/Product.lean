@@ -37,7 +37,8 @@ instance (A : InfoSys α) (B : InfoSys β) (p : α × β) : Decidable (IsProdTok
 def ProdToken (A : InfoSys α) (B : InfoSys β) : Type _ :=
   {p : α × β // IsProdToken A B p}
 
-instance (A : InfoSys α) (B : InfoSys β) : DecidableEq (ProdToken A B) :=
+instance instDecidableEqProdToken (A : InfoSys α) (B : InfoSys β) :
+    DecidableEq (ProdToken A B) :=
   Subtype.instDecidableEq
 
 variable (A : InfoSys α) (B : InfoSys β)

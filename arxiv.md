@@ -461,6 +461,9 @@ Pinned: Lean / mathlib v4.30.0; sibling libraries compiled from in-tree
 `vendor/` (`srcDir`; frozen SHAs in `vendor/FROZEN.txt`)
 (`scott1972`, `scott1980`, `scott1982`). Palomar compared family: `Challenge.lean`,
 `Solution.lean`, `comparator.json`; paper of record for that packaging is `view.pdf`.
+Compared instances (`instPartialOrderElement`, `instDecidableEqSumToken`,
+`instDecidableEqProdToken`, `instDecidableEqTreeToken`) are explicitly named so
+Verso can emit declaration anchors.
 
 Acknowledgments (Dana Scott, AI tool cards, artifact URL) are injected before References
 when building `arxiv.tex` via `scripts/ai_model_cards.py` — they are not kept in this file.

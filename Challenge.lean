@@ -94,7 +94,7 @@ theorem Element.ext {x y : V.Element} (h : ∀ X, x.mem X ↔ y.mem X) : x = y :
   subst hmem
   rfl
 
-instance : PartialOrder V.Element where
+instance instPartialOrderElement : PartialOrder V.Element where
   le x y := ∀ X, x.mem X → y.mem X
   le_refl x X h := h
   le_trans x y z h1 h2 X h := h2 X (h1 X h)
@@ -135,7 +135,7 @@ structure Element where
   consistent : ∀ Y : Finset α, (Y : Set α) ⊆ carrier → Y ∈ sys.Con
   closed : ∀ (Y : Finset α) (a : α), (Y : Set α) ⊆ carrier → sys.Ent Y a → a ∈ carrier
 
-instance : PartialOrder sys.Element where
+instance instPartialOrderElement : PartialOrder sys.Element where
   le x y := x.carrier ⊆ y.carrier
   le_refl _ := Set.Subset.refl _
   le_trans _ _ _ h1 h2 := Set.Subset.trans h1 h2
@@ -205,7 +205,7 @@ inductive SumToken (α β : Type*) where
   | right : β → SumToken α β
   | bot : SumToken α β
 
-instance : DecidableEq (SumToken α β)
+instance instDecidableEqSumToken : DecidableEq (SumToken α β)
   | .left a, .left b =>
       if h : a = b then isTrue (h ▸ rfl)
       else isFalse fun h' => h (SumToken.left.inj h')
@@ -233,7 +233,8 @@ instance (A : InfoSys α) (B : InfoSys β) (p : α × β) : Decidable (IsProdTok
 def ProdToken (A : InfoSys α) (B : InfoSys β) : Type _ :=
   {p : α × β // IsProdToken A B p}
 
-instance (A : InfoSys α) (B : InfoSys β) : DecidableEq (ProdToken A B) :=
+instance instDecidableEqProdToken (A : InfoSys α) (B : InfoSys β) :
+    DecidableEq (ProdToken A B) :=
   Subtype.instDecidableEq
 
 end

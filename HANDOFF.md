@@ -27,9 +27,11 @@ lives in each sibling's `arxiv.md`.
    It `#check`s every `comparator.json` name from Challenge and from Solution
    with `pp.all` / `pp.explicit` and diffs. A non-empty diff means Palomar
    Comparator will fail (instance-name / instance-path mismatch), as on cardb.
+   Every compared `inst*` declaration must be an **explicitly named** instance
+   in `Challenge.lean` (Verso will not render an anchor for `instance : T`).
 6. Follow `.cursor/rules/handoff-discipline.mdc`.
 
-## Current status (2026-07-11)
+## Current status (2026-08-25)
 
 - `neighborhoodSystem_to_infoSys` **Pass** (`NeighborhoodToInfoSys.lean`).
 - `infoSys_to_neighborhoodSystem` **Pass** (`InfoSysToNeighborhood.lean`).
@@ -389,3 +391,11 @@ lives in each sibling's `arxiv.md`.
   requires `master_nonempty`.
 - Challenge structure now matches `vendor/scott1980` field order.
 - Local compare script also `#print`s walked structure constructors.
+
+### 2026-08-25 — explicit names for compared instances
+
+- Palomar Verso needs compiler-backed anchors on every comparator.json
+  declaration. Named the previously anonymous Challenge instances
+  `instPartialOrderElement` (1980 and 1982), `instDecidableEqSumToken`,
+  and `instDecidableEqProdToken`. The same names are now explicit in the
+  vendored 1980/1982 sources. `comparator.json` names are unchanged.

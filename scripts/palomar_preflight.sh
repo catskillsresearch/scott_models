@@ -28,6 +28,29 @@ print(f"OK: {len(cfg['theorem_names'])} theorem targets and "
       f"{len(cfg['definition_names'])} definition targets.")
 PY
 
+step "Require explicit Challenge names for compared instances"
+python3 - <<'PY'
+import json
+import re
+
+with open("comparator.json", encoding="utf-8") as f:
+    cfg = json.load(f)
+src = open("Challenge.lean", encoding="utf-8").read()
+missing = []
+for name in cfg["theorem_names"] + cfg["definition_names"]:
+    short = name.rsplit(".", 1)[-1]
+    if not short.startswith("inst"):
+        continue
+    if not re.search(rf"\binstance\s+{re.escape(short)}\b", src):
+        missing.append(name)
+if missing:
+    raise SystemExit(
+        "Challenge.lean is missing explicit instance names for: "
+        + ", ".join(missing)
+    )
+print("OK: compared instances have explicit Challenge names.")
+PY
+
 step "Build Lean project"
 lake build
 

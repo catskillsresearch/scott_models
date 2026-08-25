@@ -10,6 +10,10 @@
 # Factoid82, Fixpoint, and Theorem72 (proofs robust to stricter transparency).
 # Its lake-manifest.json is refreshed from mathlib v4.33.0.
 #
+# Vendored 1980/1982 instances used as Comparator definition holes are
+# explicitly named (`instPartialOrderElement`, `instDecidableEqSumToken`,
+# `instDecidableEqProdToken`) so Challenge and Solution share anchors.
+#
 # Vendored trees deliberately omit sibling Palomar packaging
 # (comparator.json, Challenge/Solution, formalization.yaml, preflight
 # scripts) so this monorepo has a single Comparator config at the root.

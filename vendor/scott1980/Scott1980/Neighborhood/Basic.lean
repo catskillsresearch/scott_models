@@ -291,7 +291,7 @@ theorem element_le_antisymm (x y : V.Element)
 
 /-- Elements are ordered by inclusion of their membership predicates (Scott's approximation
 order, Definition 1.8). -/
-instance : PartialOrder V.Element where
+instance instPartialOrderElement : PartialOrder V.Element where
   le := element_le V
   le_refl := element_le_refl V
   le_trans := element_le_trans V

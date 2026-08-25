@@ -114,7 +114,7 @@ theorem element_le_antisymm (x y : sys.Element)
   Element.ext sys (Set.Subset.antisymm hxy hyx)
 
 /-- Elements are ordered by inclusion of their carriers; this is the Scott ordering. -/
-instance : PartialOrder sys.Element where
+instance instPartialOrderElement : PartialOrder sys.Element where
   le x y := x.carrier ⊆ y.carrier
   le_refl := element_le_refl sys
   le_trans := element_le_trans sys

@@ -37,7 +37,7 @@ inductive SumToken (α β : Type*) where
   | right : β → SumToken α β
   | bot : SumToken α β
 
-instance : DecidableEq (SumToken α β)
+instance instDecidableEqSumToken : DecidableEq (SumToken α β)
   | .left a, .left b =>
       if h : a = b then isTrue (h ▸ rfl)
       else isFalse fun h' => h (SumToken.left.inj h')
