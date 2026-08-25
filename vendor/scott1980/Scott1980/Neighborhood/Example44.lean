@@ -104,8 +104,9 @@ theorem nestedOrDisjoint : NestedOrDisjoint memC := by
 
 /-- **Example 4.4 (Scott 1981, PRG-19).** The neighbourhood system `C` of finite or infinite binary
 sequences on `Δ = Σ*`. -/
-def C : NeighborhoodSystem Str :=
-  NeighborhoodSystem.ofNestedOrDisjoint memC Set.univ (Or.inl ⟨[], cone_nil.symm⟩) nestedOrDisjoint
+abbrev C : NeighborhoodSystem Str :=
+  NeighborhoodSystem.ofNestedOrDisjoint memC Set.univ
+    ⟨[], Set.mem_univ _⟩ (Or.inl ⟨[], cone_nil.symm⟩) nestedOrDisjoint
     (fun _ => Set.subset_univ _)
 
 @[simp] theorem C_mem {X : Set Str} : C.mem X ↔ memC X := Iff.rfl
@@ -115,10 +116,10 @@ def C : NeighborhoodSystem Str :=
 /-! ### Elements of `C`: `σ` (total) and `σ⊥` (partial). -/
 
 /-- Scott's partial element `σ⊥ = ↑σΣ*` ("the sequence starts with `σ`"). -/
-def strBot (σ : Str) : C.Element := C.principal (memC_cone σ)
+def strBot (σ : Str) : C.Element := C.principal (C_mem.mpr (memC_cone σ))
 
 /-- Scott's total element `σ = ↑{σ}` (the finite sequence `σ`, completed). -/
-def strElem (σ : Str) : C.Element := C.principal (memC_singleton σ)
+def strElem (σ : Str) : C.Element := C.principal (C_mem.mpr (memC_singleton σ))
 
 /-! ### The successor maps `x ↦ bx`. -/
 

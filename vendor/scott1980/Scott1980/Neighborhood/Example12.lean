@@ -131,6 +131,7 @@ private theorem inter_eq (X Y : Set Token) (h : mem X) (h' : mem Y) :
 def neighborhoodSystem : NeighborhoodSystem Token where
   mem := mem
   master := master
+  master_nonempty := Set.univ_nonempty
   master_mem := mem_master
   sub_master := fun _ => Set.subset_univ _
   inter_mem := by

@@ -121,7 +121,8 @@ theorem nestedOrDisjoint_C : NestedOrDisjoint memC := by
 
 /-- **The system `𝒞`** on `Δ = Σ*`: cones and terminator singletons. -/
 def C : NeighborhoodSystem Str :=
-  ofNestedOrDisjoint memC Set.univ (Or.inl ⟨[], cone_nil.symm⟩) nestedOrDisjoint_C
+  ofNestedOrDisjoint memC Set.univ ⟨[], Set.mem_univ _⟩
+    (Or.inl ⟨[], cone_nil.symm⟩) nestedOrDisjoint_C
     (by rintro X (⟨σ, rfl⟩ | ⟨σ, rfl⟩) <;> exact Set.subset_univ _)
 
 @[simp] theorem C_mem {X : Set Str} : C.mem X ↔ memC X := Iff.rfl

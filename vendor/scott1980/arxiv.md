@@ -1,14 +1,18 @@
-# Formalizing Dana Scott's 1980 Theory of Computation in Lean 4
+# Formalizing Dana Scott's 1980 Lectures (PRG-19, 1981) in Lean 4
 
 ---
 
 ## Abstract
 
-In November 1969, Dana Scott formulated a mathematical program to construct the first non-degenerate, purely mathematical model ($D_\infty$) for Alonzo Church's untyped $\lambda$-calculus. He formally detailed this in his landmark 1972 paper *Continuous Lattices*, providing the foundational justification for denotational semantics. However, Scott's initial 1972 framework relied on dense, abstract point-set topology, which remained an intimidating barrier for computer scientists seeking a practical tool for representing programming language semantics.
+In November 1969, Dana Scott formulated a mathematical program to construct a non-degenerate, purely mathematical model ($D_\infty$) for Alonzo Church's untyped $\lambda$-calculus — the construction later published in *Continuous Lattices* (1972). That paper is often described as giving the first such model; this formalization does not adjudicate historical priority. Scott's 1972 framework relied on point-set topology, which remained a barrier for computer scientists seeking a practical tool for programming-language semantics.
 
-When Scott delivered his lectures at Oxford in 1980—subsequently published as *Lectures on a Mathematical Theory of Computation* (Technical Report PRG-19)—he made an intentional, systematic pivot. The 1980 lectures focused on discrete information presented as *domains*. This more discrete presentation was intended to be more accessible to computer scientists without training in point-set topology and lattice theory.
+When Scott delivered his Oxford lectures in Michaelmas Term 1980 — published May 1981 as *Lectures on a Mathematical Theory of Computation* (Technical Monograph PRG-19) — he pivoted to discrete information presented as *domains*. That presentation was intended to be more accessible without training in point-set topology and lattice theory.
 
-This Lean 4 formalization covers every element of PRG-19, including all exercises.  We strive to avoid law of the excluded middle.  We check axioms throughout, so if a proof seems to unavoidably require law of the excluded middle, that will be shown in the axiom check.
+This Lean 4 library formalizes the numbered definitions, theorems, examples, and exercises of PRG-19, with one documented deferral: Exercise 8.17 Part 2 (whether $\mathcal{U}+\mathcal{U}$, $\mathcal{U}\times\mathcal{U}$, or $\mathcal{U}\to\mathcal{U}$ is isomorphic to $\mathcal{U}$), which Scott himself left unresolved for the function-space case. Data constructions are kept choice-free where possible. Prop-level results may use `Classical.choice`; axiom audits record the footprint. Palomar Comparator selects the principal sourced theorem `theorem_8_8` and two new formal corollaries, `P4_embeds` and `Ssys_embeds`; their permitted footprint is `{propext, Classical.choice, Quot.sound}`.
+
+### Palomar compared claim (first sentence of Theorem 8.8)
+
+The principal sourced result is **only the first sentence of Theorem 8.8**: every countable neighbourhood system $\mathcal{D}$ embeds as a subdomain of $\mathcal{U}$ ($\mathcal{D}\trianglelefteq\mathcal{U}$, Lean `theorem_8_8`). Comparator additionally selects two new formal corollaries, not separately stated by Scott: specializing the theorem to Example 1.5 gives `P4_embeds`, and specializing it to Exercise 7.22's system $S$ gives `Ssys_embeds`. Scott's effective projection-pair sentence and finitary-projection correspondence are proved in the library as `theorem_8_8_b` / `theorem_8_8_c` but are **not** Comparator targets. Scott assumes from the outset that the master token set $\Delta$ is non-empty; `NeighborhoodSystem.master_nonempty` now enforces that assumption structurally. See `Challenge.lean` and `formalization.yaml`.
 
 ---
 
@@ -128,8 +132,10 @@ The primary source is Dana Scott's *Lectures on a Mathematical Theory of Computa
 inventory of every numbered Definition, Theorem, Example, and Exercise—with formalization status and
 proof notes—is maintained in this document (`arxiv.md`). Each item is keyed to Scott's original
 numbering and cross-linked to its Lean module. Status values distinguish **Pass** (mechanized, builds
-green, zero `sorry`), **Partial** (substantial core done; documented gaps remain), **Not Yet**, and
-**Deferred** (Lecture VIII and items beyond the current formalization frontier).
+green, zero `sorry`). Remaining mismatches versus the monograph are documented deferrals or
+expository items (Exercise 8.17 Part 2; Exercise 8.15 item 6g; pictures / “discuss” prompts),
+not unfinished numbered proofs. The older **Partial** / **Not Yet** / **Deferred** legend
+described an earlier inventory state.
 
 ### Neighbourhood systems as the uniform substrate
 
@@ -369,18 +375,18 @@ Footprint `[propext, Quot.sound]`.
 
 
 #### Example 1.5
-* **Mathematical Target:** `Δ={0,1,2,3}`, `𝒟 =` all non-empty subsets; `Example15.neighborhoodSystem` (`mem X := X.Nonempty`), `mem_iff_nonempty`
+* **Mathematical Target:** `Δ={0,1,2,3}`, `𝒟 =` all non-empty subsets; `Example15.neighborhoodSystem` (`P4Mem`), `mem_iff_nonempty`, Palomar `P4_embeds`
 * **Lean File:** — (see proof notes)
 
-`Δ = {0,1,2,3}` (`Token := Fin 4`) with `𝒟` = all **non-empty** subsets (`mem X := X.Nonempty`,
+`Δ = {0,1,2,3}` (`Token := Fin 4`) with `𝒟` = all **non-empty** subsets (`P4Mem X := X.Nonempty`,
 `master := Set.univ`). Condition (ii) is immediate and choice-free: a non-empty witness `Z ⊆ X ∩ Y`
-makes `X ∩ Y` non-empty (`obtain ⟨z, hz⟩ := hZ; exact ⟨z, hZsub hz⟩`). **Factoid 1.5a**
+makes `X ∩ Y` non-empty (`P4_inter_mem`). **Factoid 1.5a**
 (`consistent_iff_inter_nonempty`) is Scott's remark that "sets are consistent iff they have a
 non-empty intersection": reusing the `Basic` `Consistent`/`interUpTo` infrastructure, a prefix is
 consistent (`∃ Z, Z.Nonempty ∧ Z ⊆ ⋂`) iff `⋂_{i<n} Xᵢ` is non-empty (`→` shrinks the witness, `←`
 takes the intersection as its own witness). Notably this example needs **no** `fin_cases`/`decide`
 and audits to `[propext]` (system) / `[propext, Quot.sound]` (Factoid 1.5a) — a fully constructive
-contrast to the finite Examples 1.2–1.4.
+contrast to the finite Examples 1.2–1.4. Palomar compares `P4_embeds : neighborhoodSystem ⊴ U`.
 
 
 #### Factoid 1.5a
@@ -1925,11 +1931,11 @@ Lecture VII establishes the recursion-theoretic foundations of domain theory.
 * **Proof Notes:** `Exercise721.lean`, ns `Domain.Neighborhood`, green, wired, zero `sorry`. Headline **Q1** `ℙ(D→E)→(ℙD→ℙE)`: **yes**, the Smyth power-domain lift of evaluation. **`papplyEval V W : ApproximableMap₂ ℙ(funSpace V W) ℙV ℙW`**, `rel Φ A B := ℙfun Φ ∧ ℙD A ∧ ℙE B ∧ ∀G∈Φ,∀X∈A,∃Y∈B, (eval V W).rel G X Y` (two-var analogue of Ex 7.19's `ℙf`). Approximable: `master_rel` (witness `Δ_E`), `inter_right` (`eval.inter_right`+downward-closure `PDmem_down`, witness `Y∩Y'`), `mono`. Made a product map **`papplyB = ofMap₂ papplyEval`** then **curried (Thm 3.12) to the exact type `papply = curry papplyB : ℙ(D→E)→(ℙD→ℙE)`**. **Non-trivial**: `papplyEval_step_witness` — `↓[X₀,Y₀] papply ↓X₀ ↦ ↓Y₀` for any `X₀∈D,Y₀∈E`. **Computable: yes when `eval` is** — `papplyEval_rel_Ypd_iff` reduces (Prop-7.10 codes) to `∀g∈dl Φc,∀x∈dl Ac,∃y∈dl Bc, eval(Pf.X g)(P.X x)(Q.X y)`; r.e. via new choice-free helper **`re_forallG_forallX_existsY`** (`⊆{propext,Quot.sound}`: layers `bExists_decodeList_re` (Ex 7.19) + `REPred.forall_mem_decodeList₂` twice, with 4 primrec re-indexings); base predicate `heval` = Thm 7.5 `evalMap_isComputable` transported through `funPresentation` (`papplyEval_isComputable`). **Discussion (docstring):** **Q2** isos among `(D→ℙE)`, `ℙ(D×E)`, `ℙD×ℙE` — *no in general* (Smyth `ℙ` doesn't distribute over `×`; `ℙ(D×E)→ℙD×ℙE` via `⟨ℙp₀,ℙp₁⟩` forgets correlation, e.g. `{(d₁,e₁),(d₂,e₂)}` vs `{(d₁,e₂),(d₂,e₁)}` share marginals); **Q3** `ℙ(D×E)×ℙ(E×F)→ℙ(D×F)` — *yes*, relational composition `R;S` (Smyth lift, middle witness via Ex-7.19 `comp_witness`), same recipe as `papply`; **Q4** `ℙN` vs `PN` — `ℙN⊴PN` (finitely generated/computable core, `PN` = ideal completion), not isomorphic. Axioms: helper `⊆{propext,Quot.sound}`; all other decls `={propext,Classical.choice,Quot.sound}` (choice Prop-level, inherited from the power domain Prop 7.10, none added — as in 7.19/7.20).
 
 
-Scott's **Exercise 7.22** is split below into sub-rows **7.22a–h**, **7.22i(a)–i(b)**, **7.22j–l**
-(proven blocks first, then open items with plans). Composer sessions **C1–C8**, **C11**, **C12**, **C9a**,
-**C9b1–C9b8**, **C10**, and **C7b** delivered **7.22a–h**, **7.22i(a)**, **7.22i(b)1–8**, **7.22j**,
-and **7.22k**; **7.22l** (Scott's infinite-word equations, as genuine domain least fixed points) is
-also now **Pass**, closing the inventory.
+Scott's **Exercise 7.22** is split below into sub-rows **7.22a–h**, **7.22i(a)–i(b)**, **7.22j–l**.
+Composer sessions **C1–C8**, **C11**, **C12**, **C9a**, **C9b1–C9b8**, **C10**, and **C7b** delivered
+**7.22a–h**, **7.22i(a)**, **7.22i(b)1–8**, **7.22j**, and **7.22k**; **7.22l** (Scott's infinite-word
+equations, as genuine domain least fixed points) is also **Pass**, closing the inventory. Palomar
+compares `Ssys_embeds : Ssys ⊴ U` (`PalomarExamples.lean`).
 
 #### Exercise 7.22a
 * **Mathematical Target:** least-fixed-point family `S` over `{0,1}*` (`InS`)
@@ -2212,7 +2218,7 @@ flowchart LR
 ```
 
 
-Lecture VIII covers retractions, projections, and the construction of the universal domain $U$. The retraction/projection spine (Definitions 8.1/8.3, Proposition 8.2, Example 8.4(a)/(b), Theorem 8.5 in full, **Theorem 8.6 in full — (a)/(b)(i)/(b)(ii)/(c) all Pass**) is formalized below, **Definition 8.7's `U` itself is now built and verified as a genuine `NeighborhoodSystem ℚ`, Pass**, and **Theorem 8.8(a) (`U`'s general/non-effective universality) is now Pass**; **Theorem 8.8(b) (the effective refinement) is now fully Pass, all sub-items (i)–(viii) done**; **Theorem 8.8(c) is now fully Pass, all 6 of 6 parts** (the diagonal fixed-point predicate `DiagFixed` is r.e. given a computable map — `Theorem88h.lean`; a `qChar`-gated primitive-recursive fold whose output is always `DiagFixed` — `Theorem88i.lean`; the induced enumeration `D_X` covers `fixedNbhd a` exactly — `Theorem88j.lean`; `D_X`'s `interEq`/`cons` relations are recursively decidable — `Theorem88k.lean`; a primitive-recursive `.inter` for `D_X` with its `inter_spec` — `Theorem88l.lean`; and the final assembly `fixedNbhd_isEffectivelyGiven`/`theorem_8_8_c` — `Theorem88m.lean`); a few other hard/large items remain deferred.
+Lecture VIII covers retractions, projections, and the construction of the universal domain $U$. Scott prints Theorem 8.8 as one unlettered three-sentence theorem; for inventory and Lean-name purposes only, this narrative calls its sentences 8.8(a), 8.8(b), and 8.8(c). Those labels are editorial, not Scott's. The retraction/projection spine (Definitions 8.1/8.3, Proposition 8.2, Example 8.4(a)/(b), Theorem 8.5 in full, **Theorem 8.6 in full — (a)/(b)(i)/(b)(ii)/(c) all Pass**) is formalized below, **Definition 8.7's `U` itself is now built and verified as a genuine `NeighborhoodSystem ℚ`, Pass**, and **the first sentence of Theorem 8.8 (`U`'s general/non-effective universality) is now Pass**; **the second sentence (the effective refinement) is now fully Pass, all internal sub-items (i)–(viii) done**; **the third sentence is now fully Pass, all 6 internal parts** (the diagonal fixed-point predicate `DiagFixed` is r.e. given a computable map — `Theorem88h.lean`; a `qChar`-gated primitive-recursive fold whose output is always `DiagFixed` — `Theorem88i.lean`; the induced enumeration `D_X` covers `fixedNbhd a` exactly — `Theorem88j.lean`; `D_X`'s `interEq`/`cons` relations are recursively decidable — `Theorem88k.lean`; a primitive-recursive `.inter` for `D_X` with its `inter_spec` — `Theorem88l.lean`; and the final assembly `fixedNbhd_isEffectivelyGiven`/`theorem_8_8_c` — `Theorem88m.lean`); a few other hard/large items remain deferred.
 
 #### Definition 8.1
 * **Mathematical Target:** a *retraction* `a:E→E` with `a∘a=a`
@@ -2269,9 +2275,9 @@ Lecture VIII covers retractions, projections, and the construction of the univer
 * **Lean File:** `Scott1980/Neighborhood/Definition87.lean`
 * **Proof Notes:** **Encoding.** A finite union of intervals is coded by `L:List(ℚ×ℚ)` (`presentedIntervals L:=⋃p∈L,Ico p.1 p.2`); rather than force the per-pair bounds `0≤r<s≤1` into every list operation, `U.mem X:=(∃L,X=presentedIntervals L)∧X.Nonempty∧X⊆Ico 0 1` — presentability plus the two set-level facts Scott's family actually needs. **Closure under `∩` is bookkeeping-free**: pairwise-combining two lists' endpoints via `p.1⊔q.1,p.2⊓q.2` (`combineIntervals`) always presents the intersection (`presentedIntervals_inter`, proved directly from `sup_le`/`lt_inf_iff`/`le_sup_left`/`inf_le_left`-style order facts — no case split on validity, since a crossed bound `⊔≥⊓` just makes `Ico` empty on its own). `master_mem`/`sub_master`/`inter_mem` (`Z.Nonempty.mono hZsub`, `Set.inter_subset_left.trans hXsub`) are then immediate. **Faithfulness** (`U_mem_iff_scott`): the encoding is *not* a relaxation — it is proved equivalent to Scott's literal per-pair-bounded family, by clipping any presenting list to `[0,1)` (`clip p:=(p.1⊔0,p.2⊓1)`, `presentedIntervals_map_clip : presentedIntervals(L.map clip)=presentedIntervals L∩Ico 0 1`) and discarding now-degenerate pairs (`presentedIntervals_filter_lt`, filtering on `decide(p.1<p.2)` doesn't change the union since dropped pairs contributed `∅` already). **Bonus — Scott's remark "`U` has no minimal neighbourhoods"** (`U_no_minimal`): any `U`-neighbourhood `X` splits into two disjoint proper `U`-neighbourhoods by cutting at the rational midpoint `m:=(p.1+p.2)/2` of any witnessing interval `[p.1,p.2)⊆X` (`left_lt_add_div_two`/`add_div_two_lt_right`) — `Y:=X∩Iio m`, `Z:=X∩Ici m` are both presentable (`clipLt`/`clipGe` variants of the same clipping trick), non-empty (`p.1∈Y`, `m∈Z`), disjoint, union to `X`, and each properly smaller than `X` (else the other would collapse into the empty intersection). **Axiom footprint.** Every proof is elementary list recursion plus `ℚ`'s linear order — no `Classical.choice`/`Classical.dec` is used directly — but `#print axioms` reports `[propext,Classical.choice,Quot.sound]` throughout, because the *pinned Mathlib's* bundled `LinearOrder ℚ` (`Rat.instLinearOrder`) is itself `Classical.choice`-tainted at the axiom level in this snapshot: even bare `Rat.le_refl` reports this footprint (confirmed directly), as does the pre-existing `Exercise117.lean`'s `ratIntervalMem_nonempty` despite that file's now-stale "choice-free" docstring claim. This is an upstream `ℚ`-order-hierarchy artifact, not a choice made here.
 
-#### Theorem 8.8(a)
+#### Theorem 8.8, first sentence (editorial label 8.8(a))
 * **Mathematical Target:** for every countable neighbourhood system `D`, `D ⊴ U` (general/non-effective case: `∃ D' : NeighborhoodSystem ℚ, D ≅ᴰ D' ∧ D' ◁ U`)
-* **Lean File:** `Scott1980/Neighborhood/Theorem88.lean` (atom/transfer apparatus) + `Scott1980/Neighborhood/Theorem88a.lean` (assembly, `theorem_8_8_a`)
+* **Lean File:** `Scott1980/Neighborhood/Theorem88.lean` (atom/transfer apparatus) + `Scott1980/Neighborhood/Theorem88a.lean` (assembly, `theorem_8_8_a`; Palomar compared wrapper `theorem_8_8 : D ⊴ U`)
 * **Proof Notes:** Scott's back-and-forth construction, fully assembled. **Atom apparatus** (`Theorem88.lean`): generic `genAtom Z M δ n`/`atomD`, a totalized `splitChoice` packaging `exists_split` (built from **Definition 8.7's `U_no_minimal`**, no interval-difference-closure lemma needed — the three cases are handled entirely by `∅`, `B` itself, or `U_no_minimal`'s output), the recursive `atomU`, and the combined invariant `atomU_invariant` (emptiness-match/`U.mem`-or-∅/pairwise disjointness). `Yseq n` is the union of the depth-`(n+1)` "+"-pieces (`Fin n → Bool`-indexed), shown to satisfy `atomU_eq_genAtom : atomU = genAtom Yseq U.master`. This yields the **general finite-constraint transfer lemma** `transfer_empty_iff` (a listed Boolean-constraint set on `Δ` is non-empty iff the corresponding one on `U.master` is) and its corollaries `transfer_subset_iff`/`transfer_inter_empty_iff`/`transfer_double_subset_iff`/`transfer_inter_eq_iff` (the last upgrading an *equation* `Xᵢ∩Xⱼ=Xₖ` to `Yᵢ∩Yⱼ=Yₖ`, both directions), plus `Yidx`-independent nonemptiness facts `Yseq_nonempty_of_mem`/`Yseq_empty_or_mem`/`Yseq_zero_eq_master`. **Assembly** (`Theorem88a.lean`): the naive "feed `D`'s own enumeration `Xₙ` directly into `Yseq`" **does not work** — `Subsystem.inter_closed` demands that whenever `Yᵢ∩Yⱼ` is merely non-empty as a raw set (which, since `U` is so permissive, is exactly when it's a genuine `U`-neighbourhood), `Xᵢ∩Xⱼ` must *already* be a `D`-neighbourhood, and this can fail for perfectly good `D` where `Xᵢ,Xⱼ` overlap as raw sets without being *witnessed-consistent* (confirmed with an explicit 3-element counterexample `D={Δ,X₁,X₂}` over `Δ={1,2,3}`). This is exactly the gap Scott's own "WLOG `𝒟≅𝒟†`" preparation (Definition 7.9's `↓X∩↓Y=↓(X∩Y)`, empty iff *not consistent*) is for — **implemented here not as a `NeighborhoodSystem` on down-sets but as a reindexing over `ℕ`**: `idxSet e n := {m∣e m⊆e n}` (Scott's `↓(e n)`, but tracked purely by index) is *always non-empty* (`n∈idxSet e n`), matches `e`'s inclusion order exactly (`idxSet_subset_iff`), and `e i∩e j=e m → idxSet e i∩idxSet e j=idxSet e m` is a **definitional** rewriting needing no transfer at all. Feeding `(idxSet e,Set.univ)` into `Yseq` gives `Yidx`, and `embed_subset_iff`/`embed_eq_iff` (from `transfer_subset_iff`) show `e i⊆e j ↔ Yidx e i⊆Yidx e j`. `DprimeU` (`mem Y:=∃n,Y=Yidx e n`) then gets both its own `inter_mem` *and* `DprimeU_subsystem`'s `inter_closed` from a single shared lemma pair `exists_inter_index_of_dmem`/`exists_inter_index_of_nonempty`, which pull a witnessed-consistent pair out of `D`'s own `inter_mem` (using nonemptiness-transfer to *find* the witness when only raw non-emptiness is known) and push the resulting equation `e i∩e j=e m` across to `Yidx e i∩Yidx e j=Yidx e m` via `transfer_inter_eq_iff`. The element-level isomorphism `domainIso : D.Element≃o DprimeU.Element` is a direct pushforward/pullback-filter construction (`toDprimeU`/`toD`, mirroring the codebase's `tokenIso`/`powerIso` idiom), with `embed_eq_iff` resolving index-choice ambiguity. `theorem_8_8_a` supplies the enumeration `e` from `[Countable {S//D.mem S}]` via `exists_surjective_nat`, shifted by one and patched at `0` to enforce `X₀=Δ`. **Axiom footprint:** `#print axioms theorem_8_8_a` reports `[propext,Classical.choice,Quot.sound]` — expected and unavoidable, since this is a genuinely non-constructive `Prop`-level existence statement for an arbitrary countable `D` (`Classical.choice` enters both via `exists_surjective_nat` and `exists_split`'s use of `U_no_minimal`'s witness).
 
 #### Theorem 8.8(b)
@@ -3516,9 +3522,9 @@ bash scripts/build_arxiv_pdf.sh --pdf-only # PDF only when arxiv.tex already cur
 
 * **[Sco69]** D. S. Scott. *Lattice-theoretic models for the $\lambda$-calculus* (Unpublished manuscript). University of Oxford, 1969.
 * **[Sco72]** D. S. Scott. Continuous lattices. In F. W. Lawvere (Ed.), *Toposes, Algebraic Geometry and Logic* (Lecture Notes in Mathematics, Vol. 274, pp. 97–136). Springer, Berlin, Heidelberg, 1972.
-* **[Sco81]** D. S. Scott. *Lectures on a mathematical theory of computation* (Technical Report no. PRG-19). Oxford University Computing Laboratory, 1980.
+* **[Sco81]** D. S. Scott. *Lectures on a mathematical theory of computation* (Technical Monograph PRG-19). Oxford University Computing Laboratory, Programming Research Group, May 1981. Lectures delivered Michaelmas Term 1980.
 * **[Win93]** G. Winskel. *The Formal Semantics of Programming Languages*. MIT Press, 1993.
-* **[ER80]** Catskills Research. *scott1980* (this work). <https://github.com/catskillsresearch/scott1980>.
+* **[ER80]** Lars Warren Ericson. *scott1980* (this work). <https://github.com/catskillsresearch/scott1980>.
 * **[COPE24]** Committee on Publication Ethics (COPE). *Authorship and AI tools: COPE position statement*. 2024. <https://publicationethics.org/guidance/cope-position/authorship-and-ai-tools>
 <!-- AI_MODEL_REFERENCES -->
 <!-- /AI_MODEL_REFERENCES -->

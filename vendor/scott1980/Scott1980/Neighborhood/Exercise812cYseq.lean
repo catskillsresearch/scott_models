@@ -313,22 +313,22 @@ theorem transfer_subset_iffE (i j : ℕ) :
   have key := transfer_empty_iffE E split X Δ hΔ hEmne hsplit (cs := [(i, true), (j, false)])
     (n := max i j + 1)
     (by simp only [List.mem_cons, List.not_mem_nil, or_false]
-        rintro p (rfl | rfl) <;> simp [Nat.lt_succ_iff])
+        rintro p (rfl | rfl) <;> simp)
   have hLHS : {x ∈ Δ | ∀ p ∈ [(i, true), (j, false)], (p.2 = true ↔ x ∈ X p.1)}
       = (Δ ∩ X i) \ X j := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ E.master |
       ∀ p ∈ [(i, true), (j, false)], (p.2 = true ↔ y ∈ YseqE E split X Δ p.1)}
       = (E.master ∩ YseqE E split X Δ i) \ YseqE E split X Δ j := by
     ext y
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   rw [hLHS, hRHS] at key
-  rw [← Set.diff_eq_empty, ← Set.diff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
+  rw [← Set.sdiff_eq_empty, ← Set.sdiff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
     ← Set.not_nonempty_iff_eq_empty, not_iff_not]
   exact key
 
@@ -339,18 +339,18 @@ theorem transfer_inter_empty_iffE (i j : ℕ) :
   have key := transfer_empty_iffE E split X Δ hΔ hEmne hsplit (cs := [(i, true), (j, true)])
     (n := max i j + 1)
     (by simp only [List.mem_cons, List.not_mem_nil, or_false]
-        rintro p (rfl | rfl) <;> simp [Nat.lt_succ_iff])
+        rintro p (rfl | rfl) <;> simp)
   have hLHS : {x ∈ Δ | ∀ p ∈ [(i, true), (j, true)], (p.2 = true ↔ x ∈ X p.1)}
       = Δ ∩ X i ∩ X j := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
       forall_eq_or_imp, forall_eq, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ E.master |
       ∀ p ∈ [(i, true), (j, true)], (p.2 = true ↔ y ∈ YseqE E split X Δ p.1)}
       = E.master ∩ YseqE E split X Δ i ∩ YseqE E split X Δ j := by
     ext y
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
       forall_eq_or_imp, forall_eq, Set.mem_inter_iff]
     tauto
   rw [hLHS, hRHS] at key
@@ -366,24 +366,24 @@ theorem transfer_double_subset_iffE (i j k : ℕ) :
     (cs := [(i, true), (j, true), (k, false)]) (n := max i (max j k) + 1)
     (by simp only [List.mem_cons, List.not_mem_nil, or_false]
         rintro p (rfl | rfl | rfl) <;>
-          simp [Nat.lt_succ_iff,
+          simp [
             (Nat.le_max_left j k).trans (Nat.le_max_right i (max j k)),
             (Nat.le_max_right j k).trans (Nat.le_max_right i (max j k))])
   have hLHS : {x ∈ Δ | ∀ p ∈ [(i, true), (j, true), (k, false)], (p.2 = true ↔ x ∈ X p.1)}
       = (Δ ∩ X i ∩ X j) \ X k := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ E.master |
       ∀ p ∈ [(i, true), (j, true), (k, false)], (p.2 = true ↔ y ∈ YseqE E split X Δ p.1)}
       = (E.master ∩ YseqE E split X Δ i ∩ YseqE E split X Δ j) \ YseqE E split X Δ k := by
     ext y
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   rw [hLHS, hRHS] at key
-  rw [← Set.diff_eq_empty, ← Set.diff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
+  rw [← Set.sdiff_eq_empty, ← Set.sdiff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
     ← Set.not_nonempty_iff_eq_empty, not_iff_not]
   exact key
 
@@ -447,7 +447,7 @@ theorem YseqE_zero_eq_master (h0 : X 0 = Δ) : YseqE E split X Δ 0 = E.master :
     rw [← hspec.2.2.2.1]
     show genAtom X Δ δ 0 \ X 0 = ∅
     rw [show genAtom X Δ δ 0 = Δ from rfl, h0]
-    exact Set.diff_self
+    exact Set.sdiff_self
   have hI : (split (genAtom X Δ δ 0) (atomE E split X Δ δ 0) (X 0)).1 = E.master := by
     have hunion := hspec.2.2.2.2.1
     rw [hJ, Set.union_empty] at hunion

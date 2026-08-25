@@ -54,6 +54,7 @@ def R : NeighborhoodSystem ℚ :=
   NeighborhoodSystem.ofNestedOrDisjoint
     (mem := fun X => ∃ r : ℚ, 0 < r ∧ r ≤ 1 ∧ X = Set.Ico (0 : ℚ) r)
     (master := Set.Ico (0 : ℚ) 1)
+    (master_nonempty := ⟨0, by norm_num⟩)
     (master_mem := ⟨1, one_pos, le_refl 1, rfl⟩)
     (hnd := by
       rintro X Y ⟨r, hr0, hr1, rfl⟩ ⟨s, hs0, hs1, rfl⟩
@@ -460,7 +461,7 @@ theorem not_isCompactElt_pos {β : Type} {F : NeighborhoodSystem β}
   intro hcompact
   set S : Set (Set.Icc (0 : ℝ) 1) := {x | x.1 ∈ Set.Ico (0 : ℝ) t} with hSdef
   have hmem0 : (⟨0, le_refl 0, zero_le_one⟩ : Set.Icc (0 : ℝ) 1) ∈ S := ⟨le_refl 0, htpos⟩
-  haveI : Nonempty S := ⟨⟨_, hmem0⟩⟩
+  have : Nonempty S := ⟨⟨_, hmem0⟩⟩
   set fam : S → F.Element := fun x => g x.1 with hfamdef
   have hdir : ∀ i j : S, ∃ k : S, fam i ≤ fam k ∧ fam j ≤ fam k := by
     rintro ⟨x, hx⟩ ⟨y, hy⟩

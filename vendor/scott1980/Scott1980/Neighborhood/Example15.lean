@@ -6,6 +6,8 @@ Github:  https://github.com/catskillsresearch/scott1980
 -/
 
 import Scott1980.Neighborhood.Basic
+import Mathlib.Data.Countable.Defs
+import Mathlib.Data.Fintype.Powerset
 import Mathlib.Tactic
 
 /-!
@@ -40,19 +42,41 @@ abbrev Token := Fin 4
 /-- The master neighbourhood `Δ = {0, 1, 2, 3}`. -/
 def master : Set Token := Set.univ
 
+/-- Membership: the non-empty subsets of `Δ`. -/
+def P4Mem (X : Set Token) : Prop := X.Nonempty
+
+/-- `Δ` is non-empty. -/
+theorem P4_master_mem : P4Mem master := by
+  rw [master]; exact Set.univ_nonempty
+
+/-- The master token set itself is non-empty. -/
+theorem P4_master_nonempty : master.Nonempty := by
+  exact ⟨0, Set.mem_univ 0⟩
+
+/-- A non-empty witness inside `X ∩ Y` shows the intersection is a neighbourhood. -/
+theorem P4_inter_mem {X Y Z : Set Token} (_hX : P4Mem X) (_hY : P4Mem Y)
+    (hZ : P4Mem Z) (hZsub : Z ⊆ X ∩ Y) : P4Mem (X ∩ Y) :=
+  hZ.mono hZsub
+
+/-- Every neighbourhood is a subset of `Δ`. -/
+theorem P4_sub_master {X : Set Token} (_h : P4Mem X) : X ⊆ master :=
+  Set.subset_univ _
+
 /-- **Example 1.5.** The neighbourhood system of all non-empty subsets of `Δ = {0,1,2,3}`. -/
 def neighborhoodSystem : NeighborhoodSystem Token where
-  mem X := X.Nonempty
+  mem := P4Mem
   master := master
-  master_mem := by rw [master]; exact Set.univ_nonempty
-  sub_master := fun _ => Set.subset_univ _
-  inter_mem := by
-    intro X Y Z _ _ hZ hZsub
-    obtain ⟨z, hz⟩ := hZ
-    exact ⟨z, hZsub hz⟩
+  master_nonempty := P4_master_nonempty
+  master_mem := P4_master_mem
+  inter_mem := P4_inter_mem
+  sub_master := P4_sub_master
 
 /-- The neighbourhoods of Example 1.5 are exactly the non-empty subsets. -/
 theorem mem_iff_nonempty (X : Set Token) : neighborhoodSystem.mem X ↔ X.Nonempty := Iff.rfl
+
+/-- The neighbourhoods of Example 1.5 are a finite family, hence countable. -/
+instance P4_countable : Countable {S : Set Token // neighborhoodSystem.mem S} :=
+  inferInstance
 
 /-- **Factoid 1.5a (Scott 1981, PRG-19).** In Example 1.5, "sets are consistent in `𝒟` iff they
 have a non-empty intersection": a finite prefix `X₀, …, Xₙ₋₁` is consistent exactly when its

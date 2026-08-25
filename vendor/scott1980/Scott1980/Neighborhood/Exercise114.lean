@@ -53,6 +53,7 @@ theorem mem_singleton (n : ℕ) : mem {n} :=
 def neighborhoodSystem : NeighborhoodSystem ℕ where
   mem := mem
   master := Set.univ
+  master_nonempty := Set.univ_nonempty
   master_mem := Or.inl rfl
   inter_mem := by
     intro X Y Z hX hY hZ hZsub

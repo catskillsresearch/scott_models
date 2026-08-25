@@ -90,7 +90,7 @@ def unionMap (V : NeighborhoodSystem α) :
   master_rel := by
     refine ⟨V.PowerDomain.PDmem_master, V.PDmem_master, ?_⟩
     intro S hS X hX
-    simp only [PowerDomain_master, mem_upSet] at hS
+    simp only [mem_upSet] at hS
     exact ⟨V.master, ⟨V.master_mem, subset_rfl⟩, V.sub_master (V.PDmem_mem hS.1 hX)⟩
   inter_right := by
     rintro A B B' ⟨hA, hB, hbody⟩ ⟨-, hB', hbody'⟩

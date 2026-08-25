@@ -6,6 +6,7 @@ Github:  https://github.com/catskillsresearch/scott1980
 -/
 
 import Scott1980.Neighborhood.Exercise722
+import Mathlib.Logic.Encodable.Basic
 
 /-!
 # Exercise 7.22 (Scott 1981, PRG-19, §7) — the regular-event layer
@@ -73,7 +74,7 @@ inductive SExpr : Type
   | single : List Bool → SExpr
   | cat : SExpr → SExpr → SExpr
   | cap : SExpr → SExpr → SExpr
-  deriving DecidableEq
+  deriving DecidableEq, Encodable
 
 /-- The language denoted by an `S`-term. -/
 def denote : SExpr → Set (List Bool)
@@ -180,17 +181,13 @@ theorem inS_iff_exists_denote {X : Set (List Bool)} :
 
 `SExpr` is built from `List Bool` by finitely many constructors, hence countable; so `S`, being the
 range of `denote` (restricted to non-empty denotations), is at most countable — Scott's standing
-"at most a countable infinity of neighbourhoods" (Definition 7.1). We record the range presentation;
-the countability of `SExpr` itself is immediate (a finitely-branching inductive over the countable
-`List Bool`) and not needed below. -/
+"at most a countable infinity of neighbourhoods" (Definition 7.1). -/
 
-/-- The set of `S`-languages is the range of `denote` (on `SExpr`), hence the image of a countable
-type: `S = denote '' {e | (denote e).Nonempty}`. This realises the enumeration backbone of an
-effective presentation; what it does *not* yet supply is the recursive *decidability* of Scott's two
-index relations (see the module docstring). -/
+instance : Countable SExpr := inferInstance
+
 theorem inS_eq_range_denote : {X | InS X} = denote '' {e | (denote e).Nonempty} := by
   ext X
-  simp only [Set.mem_setOf_eq, Set.mem_image]
+  simp only [Set.mem_ofPred_eq, Set.mem_image]
   constructor
   · intro h
     obtain ⟨e, he⟩ := InS_exists_denote h

@@ -54,6 +54,7 @@ theorem wayBelowUp_anti {a b : D} (hab : a ≤ b) :
 def toNeighborhoodSystem : NeighborhoodSystem D where
   mem X := ∃ a : D, X = wayBelowUp a
   master := Set.univ
+  master_nonempty := ⟨⊥, Set.mem_univ _⟩
   master_mem := ⟨⊥, wayBelowUp_bot.symm⟩
   inter_mem := by
     intro X Y _Z hX hY _hZ _hZsub

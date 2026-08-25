@@ -65,7 +65,7 @@ theorem nestedOrDisjoint : NestedOrDisjoint mem := by
 
 /-- **Exercise 1.12.** The final-segment neighbourhood system on `ℕ` (master `Δ = tail 0 = ℕ`). -/
 def neighborhoodSystem : NeighborhoodSystem ℕ :=
-  ofNestedOrDisjoint mem (tail 0) ⟨0, rfl⟩ nestedOrDisjoint
+  ofNestedOrDisjoint mem (tail 0) ⟨0, Nat.zero_le 0⟩ ⟨0, rfl⟩ nestedOrDisjoint
     (fun {X} hX => by obtain ⟨n, rfl⟩ := hX; exact tail_subset_iff.mpr (Nat.zero_le n))
 
 @[simp] theorem ns_mem {X : Set ℕ} : neighborhoodSystem.mem X ↔ ∃ n, X = tail n := Iff.rfl

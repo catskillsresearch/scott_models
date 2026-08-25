@@ -71,6 +71,7 @@ def liftTok (D : NeighborhoodSystem Str) (_hD : ∀ X, D.mem X → X.Nonempty) :
     NeighborhoodSystem Str where
   mem W := W = liftTokMaster D ∨ ∃ X, D.mem X ∧ W = embBit false X
   master := liftTokMaster D
+  master_nonempty := ⟨[], nil_mem_liftTokMaster⟩
   master_mem := Or.inl rfl
   sub_master := by
     rintro W (rfl | ⟨X, hX, rfl⟩)

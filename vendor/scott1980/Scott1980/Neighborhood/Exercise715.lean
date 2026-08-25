@@ -759,6 +759,7 @@ def osum : NeighborhoodSystem (Option (α ⊕ β)) where
   mem W := W = sumMaster V₀ V₁ ∨ (∃ X, V₀.mem X ∧ X ≠ V₀.master ∧ W = inj₀ X) ∨
     (∃ Y, V₁.mem Y ∧ Y ≠ V₁.master ∧ W = inj₁ Y)
   master := sumMaster V₀ V₁
+  master_nonempty := ⟨none, none_mem_sumMaster⟩
   master_mem := Or.inl rfl
   sub_master := by
     rintro W (rfl | ⟨X, hX, -, rfl⟩ | ⟨Y, hY, -, rfl⟩)

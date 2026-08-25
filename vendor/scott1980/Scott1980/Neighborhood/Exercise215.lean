@@ -64,7 +64,8 @@ theorem subMaster_O : ∀ {X : Set (Fin 1)}, memO X → X ⊆ Set.univ := fun _ 
 
 /-- **Exercise 2.15 — the one-token system `𝒪 = {Δ, ∅}`.** -/
 def O : NeighborhoodSystem (Fin 1) :=
-  NeighborhoodSystem.ofNestedOrDisjoint memO Set.univ (Or.inl rfl) nestedOrDisjoint_O subMaster_O
+  NeighborhoodSystem.ofNestedOrDisjoint memO Set.univ Set.univ_nonempty
+    (Or.inl rfl) nestedOrDisjoint_O subMaster_O
 
 @[simp] theorem O_mem {X : Set (Fin 1)} : O.mem X ↔ memO X := Iff.rfl
 @[simp] theorem O_master : O.master = (Set.univ : Set (Fin 1)) := rfl
@@ -206,7 +207,7 @@ def mapToOpen (f : ApproximableMap V O) : Set V.Element := {x | f.toElementMap x
 theorem isOpen_mapToOpen (f : ApproximableMap V O) : IsOpen (mapToOpen V f) := by
   have heq : mapToOpen V f = (fun x => f.toElementMap x) ⁻¹' O.basicOpen ∅ := by
     ext x
-    simp only [mapToOpen, Set.mem_setOf_eq, Set.mem_preimage, mem_basicOpen]
+    simp only [mapToOpen, Set.mem_ofPred_eq, Set.mem_preimage, mem_basicOpen]
     exact (mem_empty_iff_eq_top (f.toElementMap x)).symm
   rw [heq]
   exact (O.isOpen_basicOpen ∅).preimage f.continuous_toElementMap
@@ -214,7 +215,7 @@ theorem isOpen_mapToOpen (f : ApproximableMap V O) : IsOpen (mapToOpen V f) := b
 /-- **Exercise 2.15 — round trip (open → map → open).** `mapToOpen (openToMap U hU) = U`. -/
 theorem mem_mapToOpen_openToMap (U : Set V.Element) (hU : IsOpen U) (x : V.Element) :
     x ∈ mapToOpen V (openToMap V U hU) ↔ x ∈ U := by
-  rw [mapToOpen, Set.mem_setOf_eq, ← mem_empty_iff_eq_top,
+  rw [mapToOpen, Set.mem_ofPred_eq, ← mem_empty_iff_eq_top,
     ApproximableMap.toElementMap_mem_iff_principal]
   constructor
   · rintro ⟨X, hxX, hmem⟩
@@ -233,7 +234,7 @@ theorem openToMap_mapToOpen (f : ApproximableMap V O) :
   apply ApproximableMap.eq_of_toElementMap_principal
   intro X hX
   apply O_ext
-  rw [toElementMap_openToMap_principal_mem_empty, mapToOpen, Set.mem_setOf_eq,
+  rw [toElementMap_openToMap_principal_mem_empty, mapToOpen, Set.mem_ofPred_eq,
     ← mem_empty_iff_eq_top]
 
 /-- **Exercise 2.15 (main).** The open subsets of `|𝒟|` are in one-one correspondence with the

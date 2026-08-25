@@ -96,8 +96,9 @@ noncomputable def roundFilter_infoSys_iso :
     RoundFilter (D := D) ≃o RoundInfoSysElement (D := D) where
   toFun := fun f =>
     ⟨(wayBelowNbhdBasis (D := D)).domainOrderIso f.1, by
+      let f' : (wayBelowNbhdBasis (D := D)).system.Element := f.1
       change IsRound ((wayBelowNbhdBasis (D := D)).domainOrderIso.symm
-        ((wayBelowNbhdBasis (D := D)).domainOrderIso f.1))
+        ((wayBelowNbhdBasis (D := D)).domainOrderIso f'))
       rw [OrderIso.symm_apply_apply]
       exact f.2⟩
   invFun := fun e =>

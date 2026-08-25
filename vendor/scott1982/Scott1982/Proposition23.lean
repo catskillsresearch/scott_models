@@ -24,10 +24,6 @@ namespace InfoSys
 
 variable {α : Type*} [DecidableEq α] (sys : InfoSys α)
 
-/-- Empty set is consistent (subset of any singleton). -/
-theorem con_empty : (∅ : Finset α) ∈ sys.Con :=
-  sys.con_subset (sys.con_sing sys.bot) (Finset.empty_subset _)
-
 /-- `u ∪' insert a t = insert a (u ∪' t)`. -/
 theorem funion_insert (u : Finset α) (a : α) (t : Finset α) :
     u ∪' insert a t = insert a (u ∪' t) := by
@@ -90,7 +86,7 @@ theorem proposition_2_3_ii {u v : Finset α} (hu : u ∈ sys.Con) (h : sys.EntSe
     refine Finset.induction_on s ?_ ?_
     · intro _
       -- foldr insert u 0 = u
-      simpa [funion, Multiset.foldr] using hu
+      simpa [funion_empty_right] using hu
     · intro a t _ha ih hmem
       have hEnt_u_a : sys.Ent u a := h a (hmem a (Finset.mem_insert_self a t))
       have hut : u ∪' t ∈ sys.Con := ih fun x hx => hmem x (Finset.mem_insert_of_mem hx)

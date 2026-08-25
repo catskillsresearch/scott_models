@@ -228,7 +228,22 @@ lives in each sibling's `arxiv.md`.
 - Re-run the script before submitting; a non-empty diff fails Palomar even if
   `lake build` is green.
 
-### 2026-08-20 — vendor/ the three paper repos
+### 2026-08-24 — re-vendor sibling paper repos
+
+- Copied latest `../scott1972|1980|1982` into `vendor/` (no `.git` / `.lake`);
+  updated `vendor/FROZEN.txt` at frozen SHAs (2026-08-24).
+- `scott1980`: `NeighborhoodSystem` now requires `master_nonempty`; bridge
+  `toNeighborhoodSystem` in `InfoSysToNeighborhood` and
+  `ContinuousLatticeToNeighborhood` updated.
+- `scott1982`: upstream `Factoid81` at the frozen SHA is Scott-faithful only;
+  restored the bridge patch (`TreeEntPayload` kernel disjuncts,
+  `TreeCon_insert_bot`) in `vendor/scott1982/Scott1982/Factoid81.lean` for
+  `SexDomainEquation.lean` (noted in `FROZEN.txt`).
+- `scott1972`: universe annotations on `IsContinuousLattice` / `WayBelow` /
+  `ScottOpen`; `Challenge.lean` + compare-script normalize aligned.
+- `lake build ScottModels Challenge Solution` green; compare script OK.
+
+---
 
 - Copied `../scott1972|1980|1982` into `vendor/` at the frozen HEADs (no `.git` /
   `.lake`). `lakefile.toml` path deps are in-tree. `PROVENANCE.md` + YAML +
@@ -324,3 +339,28 @@ lives in each sibling's `arxiv.md`.
   stay `background`.
 - First-Lean-treatment language is only in `limitations` as a search
   note, not a provenance claim. `arxiv.md` §1 says the same.
+
+### 2026-08-24 — Lean 4.33 standalone-vendor and bridge compatibility
+
+- Verified each vendored package independently with its own Lake project:
+  `vendor/scott1972` (962 jobs), `vendor/scott1980` (3275 jobs), and
+  `vendor/scott1982` (1118 jobs) all build green under Lean 4.33.0.
+- Refreshed the stale `vendor/scott1982/lake-manifest.json` from Mathlib
+  v4.33.0. Compatibility patches replace brittle reduction/simp proofs in
+  `Proposition23`, `Theorem72`, `Factoid82`, `Fixpoint`, and `Factoid77`;
+  the last uses explicit transports between Mathlib's categorical tensor
+  object and Scott's concrete product system.
+- Adapted bridges only after the standalone builds: explicit master-set
+  transport in `InfoSysToNeighborhood`, robust classify/assemble proofs in
+  `InfoSysConstructions`, explicit basis-element typing in
+  `PresentationDomains`, and an explicit `if_neg` proof in
+  `SexDomainEquation`.
+- `lake build ScottModels Challenge Solution` is green; no `sorry` occurs
+  under `ScottModels/`; the Palomar comparator reports matching types.
+- Axiom audit note: Mathlib 4.33's `Finset.instSetLike` and
+  `Finset.instPartialOrder` depend on `Classical.choice`, so every
+  InfoSys-facing declaration now inherits
+  `{propext, Classical.choice, Quot.sound}` at the kernel level. The
+  product/function/presentation compatibility proofs do not themselves
+  select witnesses; `arxiv.md` §4 distinguishes this inherited instance
+  frontier from genuine classical classification.

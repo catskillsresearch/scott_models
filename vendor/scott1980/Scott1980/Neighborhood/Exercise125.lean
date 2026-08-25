@@ -65,6 +65,7 @@ def finalSegmentSystem (Δ : Type*) [LinearOrder Δ] [Nonempty Δ] : Neighborhoo
   NeighborhoodSystem.ofNestedOrDisjoint
     (fun X => X.Nonempty ∧ IsUpperSet X)
     Set.univ
+    Set.univ_nonempty
     ⟨Set.univ_nonempty, isUpperSet_univ⟩
     (fun _ _ hX hY => (upperSet_subset_or hX.2 hY.2).imp_right Or.inl)
     (fun _ => Set.subset_univ _)

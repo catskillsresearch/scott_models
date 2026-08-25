@@ -573,6 +573,7 @@ def singletonSys (Γ : Set Str) (h : Γ.Nonempty) : ScottSys where
   sys :=
     { mem := fun X => X = Γ
       master := Γ
+      master_nonempty := h
       master_mem := rfl
       inter_mem := by
         intro X Y Z hX hY _ _

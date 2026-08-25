@@ -108,7 +108,9 @@ end Scott1980.Neighborhood
 
 namespace Scott1982
 
-structure InfoSys (α : Type*) [DecidableEq α] where
+universe u
+
+structure InfoSys (α : Type u) [DecidableEq α] where
   bot : α
   Con : Set (Finset α)
   Ent : Finset α → α → Prop
@@ -125,7 +127,7 @@ namespace InfoSys
 set_option linter.unusedSectionVars false
 
 section Element
-variable {α : Type*} [DecidableEq α] (sys : InfoSys α)
+variable {α : Type u} [DecidableEq α] (sys : InfoSys α)
 
 structure Element where
   carrier : Set α
@@ -150,8 +152,6 @@ noncomputable def closure (u : Finset α) (hu : u ∈ sys.Con) : sys.Element :=
   sorry
 
 end Element
-
-universe u
 
 /-- Tokens of the tree / S-expression system (Scott 1982, Factoid 8.1). -/
 inductive TreeToken (α : Type u) where
@@ -253,7 +253,9 @@ end Scott1982
 
 namespace Scott1972.ContinuousLattice
 
-variable {D : Type*} [CompleteLattice D]
+universe u
+
+variable {D : Type u} [CompleteLattice D]
 
 def ScottOpen (U : Set D) : Prop :=
   IsUpperSet U ∧
@@ -265,7 +267,7 @@ def WayBelow (x y : D) : Prop :=
 
 @[inherit_doc] scoped infix:50 " ≪ " => WayBelow
 
-def IsContinuousLattice (D : Type*) [CompleteLattice D] : Prop :=
+def IsContinuousLattice (D : Type u) [CompleteLattice D] : Prop :=
   ∀ y : D, IsLUB {x | x ≪ y} y
 
 end Scott1972.ContinuousLattice

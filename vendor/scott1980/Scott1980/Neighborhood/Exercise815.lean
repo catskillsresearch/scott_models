@@ -146,6 +146,7 @@ intersection combines the two witnessing sub-selections via `combineSub`. -/
 def finGenSys (js : List ℕ) : NeighborhoodSystem α where
   mem Y := Y ∈ finGen P js
   master := D.master
+  master_nonempty := D.master_nonempty
   master_mem := master_mem_finGen P js
   inter_mem := by
     rintro X Y Z ⟨sub1, h1, hDX, hX⟩ ⟨sub2, h2, hDY, hY⟩ ⟨sub3, h3, hDZ, hZ⟩ hZsub
@@ -270,6 +271,7 @@ representing finitely generated subsystems of `D`); neighbourhoods are the princ
 def SubD (P : ComputablePresentation D) : NeighborhoodSystem (List ℕ) where
   mem N := ∃ js, N = nbhdGen P js
   master := nbhdGen P []
+  master_nonempty := ⟨[], self_mem_nbhdGen P []⟩
   master_mem := ⟨[], rfl⟩
   inter_mem := by
     rintro N1 N2 N3 ⟨js1, rfl⟩ ⟨js2, rfl⟩ ⟨js3, rfl⟩ _
@@ -320,6 +322,7 @@ def ofSubsystem (D' : NeighborhoodSystem α) (hD' : D' ◁ D) : (SubD P).Element
 def toSubsystemSys (x : (SubD P).Element) : NeighborhoodSystem α where
   mem Y := ∃ js, x.mem (nbhdGen P js) ∧ Y ∈ finGen P js
   master := D.master
+  master_nonempty := D.master_nonempty
   master_mem := ⟨[], x.master_mem, master_mem_finGen P []⟩
   inter_mem := by
     rintro X Y Z ⟨js1, hx1, hX⟩ ⟨js2, hx2, hY⟩ ⟨js3, _, hZ⟩ hZsub

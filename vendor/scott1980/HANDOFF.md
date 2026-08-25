@@ -52,7 +52,7 @@ closed too, see the dated checkpoints at the end of this file. **Every row in `a
 You are a Lean 4 proof engineer formalizing Dana Scott's 1981 *Lectures on a Mathematical Theory of
 Computation* (PRG-19) in:
 
-`/home/catskills/Desktop/domain_theory` — mathlib `v4.30.0`, Lean toolchain per `lean-toolchain`.
+`/home/catskills/Desktop/scott1980` — mathlib `v4.33.0`, Lean toolchain per `lean-toolchain`.
 
 ## Resume Protocol (read this first)
 
@@ -66,7 +66,14 @@ A session may begin after a context reset; chat memory is not durable, these fil
 4. Build with `lake build Domain` (filter output: `| grep -vE 'LEAN_PATH|trace:' | tail`).
 5. Follow `.cursor/rules/handoff-discipline.mdc` (choice discipline, axiom audits, and the
    end-of-item checklist that keeps this file + `arxiv.md` current).
-6. **Exercise 7.22 (split inventory): COMPLETE.** grep `Exercise 7.22` in `arxiv.md`: rows
+6. **Palomar compared claim** is `theorem_8_8 : D ⊴ U` (the first
+   sentence of Scott's unlettered Theorem 8.8) plus two new formal
+   corollaries: Example 1.5 `P4_embeds` and Exercise 7.22 `Ssys_embeds`.
+   Scott does not separately state those embeddings. Informal surfaces
+   must not attribute the editorial labels 8.8(a)/(b)/(c) to Scott.
+   `NeighborhoodSystem.master_nonempty` now enforces Scott's standing
+   non-empty-token-set `Δ` assumption at the structure level.
+7. **Exercise 7.22 (split inventory): COMPLETE.** grep `Exercise 7.22` in `arxiv.md`: rows
    **7.22a–h**, **7.22i(a)**, **7.22i(b)1(a–e)**, **7.22i(b)2–8**, the **7.22i(b)** umbrella,
    **7.22j**, **7.22k**, and **7.22l** are **all Pass**. `Ssys_cons_computable`/
    `Ssys_interEq_computable`: Definition 7.1 (i)/(ii) recursively decidable. `streamArrow`/
@@ -13328,16 +13335,165 @@ produces `arxiv.pdf` / `view.pdf`. Lean appendix follows scott1972: `\section{Co
 source}` then one `\subsection{Scott1980/...File.lean}` per module (import order), with the
 green "Lean 4 source" listing header. `generate_arxiv_with_code.py` rewritten accordingly.
 
-## 2026-08-17: flattened `proof.lean` (all 235 Scott1980 modules)
+## 2026-08-17: flattened `proof.lean` export (all 235 Scott1980 modules)
 
-Generated a single-file dump of every Lean 4 module under `Scott1980/`:
+**`scripts/flatten_to_proof.py`** concatenates every module under `Scott1980/` into
+one **`proof.lean`** at the repo root — for LLM export when the consumer cannot
+browse the multi-file tree locally. Mathlib imports hoisted; internal
+`import Scott1980.*` stripped; dependency order (Kahn sort,
+`Scott1980.lean` listing as tie-break).
 
-- **`proof.lean`** — 235 modules, 86 823 lines; Mathlib imports hoisted; internal
-  `import Scott1980.*` stripped; bodies concatenated in import-dependency order
-  (Kahn sort, `Scott1980.lean` listing as tie-break). Starts at `Basic.lean`,
-  ends at `Exercise827.lean`.
-- **`scripts/flatten_to_proof.py`** — regenerator. Listed in `.cursorignore`
-  (duplicate of the whole library; not a source of truth). Not wired into
-  `lakefile.toml` / `lake build Scott1980`.
+- **Not committed** (`proof.lean` / `proof.lean.*` are in `.gitignore` and
+  `.cursorignore`; stale copies should be purged, not versioned).
+- **Not** wired into `lakefile.toml` / `lake build Scott1980`.
 
 **Command:** `python3 scripts/flatten_to_proof.py`
+
+## 2026-08-23: purge committed `proof.lean`; keep flatten script only
+
+Removed the tracked 86k-line `proof.lean` and deleted stale `proof.lean.txt`.
+The export script stays; regenerate `proof.lean` on demand for LLM handoff.
+
+## 2026-08-23: Lean / mathlib bump `v4.30.0` → `v4.33.0`
+
+Pinned to the newest toolchain already downloaded (`elan toolchain list`:
+`v4.30.0`, `v4.31.0`, `v4.32.2`, **`v4.33.0`**).
+
+- `lean-toolchain`, `lakefile.toml` `rev`, `lake-manifest.json` (`mathlib`
+  `db584cd…`, `inputRev: v4.33.0`), `README.md`, and this file's Resume
+  Protocol path/version line.
+- `lake update` + cache hit (8689 files); `lake build Scott1980` green
+  (3263 jobs).
+- Lean 4.33 is stricter at **implicit transparency** (`rw`/`simpa`/`calc`/`dsimp`).
+  Fixes: wrapper `def` → `abbrev` (`N`, `C`, `Cn`, `L`, `Dsharp`, `PowerDomain`,
+  `Dom.arrow`, `tStr`, `TexpF`/`gFunctor`/`ExpAlg`, `colimAlg`, `Tc`/`Calg`/`Cobj`,
+  `Tsig`/`Cnalg`/…); named `Monotone` proofs; `PFun`/`ℕ →. Bool` packaged as
+  `rfindZeroPred`; `dsimp only` no-ops deleted or replaced by `simp [tag]`;
+  `exact`/`change` instead of `simpa` where types only matched after unfolding.
+
+**Command:** `lake build Scott1980`
+
+## 2026-08-23: Lean 4.33 deprecation / linter sweep
+
+`lake build Scott1980` is green with **zero** `warning:` / `error:` lines after a
+clean rebuild of the Scott1980 oleans.
+
+- Deprecated Set lemmas: `mem_setOf_eq` → `mem_ofPred_eq`, `mem_diff` →
+  `mem_sdiff`, `diff_*` → `sdiff_*`, plus `union_sdiff_distrib` /
+  `inter_union_sdiff`.
+- `push_neg` → `push Not`; `Mathlib.Data.Real.Archimedean` →
+  `Mathlib.Algebra.Order.Archimedean.Real.Basic`.
+- `haveI`/`letI` → `have`/`let`; `def` of `Prop`s → `theorem` (`Dceq`,
+  `Dchain`, `colimCeq`, `succChainDir`, `expSub`).
+- Unused `simp` args, unused binders, unused section `[Fintype σ]`
+  (`omit` in `Exercise722Decide`), and a dead `all_goals try omega`.
+
+## 2026-08-23: Palomar infrastructure (Theorem 8.8)
+
+Added the cardb / scott1972 Challenge–Solution layout. Compared claim is
+Scott's Theorem 8.8 (general half): every countable neighbourhood system
+embeds as a subdomain of `𝒰` (`theorem_8_8 : D ⊴ U`), wrapping
+`theorem_8_8_a`.
+
+- `Challenge.lean` (Mathlib-only, 155 lines), `Solution.lean`,
+  `comparator.json`, `formalization.yaml`, `PROVENANCE.md`.
+- Locked `U` via named proof fields `UMem` / `UMaster` / `U_master_mem` /
+  `U_inter_mem` / `U_sub_master`; element order via `element_le_*`.
+- `scripts/palomar_preflight.sh` green: types match, no `._proof_N`,
+  axioms `⊆ {propext, Classical.choice, Quot.sound}`.
+- CI now runs the preflight. Challenge `sorry`s are the deliberate holes.
+
+## 2026-08-23: Palomar preflight sync from scott1972
+
+Copied the updated Comparator style notes and transitive-body dump from
+`scott1972`. Compare script now `#print`s every `definition_names` entry
+plus extras; preflight step title matches. Kept the axiom-free
+`#print axioms` parse (`element_le_refl` / `element_le_trans` have none).
+`scripts/palomar_preflight.sh` still green.
+
+## 2026-08-23: Palomar package review hardening
+
+Responded to a submit-file audit. Compared theorem unchanged (`theorem_8_8`).
+
+- Informal surfaces now say Palomar is **only** Scott's first 8.8 sentence.
+- `arxiv.md` no longer claims "every element / all exercises / avoid LEM /
+  first model"; Exercise 8.17 Part 2 is the documented deferral.
+- Year labeling: 1980 lectures, May 1981 PRG-19. Author: Lars Warren Ericson.
+- `NOTICE` + `sources/README.md`: Scott's monograph is not Apache-2.0.
+- `sources/PRG19.md` `verification_status: verified` for compared passages.
+- Locked `element_le` so the element-order relation is a compared definition.
+- Rebuilt `arxiv.pdf` / `view.pdf` (1824 pages, 2026-08-23) so the tracked
+  PDFs include the Palomar package notes. Preflight still green.
+
+## 2026-08-23: Palomar examples (1.5 + 7.22)
+
+Added two concrete countable systems to the Palomar Challenge so the
+universal-domain claim has inhabitants, not only the abstract
+`theorem_8_8`. Challenge is 236 lines (dedicated rendered page; still
+human-auditable). Preflight green.
+
+- Example 1.5: named `P4Mem` / `P4_*` proof fields, `P4_countable`,
+  compared `P4_embeds : neighborhoodSystem ⊴ U`.
+- Exercise 7.22: named `Ssys_*` proof fields (no inline `ofPositive`),
+  Challenge syntax `SExpr`/`InS`/`concat`, compared `Ssys_embeds`.
+- `Ssys_countable` lives in `PalomarExamples.lean` (uses `Classical.choice`
+  via `Surjective.countable`); Regular stays choice-free.
+- `Solution.lean` imports `PalomarExamples`. Comparator locks the new
+  named proof theorems plus `concat` / `Ssys` / `P4Mem` /
+  `neighborhoodSystem`. Instances and inductives are not locked.
+
+## 2026-08-23: Palomar titles say 8.8(a) / `D ⊴ U`
+
+Renamed Palomar-facing titles that said bare "Theorem 8.8" so they
+claim only the first sentence: yaml `project.name` is now
+`Scott 1981 — D ⊴ U (Theorem 8.8(a))`; Challenge heading and
+`theorem_8_8` docstring, README table, PROVENANCE, Solution,
+`sources/README.md`, and the arxiv Palomar heading match. Library
+inventory rows for 8.8(b)/(c) are unchanged.
+
+## 2026-08-23: Palomar source `type` vocabulary
+
+`formalization.yaml` source types are now Palomar's closed set
+(`paper` for PRG-19, `other` for the author's write-up). `article` is
+a mechanical hard fail. Official
+`PalomarTemplate/scripts/validate-formalization.rb` reports no TEMPLATE
+values. Ordinary layout files present; Lean `v4.33.0` ≥ Palomar minimum
+`v4.28.0`.
+
+## 2026-08-23: corrected Palomar source nomenclature
+
+Editorial review found that Scott prints one unlettered, three-sentence
+Theorem 8.8; “8.8(a)” is this project's internal label, not Scott's.
+All Palomar-facing titles and source locations now say “first sentence
+of Theorem 8.8.” `Challenge.lean`, `formalization.yaml`, `Solution.lean`,
+README/PROVENANCE/source docs, `Theorem88a.lean`, and the top-level
+`arxiv.md` presentation were corrected. The two example embeddings are
+explicitly identified as new formal corollaries, not separately stated
+source claims. The YAML abstract now states the universality result's
+significance and audience. Full `scripts/palomar_preflight.sh` is green;
+the official Palomar YAML validator reports no TEMPLATE values.
+
+## 2026-08-24: Palomar v2 review feedback resolved
+
+Implemented both non-blocking findings from Palomar's accepted v1 review.
+
+- **Complete Comparator scope is public.** README, Challenge/Solution,
+  PROVENANCE, `arxiv.md`, source notes, and every relevant
+  `formalization.yaml` field now distinguish the principal sourced
+  `theorem_8_8` from the additionally compared new formal corollaries
+  `P4_embeds` and `Ssys_embeds`; 8.8's other two sentences remain
+  library-only.
+- **Scott's non-empty `Δ` assumption is structural.** Added
+  `NeighborhoodSystem.master_nonempty : master.Nonempty` in
+  `Basic.lean` and the independent Challenge copy. Migrated every
+  neighbourhood-system constructor across the library without adding
+  choice. Helper constructors now require a non-empty master; `npow`
+  requires `0 < n`; indexed products/smashes require a non-empty index
+  type.
+- Comparator now explicitly selects `UMaster_nonempty`,
+  `P4_master_nonempty`, and `Ssys_master_nonempty` (19 theorem targets,
+  13 definition targets).
+- Full `bash scripts/palomar_preflight.sh` passes: 3267-job build,
+  Challenge/Solution type and transitive-value comparison, zero Solution
+  `sorry`, and permitted-axiom audit. Official Palomar YAML validation
+  reports no TEMPLATE values; `git diff --check` is clean.

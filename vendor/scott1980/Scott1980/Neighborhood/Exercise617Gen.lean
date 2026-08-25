@@ -110,8 +110,9 @@ theorem nestedOrDisjointN : NestedOrDisjoint (memCn (A := A)) := by
       exact h h2
 
 /-- **The generic domain `Cₐ`** of finite-or-infinite `A`-sequences. -/
-def Cn (A : Type) [DecidableEq A] : NeighborhoodSystem (Strn A) :=
-  NeighborhoodSystem.ofNestedOrDisjoint memCn Set.univ (Or.inl ⟨[], coneN_nil.symm⟩) nestedOrDisjointN
+abbrev Cn (A : Type) [DecidableEq A] : NeighborhoodSystem (Strn A) :=
+  NeighborhoodSystem.ofNestedOrDisjoint memCn Set.univ
+    ⟨[], Set.mem_univ _⟩ (Or.inl ⟨[], coneN_nil.symm⟩) nestedOrDisjointN
     (fun _ => Set.subset_univ _)
 
 @[simp] theorem Cn_mem {X : Set (Strn A)} : (Cn A).mem X ↔ memCn X := Iff.rfl
@@ -125,10 +126,10 @@ theorem Cn_nonempty : ∀ X, (Cn A).mem X → X.Nonempty := by
   · exact ⟨σ, rfl⟩
 
 /-- The partial element `σ⊥ = ↑σA*`. -/
-def strBotN (σ : Strn A) : (Cn A).Element := (Cn A).principal (memCn_coneN σ)
+def strBotN (σ : Strn A) : (Cn A).Element := (Cn A).principal (Cn_mem.mpr (memCn_coneN σ))
 
 /-- The total element `σ = ↑{σ}`. -/
-def strElemN (σ : Strn A) : (Cn A).Element := (Cn A).principal (memCn_singleton σ)
+def strElemN (σ : Strn A) : (Cn A).Element := (Cn A).principal (Cn_mem.mpr (memCn_singleton σ))
 
 /-! ### Prepending a letter: the successors `x ↦ a·x`. -/
 
@@ -348,6 +349,7 @@ def sumSig (A : Type) [DecidableEq A] (V : NeighborhoodSystem β)
     NeighborhoodSystem (SigTok A β) where
   mem W := W = masterSig V ∨ W = jU ∨ ∃ a X, V.mem X ∧ W = jc a X
   master := masterSig V
+  master_nonempty := ⟨none, none_mem_masterSig⟩
   master_mem := Or.inl rfl
   sub_master := by
     rintro W (rfl | rfl | ⟨a, X, hX, rfl⟩)
@@ -695,7 +697,7 @@ end SumMapSig
 /-! ## The endofunctor `Tsig(X) = 𝟙 + Σ_a X` on the `∅`-free category. -/
 
 /-- `Tsig` on objects: `Tsig(D) = 𝟙 + Σ_a D`, again `∅`-free (`sumSig_nonempty`). -/
-def tsigObj (A : Type) [DecidableEq A] (D : StrictDomainObj.{0}) : StrictDomainObj.{0} where
+abbrev tsigObj (A : Type) [DecidableEq A] (D : StrictDomainObj.{0}) : StrictDomainObj.{0} where
   carrier := SigTok A D.carrier
   sys := sumSig A D.sys D.nonempty
   nonempty := sumSig_nonempty
@@ -713,11 +715,11 @@ def tsigMapHom (A : Type) [DecidableEq A] {D E : StrictDomainObj.{0}} (f : Categ
     (tsigMapHom A f).1 = sumMapSig (A := A) (h₀ := D.nonempty) (h₁ := E.nonempty) f.1 := rfl
 
 /-- **The functor `Tsig(X) = 𝟙 + Σ_{a:A} X`** on the category of `∅`-free domains and strict maps. -/
-def Tsig (A : Type) [DecidableEq A] : Endofunctor StrictDomainObj.{0} where
+abbrev Tsig (A : Type) [DecidableEq A] : Endofunctor StrictDomainObj.{0} where
   obj := tsigObj A
   map := tsigMapHom A
-  map_id D := Subtype.ext sumMapSig_id
-  map_comp {D E F} g f := Subtype.ext (sumMapSig_comp g.1 f.1)
+  map_id _ := Subtype.ext sumMapSig_id
+  map_comp {_ _ _} g f := Subtype.ext (sumMapSig_comp g.1 f.1)
 
 @[simp] theorem Tsig_obj (A : Type) [DecidableEq A] (D : StrictDomainObj.{0}) :
     (Tsig A).obj D = tsigObj A D := rfl
@@ -1131,17 +1133,17 @@ section Algebra
 variable {A : Type} [DecidableEq A] [Inhabited A]
 
 /-- `Cₐ` as an object of the `∅`-free category. -/
-def Cnobj (A : Type) [DecidableEq A] : StrictDomainObj.{0} := ⟨Strn A, Cn A, Cn_nonempty⟩
+abbrev Cnobj (A : Type) [DecidableEq A] : StrictDomainObj.{0} := ⟨Strn A, Cn A, Cn_nonempty⟩
 
 @[simp] theorem Cnobj_sys (A : Type) [DecidableEq A] : (Cnobj A).sys = Cn A := rfl
 
 /-- **The `Tsig`-algebra structure on `Cₐ`.** The structure map `i : 𝟙+Σ_a Cₐ → Cₐ` is the inverse of
 the domain-equation isomorphism `ccEquiv`, strict by `isStrict_ofIso`. -/
-def cnStr : Category.Hom ((Tsig A).obj (Cnobj A)) (Cnobj A) :=
+abbrev cnStr : Category.Hom ((Tsig A).obj (Cnobj A)) (Cnobj A) :=
   ⟨ofIso ccEquiv.symm, isStrict_ofIso _⟩
 
 /-- **`Cₐ` is a `Tsig`-algebra** for `Tsig(X) = 𝟙 + Σ_a X`. -/
-def Cnalg (A : Type) [DecidableEq A] [Inhabited A] : TAlgebra (Tsig A) := ⟨Cnobj A, cnStr⟩
+abbrev Cnalg (A : Type) [DecidableEq A] [Inhabited A] : TAlgebra (Tsig A) := ⟨Cnobj A, cnStr⟩
 
 end Algebra
 
@@ -1435,7 +1437,7 @@ def descAlgHom : AlgHom (Cnalg A) B where
   hom := descStrict B
   comm := by
     apply Subtype.ext
-    simp only [StrictDomainObj.comp_val, Tsig_map_val]
+    simp only [StrictDomainObj.comp_val]
     exact descComm B
 
 /-- **Uniqueness.** Any `Tsig`-algebra homomorphism out of `(Cₐ, i)` equals `descAlgHom`. -/
@@ -1445,8 +1447,7 @@ theorem descAlgHom_uniq (h' : AlgHom (Cnalg A) B) : h' = descAlgHom B := by
     refine rec_determines B hom.1 ?_
     have hc : hom.1.comp (ofIso ccEquiv.symm)
         = B.str.1.comp (sumMapSig (A := A) (h₀ := Cn_nonempty) (h₁ := B.carrier.nonempty) hom.1) := by
-      have hcomm := congrArg Subtype.val comm
-      simpa only [StrictDomainObj.comp_val, Tsig_map_val] using hcomm
+      exact congrArg Subtype.val comm
     have h2 := congrArg (fun m => m.comp (ofIso ccEquiv)) hc
     simp only at h2
     rw [comp_assoc] at h2

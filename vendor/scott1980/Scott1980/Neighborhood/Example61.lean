@@ -256,10 +256,13 @@ theorem memS_inter {D : NeighborhoodSystem α} (hD : ∀ X, D.mem X → X.Nonemp
 
 /-- **Example 6.1 (Scott 1981, PRG-19).** The *tree algebra* `D^§`: a neighbourhood system over
 `Γ = {1,2}* 0 Δ`, under the standing assumption `∅ ∉ 𝒟` (`hD`). -/
-def Dsharp (D : NeighborhoodSystem α) (hD : ∀ X, D.mem X → X.Nonempty) :
+abbrev Dsharp (D : NeighborhoodSystem α) (hD : ∀ X, D.mem X → X.Nonempty) :
     NeighborhoodSystem (List Bool × α) where
   mem := MemS D
   master := Gamma D
+  master_nonempty := by
+    obtain ⟨a, ha⟩ := D.master_nonempty
+    exact ⟨([], a), ha⟩
   master_mem := MemS.gamma
   inter_mem := fun hX hY hZ hsub => memS_inter hD hX hY hZ hsub
   sub_master := memS_subset_gamma

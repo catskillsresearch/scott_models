@@ -19,6 +19,10 @@ lean-listings/
 figures/
 dist/
 
+# Generated single-file library dump (scripts/flatten_to_proof.py; for LLM export)
+proof.lean
+proof.lean.*
+
 # LaTeX build artifacts (the .tex/.pdf deliverables are kept)
 *.aux
 *.log

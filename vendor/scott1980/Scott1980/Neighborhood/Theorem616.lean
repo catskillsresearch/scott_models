@@ -291,8 +291,7 @@ theorem trianglelefteq_of_isInitial
   have hgh_id : gg.comp hh = idMap Dalg.carrier.sys := by
     have huniq : g_alg.comp h_alg = AlgHom.id Dalg := by
       rw [hinit.uniq Dalg (g_alg.comp h_alg), hinit.uniq Dalg (AlgHom.id Dalg)]
-    have hh2 := congrArg AlgHom.hom huniq
-    simpa only [AlgHom.comp_hom, AlgHom.id_hom] using hh2
+    exact congrArg AlgHom.hom huniq
   -- conclude via Lemma 6.15.
   exact trianglelefteq_of_projectionPair hh gg hgh_id (le_of_eq_of_le hgk hk_le)
 

@@ -121,7 +121,7 @@ theorem upSet_zero : upSet 0 = Set.univ := by
 /-- `[m⁺] = [m]⁺`: the recursion step of 4.13(3). -/
 theorem upSet_succ (m : ℕ) : upSet (m + 1) = succImage (upSet m) := by
   ext k
-  simp only [upSet, succImage, Set.mem_setOf_eq]
+  simp only [upSet, succImage, Set.mem_ofPred_eq]
   constructor
   · intro h
     exact ⟨k - 1, by omega, by omega⟩
@@ -148,9 +148,7 @@ def addIso (m : ℕ) : ℕ ≃ {k : ℕ // k ∈ upSet m} where
   left_inv n := by show m + n - m = n; omega
   right_inv := by
     rintro ⟨k, hk⟩
-    have : m ≤ k := hk
-    simp only [Subtype.mk.injEq]
-    omega
+    exact Subtype.ext (Nat.add_sub_of_le hk)
 
 /-- The isomorphism is given by addition: `addIso m n = m + n`. -/
 theorem addIso_apply (m n : ℕ) : (addIso m n : ℕ) = m + n := rfl

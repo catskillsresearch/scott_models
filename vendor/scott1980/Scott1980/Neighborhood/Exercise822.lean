@@ -285,7 +285,8 @@ theorem D'_nestedOrDisjoint : NestedOrDisjoint memD' := by
 
 /-- **The image neighbourhood system `D'`.** -/
 def D' : NeighborhoodSystem Str :=
-  NeighborhoodSystem.ofNestedOrDisjoint memD' Set.univ (Or.inl ⟨[], by rw [enc_nil, cone_nil]⟩)
+  NeighborhoodSystem.ofNestedOrDisjoint memD' Set.univ ⟨[], Set.mem_univ _⟩
+    (Or.inl ⟨[], by rw [enc_nil, cone_nil]⟩)
     D'_nestedOrDisjoint (by rintro X (⟨σ, rfl⟩ | ⟨σ, rfl⟩) <;> exact Set.subset_univ _)
 
 @[simp] theorem D'_mem {X : Set Str} : D'.mem X ↔ memD' X := Iff.rfl

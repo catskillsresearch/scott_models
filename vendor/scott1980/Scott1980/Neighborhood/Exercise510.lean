@@ -88,6 +88,9 @@ content: given two smash neighbourhoods with a consistency witness `Z`,
 def smash (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β) : NeighborhoodSystem (α ⊕ β) where
   mem W := W = prodNbhd V₀.master V₁.master ∨ SmashProper V₀ V₁ W
   master := prodNbhd V₀.master V₁.master
+  master_nonempty := by
+    obtain ⟨a, ha⟩ := V₀.master_nonempty
+    exact ⟨Sum.inl a, mem_prodNbhd_inl.mpr ha⟩
   master_mem := Or.inl rfl
   inter_mem := by
     rintro W W' Z (rfl | ⟨X, Y, hX, hXne, hY, hYne, rfl⟩) hW' hZ hZsub
@@ -377,6 +380,7 @@ def strictFun (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β) :
   mem W := (∃ L : List (Set α × Set β), (∀ p ∈ L, V₀.mem p.1 ∧ V₁.mem p.2) ∧ W = sstepFun L)
     ∧ W.Nonempty
   master := Set.univ
+  master_nonempty := ⟨⟨constMap V₀ V₁.bot, isStrict_constBot⟩, Set.mem_univ _⟩
   master_mem := ⟨⟨[], by simp, sstepFun_nil.symm⟩,
     ⟨⟨constMap V₀ V₁.bot, isStrict_constBot⟩, Set.mem_univ _⟩⟩
   inter_mem := by

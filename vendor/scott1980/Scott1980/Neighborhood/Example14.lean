@@ -347,12 +347,13 @@ private theorem inter_eq (X Y : Set Token) (hX : mem X) (hY : mem Y) :
       leaf10_inter_leaf11, leaf11_inter_leaf10,
       left_inter_leaf00, leaf00_inter_left, left_inter_leaf01, leaf01_inter_left,
       right_inter_leaf10, leaf10_inter_right, right_inter_leaf11, leaf11_inter_right,
-      eq_self_iff_true, true_or, or_true]
+      true_or, or_true]
 
 /-- **Example 1.4.** The binary-tree neighbourhood system on `Δ = {Λ,0,1,00,01,10,11}`. -/
 def neighborhoodSystem : NeighborhoodSystem Token where
   mem := mem
   master := master
+  master_nonempty := Set.univ_nonempty
   master_mem := mem_master
   sub_master := fun _ => Set.subset_univ _
   inter_mem := by

@@ -40,6 +40,7 @@ open Scott1980.Neighborhood NeighborhoodSystem Set
 def sierpinski : NeighborhoodSystem Unit where
   mem N := N = Set.univ ∨ N = ∅
   master := Set.univ
+  master_nonempty := ⟨(), Set.mem_univ _⟩
   master_mem := Or.inl rfl
   inter_mem := by
     intro X Y Z hX hY hZ _

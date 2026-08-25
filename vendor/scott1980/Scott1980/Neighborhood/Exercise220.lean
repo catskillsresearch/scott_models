@@ -47,6 +47,7 @@ sets, closed under finite intersection (`(X ∩ Y)ᶜ = Xᶜ ∪ Yᶜ`). -/
 def powerSet : NeighborhoodSystem ℕ where
   mem X := Xᶜ.Finite
   master := Set.univ
+  master_nonempty := Set.univ_nonempty
   master_mem := by rw [Set.compl_univ]; exact Set.finite_empty
   inter_mem := by
     intro X Y _ hX hY _ _

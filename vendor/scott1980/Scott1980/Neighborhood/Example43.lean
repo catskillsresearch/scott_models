@@ -87,8 +87,8 @@ theorem nestedOrDisjoint : NestedOrDisjoint memN := by
       exact h hkm
 
 /-- **Example 4.3 (Scott 1981, PRG-19).** The natural-number neighbourhood system `N` on `Δ = ℕ`. -/
-def N : NeighborhoodSystem ℕ :=
-  NeighborhoodSystem.ofNestedOrDisjoint memN Set.univ memN_univ nestedOrDisjoint
+abbrev N : NeighborhoodSystem ℕ :=
+  NeighborhoodSystem.ofNestedOrDisjoint memN Set.univ Set.univ_nonempty memN_univ nestedOrDisjoint
     (fun _ => Set.subset_univ _)
 
 @[simp] theorem N_mem {X : Set ℕ} : N.mem X ↔ memN X := Iff.rfl
@@ -101,7 +101,7 @@ theorem N_bot_mem {X : Set ℕ} : N.bot.mem X ↔ X = Set.univ := NeighborhoodSy
 /-! ### The total elements `n̂`. -/
 
 /-- Scott's total element `n̂ = ↑{n} = {{n}, ℕ}`, the principal filter of the singleton `{n}`. -/
-def natElem (n : ℕ) : N.Element := N.principal (memN_singleton n)
+def natElem (n : ℕ) : N.Element := N.principal (N_mem.mpr (memN_singleton n))
 
 /-- A neighbourhood belongs to `n̂` iff it is `ℕ` (the master) or the singleton `{n}`. -/
 theorem mem_natElem_iff {n : ℕ} {Y : Set ℕ} :

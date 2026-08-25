@@ -240,3 +240,4 @@ import Scott1980.Neighborhood.Exercise825FixedPoint
 import Scott1980.Neighborhood.Exercise825
 import Scott1980.Neighborhood.Exercise826
 import Scott1980.Neighborhood.Exercise827
+import Scott1980.Neighborhood.PalomarExamples

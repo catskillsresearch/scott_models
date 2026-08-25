@@ -48,7 +48,7 @@ variable {α : Type*} (V : NeighborhoodSystem α)
 `x₀, …, x_{n-1}` iff some choice of representatives `X_i ∈ x_i` has every down-set
 `↓X_i` contained in `W` (Scott's `⋃_{i<n} (↑X_i) ⊆ z`, read as down-sets in `ℙ𝒟`). -/
 def PDmemFinJoin {n : ℕ} (xs : Fin n → V.Element) (W : Set (Set α)) : Prop :=
-  ∃ (X : Fin n → Set α) (hX : ∀ i, (xs i).mem (X i)),
+  ∃ (X : Fin n → Set α) (_hX : ∀ i, (xs i).mem (X i)),
     V.PowerDomain.mem W ∧ ∀ i, V.upSet (X i) ⊆ W
 
 /-! ### Definition 7.11 — the join element. -/
@@ -81,7 +81,7 @@ family yields `⊥`; otherwise use Scott's union-of-down-sets condition. -/
 def PDfinJoin (n : ℕ) (xs : Fin n → V.Element) : V.PowerDomain.Element :=
   match n with
   | 0 => V.PDfinJoinZero
-  | m + 1 => V.PDfinJoinSucc xs
+  | _m + 1 => V.PDfinJoinSucc xs
 
 @[simp] theorem PDmem_finJoinZero {W : Set (Set α)} :
     (V.PDfinJoinZero).mem W ↔ W = V.PowerDomain.master := by
@@ -94,14 +94,14 @@ theorem PDmem_finJoin {n : ℕ} (xs : Fin n → V.Element) {W : Set (Set α)} :
     (V.PDfinJoin n xs).mem W ↔
       if n = 0 then W = V.PowerDomain.master else V.PDmemFinJoin xs W := by
   match n with
-  | 0 => simp [PDfinJoin, PDfinJoinZero, mem_bot, PowerDomain_master]
-  | m + 1 => simp [PDfinJoin, PDfinJoinSucc, PDmem_finJoinSucc]
+  | 0 => simp [PDfinJoin, PDfinJoinZero, mem_bot]
+  | m + 1 => simp [PDfinJoin, PDfinJoinSucc]
 
 /-- **Definition 7.11 — Scott's displayed union form.** For `n ≥ 1`, membership is equivalent to
 some representatives `X_i ∈ x_i` with `⋃_{i<n} ↓X_i ⊆ W`. -/
 theorem PDmem_finJoin_iUnion {m : ℕ} (xs : Fin (m + 1) → V.Element) {W : Set (Set α)} :
     (V.PDfinJoinSucc xs).mem W ↔
-      ∃ (X : Fin (m + 1) → Set α) (hX : ∀ i, (xs i).mem (X i)),
+      ∃ (X : Fin (m + 1) → Set α) (_hX : ∀ i, (xs i).mem (X i)),
         V.PowerDomain.mem W ∧
           (⋃ i, V.upSet (X i)) ⊆ W := by
   rw [PDmem_finJoinSucc]

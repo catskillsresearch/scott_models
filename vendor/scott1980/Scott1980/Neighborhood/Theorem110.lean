@@ -104,6 +104,7 @@ witness `[W]` for `[X] ∩ [Y]` yields `W ⊆ X ∩ Y` (via `↑W`), so `X ∩ Y
 def tokenSystem : NeighborhoodSystem V.Element where
   mem S := ∃ X, V.mem X ∧ S = V.bracket X
   master := Set.univ
+  master_nonempty := ⟨V.bot, Set.mem_univ _⟩
   master_mem := ⟨V.master, V.master_mem, V.bracket_master.symm⟩
   inter_mem := by
     rintro S T W ⟨X, hX, rfl⟩ ⟨Y, hY, rfl⟩ ⟨Z, hZ, rfl⟩ hWsub

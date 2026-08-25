@@ -143,6 +143,7 @@ theorem isGen_inter {X X' : Set α} {Y Y' : Set β}
 def Dprime : NeighborhoodSystem β where
   mem Y := ∃ X, IsGen i j X Y
   master := E.master
+  master_nonempty := E.master_nonempty
   master_mem := ⟨D.master, isGen_master i j⟩
   inter_mem := by
     rintro Y₁ Y₂ Z ⟨X₁, hg₁⟩ ⟨X₂, hg₂⟩ ⟨_, hgz⟩ hZsub

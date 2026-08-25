@@ -360,8 +360,9 @@ theorem lamDef_comp {m nn : ℕ} (f : List.Vector ℕ nn →. ℕ) (g : Fin nn �
       (fun v => (List.Vector.mOfFn fun i => g i v) >>= f) := by
   refine lamDef_of_inner (φf.comp (tupleMap nn φg)) _ ?_ ?_
   · intro v c hc
-    rw [Part.bind_eq_bind, Part.mem_bind_iff] at hc
-    obtain ⟨w, hw, hcw⟩ := hc
+    have hc' : c ∈ (List.Vector.mOfFn fun i => g i v).bind (fun w => f w) := hc
+    rw [Part.mem_bind_iff] at hc'
+    obtain ⟨w, hw, hcw⟩ := hc'
     rw [toElementMap_comp, tupleMap_vecElem_eq φg g hg v w ((mem_mOfFn _ w).mp hw)]
     exact hf.defined w c hcw
   · intro v hv
@@ -372,8 +373,8 @@ theorem lamDef_comp {m nn : ℕ} (f : List.Vector ℕ nn →. ℕ) (g : Fin nn �
         intro i; rw [hw_def, List.Vector.get_ofFn]; exact Part.get_mem (hall i)
       rw [tupleMap_vecElem_eq φg g hg v w hwget]
       refine hf.undef w (fun hfw => hv ?_)
-      have hmem : (f w).get hfw ∈ (List.Vector.mOfFn fun i => g i v) >>= f := by
-        rw [Part.bind_eq_bind, Part.mem_bind_iff]
+      have hmem : (f w).get hfw ∈ (List.Vector.mOfFn fun i => g i v).bind (fun w => f w) := by
+        rw [Part.mem_bind_iff]
         exact ⟨w, (mem_mOfFn _ w).mpr hwget, Part.get_mem hfw⟩
       exact Part.dom_iff_mem.mpr ⟨_, hmem⟩
     · rw [not_forall] at hall
@@ -399,7 +400,10 @@ theorem lamDef_primComp {m nn : ℕ} (f₀ : List.Vector ℕ nn → ℕ)
         List.Vector ℕ m →. ℕ) := by
   refine lamDef_congr (fun v => ?_)
     (lamDef_comp (f₀ : _ →. ℕ) (fun i => (g₀ i : _ →. ℕ)) φf hf φg hg)
-  simp only [PFun.coe_val, Vector.mOfFn_part_some, Part.bind_eq_bind, Part.bind_some]
+  simp only [PFun.coe_val, Vector.mOfFn_part_some]
+  change (Part.some (List.Vector.ofFn fun i => g₀ i v)).bind (fun w => Part.some (f₀ w))
+      = Part.some (f₀ (List.Vector.ofFn fun i => g₀ i v))
+  exact Part.bind_some _ _
 
 /-! ### `vecElem` of a cons is a `push`. -/
 
@@ -735,18 +739,24 @@ theorem searchMap_diverge {n : ℕ} {f : List.Vector ℕ (n + 1) → ℕ}
   rw [evalAt_apply]
   exact le_of_eq (iterVal_bot φf hf v hdiv m k)
 
+/-- The `ℕ →. Bool` predicate `k ↦ f(k ::ᵥ v) = 0`, packaged so `Nat.rfind` is well-typed at
+implicit transparency (Lean 4.33: `ℕ →. Bool` no longer unfolds to `ℕ → Part Bool` in `rw`). -/
+def rfindZeroPred {n : ℕ} (f : List.Vector ℕ (n + 1) → ℕ) (v : List.Vector ℕ n) : ℕ →. Bool :=
+  fun k => Part.some (decide (f (k ::ᵥ v) = 0))
+
 /-- **Minimisation** (`Nat.Partrec'.rfind` shape). Given a (very strict) realiser of a total
 `f : Vector ℕ (n+1) → ℕ`, `strictGuardN n (findMap φf)` λ-defines
 `v ↦ μk. f(k ::ᵥ v) = 0`. -/
 theorem lamDef_rfind {n : ℕ} {f : List.Vector ℕ (n + 1) → ℕ}
     (hf : LamDef φf (f : List.Vector ℕ (n + 1) →. ℕ)) :
     LamDef (strictGuardN n (findMap φf))
-      (fun v : List.Vector ℕ n => Nat.rfind fun k => Part.some (decide (f (k ::ᵥ v) = 0))) := by
+      (fun v : List.Vector ℕ n => Nat.rfind (rfindZeroPred f v)) := by
   refine lamDef_of_inner (findMap φf) _ ?_ ?_
   · intro v c hc
     rw [findMap_vecElem]
-    rw [Nat.mem_rfind] at hc
-    obtain ⟨hcs, hcm⟩ := hc
+    have hc' : c ∈ Nat.rfind (rfindZeroPred f v) := hc
+    rw [Nat.mem_rfind] at hc'
+    obtain ⟨hcs, hcm⟩ := hc'
     have h0 : f (c ::ᵥ v) = 0 := of_decide_eq_true (Part.mem_some_iff.mp hcs).symm
     have hmin : ∀ i, i < c → f (i ::ᵥ v) ≠ 0 :=
       fun i hi => of_decide_eq_false (Part.mem_some_iff.mp (hcm hi)).symm
@@ -756,9 +766,13 @@ theorem lamDef_rfind {n : ℕ} {f : List.Vector ℕ (n + 1) → ℕ}
     have hdiv : ∀ k, f (k ::ᵥ v) ≠ 0 := by
       intro k h0
       refine hv ?_
-      rw [Nat.rfind_dom]
-      exact ⟨k, by rw [Part.mem_some_iff]; exact (decide_eq_true_iff.mpr h0).symm,
-        fun {m} _ => trivial⟩
+      have hdom : (Nat.rfind (rfindZeroPred f v)).Dom := by
+        rw [Nat.rfind_dom]
+        refine ⟨k, ?_, fun {m} _ => trivial⟩
+        change true ∈ Part.some (decide (f (k ::ᵥ v) = 0))
+        rw [Part.mem_some_iff]
+        exact (decide_eq_true_iff.mpr h0).symm
+      exact hdom
     exact searchMap_diverge φf hf v hdiv 0
 
 end Rfind

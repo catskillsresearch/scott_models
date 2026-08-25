@@ -243,6 +243,7 @@ neighbourhoods are their principal up-sets. -/
 def domainOfClosure (h : IsClosureOperator a) : NeighborhoodSystem (CompactFix h) where
   mem S := ∃ k : CompactFix h, S = upFix h k
   master := upFix h (botK h)
+  master_nonempty := ⟨botK h, self_mem_upFix h (botK h)⟩
   master_mem := ⟨botK h, rfl⟩
   sub_master := by rintro S ⟨k, rfl⟩; exact upFix_subset_upFix_botK h k
   inter_mem := by

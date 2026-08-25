@@ -58,7 +58,7 @@ theorem tail_zero : tail 0 = Set.univ := by ext k; simp [tail]
 /-- `1·(1ⁿ⊥) = 1ⁿ⁺¹⊥`: shifting a tail. -/
 theorem shift_tail (n : ℕ) : shift (tail n) = tail (n + 1) := by
   ext k
-  simp only [shift, tail, Set.mem_setOf_eq]
+  simp only [shift, tail, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨m, hm, rfl⟩; omega
   · intro h; exact ⟨k - 1, by omega, by omega⟩
@@ -66,7 +66,7 @@ theorem shift_tail (n : ℕ) : shift (tail n) = tail (n + 1) := by
 /-- `1·{1ⁿ} = {1ⁿ⁺¹}`: shifting a singleton. -/
 theorem shift_singleton (n : ℕ) : shift ({n} : Set ℕ) = {n + 1} := by
   ext k
-  simp only [shift, Set.mem_singleton_iff, Set.mem_setOf_eq]
+  simp only [shift, Set.mem_singleton_iff, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨m, rfl, rfl⟩; rfl
   · rintro rfl; exact ⟨n, rfl, rfl⟩
@@ -126,7 +126,8 @@ theorem nestedOrDisjoint : NestedOrDisjoint memC1 := by
 
 /-- **Exercise 4.25 (Scott 1981, PRG-19).** The unary sequence system `C₁` on `Δ = {1}* ≅ ℕ`. -/
 def C1 : NeighborhoodSystem ℕ :=
-  NeighborhoodSystem.ofNestedOrDisjoint memC1 Set.univ memC1_univ nestedOrDisjoint
+  NeighborhoodSystem.ofNestedOrDisjoint memC1 Set.univ Set.univ_nonempty
+    memC1_univ nestedOrDisjoint
     (fun _ => Set.subset_univ _)
 
 @[simp] theorem C1_mem {X : Set ℕ} : C1.mem X ↔ memC1 X := Iff.rfl

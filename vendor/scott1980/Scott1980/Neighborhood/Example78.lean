@@ -64,7 +64,7 @@ theorem nbhd_zero : nbhd 0 = Set.univ := by
 one: `nbhd n ∩ nbhd m = nbhd (n ||| m)` (bitwise OR of the excluded finite sets). -/
 theorem nbhd_inter (n m : ℕ) : nbhd n ∩ nbhd m = nbhd (myLor n m) := by
   ext k
-  simp only [nbhd, Set.mem_inter_iff, Set.mem_setOf_eq, myLor_eq_lor, Nat.testBit_lor,
+  simp only [nbhd, Set.mem_inter_iff, Set.mem_ofPred_eq, myLor_eq_lor, Nat.testBit_lor,
     Bool.or_eq_false_iff]
 
 /-- The enumeration `n ↦ nbhd n` is **one-one** (Scott's converse-ordered neighbourhoods are in
@@ -82,6 +82,7 @@ neighbourhoods are the cofinite sets `nbhd n`, with master `Δ = ℕ`. Closure u
 def PN : NeighborhoodSystem ℕ where
   mem Y := ∃ n, Y = nbhd n
   master := Set.univ
+  master_nonempty := Set.univ_nonempty
   master_mem := ⟨0, nbhd_zero.symm⟩
   inter_mem := by
     rintro X Y Z ⟨a, rfl⟩ ⟨b, rfl⟩ _ _
@@ -114,7 +115,6 @@ def PNpres : ComputablePresentation PN where
             simp only [unpair_pair_fst, unpair_pair_snd])
         (Nat.Primrec.right.comp Nat.Primrec.right))
     -- the pointwise equivalence
-    dsimp only
     constructor
     · intro h; exact nbhd_injective ((nbhd_inter _ _).symm.trans h)
     · intro h; rw [nbhd_inter]; exact congrArg nbhd h

@@ -77,7 +77,7 @@ theorem catEps_mem_εClosure_iff (T : Set (σ₁ ⊕ σ₂)) (s : σ₁ ⊕ σ�
       cases u with
       | inl q =>
         rcases ih with hT | ⟨_, hmem⟩
-        · simp only [catEps_step_inl_none, mem_setOf_eq] at ht
+        · simp only [catEps_step_inl_none, mem_ofPred_eq] at ht
           exact Or.inr ⟨⟨q, ht.1, hT⟩, ht.2⟩
         · obtain ⟨w, _, hw⟩ := hmem; exact absurd hw.symm (by simp)
       | inr q => simp only [catEps_step_inr_none] at ht; exact absurd ht (by simp)
@@ -86,7 +86,7 @@ theorem catEps_mem_εClosure_iff (T : Set (σ₁ ⊕ σ₂)) (s : σ₁ ⊕ σ�
     · obtain ⟨t, ht, rfl⟩ := hs
       have hbase : (inl q : σ₁ ⊕ σ₂) ∈ (catEps M₁ M₂).εClosure T := εNFA.εClosure.base _ hqT
       refine εNFA.εClosure.step (inl q) (inr t) ?_ hbase
-      simp only [catEps_step_inl_none, mem_setOf_eq]
+      simp only [catEps_step_inl_none, mem_ofPred_eq]
       exact ⟨hq, t, ht, rfl⟩
 
 /-- **Closed form for `eval`.** After reading `x`, the reachable `inl`-states mirror `M₁.eval x`, and

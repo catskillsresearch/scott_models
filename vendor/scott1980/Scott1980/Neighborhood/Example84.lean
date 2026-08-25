@@ -71,6 +71,7 @@ neighbourhoods are `{0}` (most informative) and `{0,1}` (the master, least infor
 def O : NeighborhoodSystem (Fin 2) where
   mem X := X = ({0} : Set (Fin 2)) ∨ X = ({0, 1} : Set (Fin 2))
   master := ({0, 1} : Set (Fin 2))
+  master_nonempty := ⟨0, by simp⟩
   master_mem := Or.inr rfl
   inter_mem := by
     rintro X Y Z (rfl | rfl) (rfl | rfl) _ _

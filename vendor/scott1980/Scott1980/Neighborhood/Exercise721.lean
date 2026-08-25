@@ -112,7 +112,7 @@ def papplyEval (V : NeighborhoodSystem α) (W : NeighborhoodSystem β) :
   master_rel := by
     refine ⟨(funSpace V W).PDmem_master, V.PDmem_master, W.PDmem_master, ?_⟩
     intro G hG X hX
-    simp only [PowerDomain_master, mem_upSet] at hG hX
+    simp only [mem_upSet] at hG hX
     refine ⟨W.master, ⟨W.master_mem, subset_rfl⟩, ?_⟩
     exact ⟨hG.1, hX.1, W.master_mem,
       fun f hf => f.mono f.master_rel (V.sub_master hX.1) subset_rfl hX.1 W.master_mem⟩

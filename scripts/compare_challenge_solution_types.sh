@@ -69,7 +69,8 @@ lake env lean "${tmp}/SolutionTypes.lean" 2>/dev/null \
 
 # Drop universe-name noise (u_1 vs u_4) so instance-name mismatches stand out.
 normalize() {
-  sed -E 's/\.\{u_[0-9]+(,[ ]*u_[0-9]+)*\}//g; s/u_[0-9]+/u/g'
+  tr '\n' ' ' | sed -E \
+    's/\.\{u(_[0-9]+)?(,[ ]*u(_[0-9]+)?)*\}//g; s/u_[0-9]+/u/g; s/  */ /g'
 }
 
 normalize <"${tmp}/challenge.txt" >"${tmp}/challenge.norm"

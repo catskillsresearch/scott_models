@@ -89,7 +89,7 @@ theorem Yc_zero_eq_master : Yc P 0 = U.master := by
       apply (datomDec_spec P _ _).mpr
       simp only [decodeList_succ, unpair_pair_fst, unpair_pair_snd, decodeList_zero]
       show DAtom (P0 P) [] [0] = ∅
-      rw [DAtom_cons_neg, hnn, Set.inter_univ, hidx0, Set.diff_self]
+      rw [DAtom_cons_neg, hnn, Set.inter_univ, hidx0, Set.sdiff_self]
     rw [hnegEmpty, selectFn_one, atomUCode_zero]
   rw [hcode, UX_UmasterIdx]
 
@@ -189,13 +189,13 @@ theorem transfer_subset_iff_idxYc (i j : ℕ) :
   have hLHS : {x ∈ (Set.univ : Set ℕ) | ∀ p ∈ [(i, true), (j, false)],
       (p.2 = true ↔ x ∈ idxSet (e P) p.1)} = ((Set.univ : Set ℕ) ∩ idxSet (e P) i) \ idxSet (e P) j := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ U.master | ∀ p ∈ [(i, true), (j, false)], (p.2 = true ↔ y ∈ Yc P p.1)}
       = (U.master ∩ Yc P i) \ Yc P j := by
     ext y
-    simp only [Set.mem_setOf_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_sdiff, Set.mem_inter_iff]
     constructor
     · rintro ⟨hyM, hcs⟩
       have h1 : y ∈ Yc P i := (hcs (i, true) (by simp)).mp rfl
@@ -209,7 +209,7 @@ theorem transfer_subset_iff_idxYc (i j : ℕ) :
       · exact ⟨fun _ => h1, fun _ => rfl⟩
       · exact ⟨fun hc => absurd hc Bool.false_ne_true, fun hmem => absurd hmem h2⟩
   rw [hLHS, hRHS] at key
-  rw [← Set.diff_eq_empty, ← Set.diff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
+  rw [← Set.sdiff_eq_empty, ← Set.sdiff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
     ← Set.not_nonempty_iff_eq_empty, not_iff_not]
   exact key
 
@@ -222,13 +222,13 @@ theorem transfer_inter_empty_iff_idxYc (i j : ℕ) :
   have hLHS : {x ∈ (Set.univ : Set ℕ) | ∀ p ∈ [(i, true), (j, true)],
       (p.2 = true ↔ x ∈ idxSet (e P) p.1)} = (Set.univ : Set ℕ) ∩ idxSet (e P) i ∩ idxSet (e P) j := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
       forall_eq_or_imp, forall_eq, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ U.master | ∀ p ∈ [(i, true), (j, true)], (p.2 = true ↔ y ∈ Yc P p.1)}
       = U.master ∩ Yc P i ∩ Yc P j := by
     ext y
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff]
     constructor
     · rintro ⟨hyM, hcs⟩
       exact ⟨⟨hyM, (hcs (i, true) (by simp)).mp rfl⟩, (hcs (j, true) (by simp)).mp rfl⟩
@@ -255,14 +255,14 @@ theorem transfer_double_subset_iff_idxYc (i j k : ℕ) :
       (p.2 = true ↔ x ∈ idxSet (e P) p.1)}
       = ((Set.univ : Set ℕ) ∩ idxSet (e P) i ∩ idxSet (e P) j) \ idxSet (e P) k := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ U.master |
       ∀ p ∈ [(i, true), (j, true), (k, false)], (p.2 = true ↔ y ∈ Yc P p.1)}
       = (U.master ∩ Yc P i ∩ Yc P j) \ Yc P k := by
     ext y
-    simp only [Set.mem_setOf_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_sdiff, Set.mem_inter_iff]
     constructor
     · rintro ⟨hyM, hcs⟩
       have h1 : y ∈ Yc P i := (hcs (i, true) (by simp)).mp rfl
@@ -278,7 +278,7 @@ theorem transfer_double_subset_iff_idxYc (i j k : ℕ) :
       · exact ⟨fun _ => h2, fun _ => rfl⟩
       · exact ⟨fun hc => absurd hc Bool.false_ne_true, fun hmem => absurd hmem h3⟩
   rw [hLHS, hRHS] at key
-  rw [← Set.diff_eq_empty, ← Set.diff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
+  rw [← Set.sdiff_eq_empty, ← Set.sdiff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
     ← Set.not_nonempty_iff_eq_empty, not_iff_not]
   exact key
 
@@ -356,6 +356,7 @@ code-driven (`Yc P n = UX (YseqCode P n)`), mirroring `Theorem88a.lean`'s `Dprim
 noncomputable def DprimeUCode : NeighborhoodSystem ℚ where
   mem Y := ∃ n, Y = Yc P n
   master := U.master
+  master_nonempty := U.master_nonempty
   master_mem := ⟨0, (Yc_zero_eq_master P).symm⟩
   sub_master := by rintro Y ⟨n, rfl⟩; exact Yc_subset_master P n
   inter_mem := by

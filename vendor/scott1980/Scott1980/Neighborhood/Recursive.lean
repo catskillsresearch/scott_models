@@ -387,7 +387,7 @@ theorem recDecidable_of_forall {p : ℕ → Prop} (h : ∀ n, p n) : RecDecidabl
 bridge when an executable Bool decider has already been realized as a numeric `{0,1}` function; the
 logical equivalence is supplied separately (do not reprove the mathematics). -/
 theorem RecDecidable.of_zero_one_char {p : ℕ → Prop} {f : ℕ → ℕ} (hf : Nat.Primrec f)
-    (h01 : ∀ n, f n = 0 ∨ f n = 1) (hfe : ∀ n, p n ↔ f n = 1) : RecDecidable p :=
+    (_h01 : ∀ n, f n = 0 ∨ f n = 1) (hfe : ∀ n, p n ↔ f n = 1) : RecDecidable p :=
   ⟨f, hf, hfe⟩
 
 /-- **Paired `{0,1}` characteristic.** When the Bool decider has been packaged as a unary
@@ -956,7 +956,7 @@ theorem primrec_max {f g : ℕ → ℕ} (hf : Nat.Primrec f) (hg : Nat.Primrec g
     · have hlt : g n < f n := Nat.lt_of_not_ge h
       have hpos : 0 < f n - g n := Nat.sub_pos_of_lt hlt
       have hmin : min (f n - g n) 1 = 1 := Nat.min_eq_right (Nat.succ_le_iff.mpr hpos)
-      simp [isZero, hmin, Nat.max_eq_left (Nat.le_of_lt hlt)]
+      simp [hmin, Nat.max_eq_left (Nat.le_of_lt hlt)]
 
 /-- Primitive-recursive `if` on a `{0,1}` condition. -/
 theorem primrec_ite {c t f : ℕ → ℕ} (hc : Nat.Primrec c) (ht : Nat.Primrec t) (hf : Nat.Primrec f) :
@@ -1788,7 +1788,7 @@ theorem allBinDigitsChar_eq_one_iff (c : ℕ) :
     allBinDigitsChar c = 1 ↔ ∀ x ∈ decodeList c, x = 0 ∨ x = 1 := by
   unfold allBinDigitsChar
   rw [allListChar_eq_one_iff]
-  simp [unpair_pair_fst, unpair_pair_snd, isBinDigit_eq_one_iff]
+  simp [isBinDigit_eq_one_iff]
 
 theorem allBinDigitsChar_le_one (c : ℕ) : allBinDigitsChar c ≤ 1 := by
   unfold allBinDigitsChar; exact allListChar_le_one _ _ _
@@ -2189,7 +2189,7 @@ for `.cat`/`.cap`. Shallow link **7.22i(b)1(d–e)** uses dispatch lemmas from *
 def mulBit (a b : ℕ) : ℕ := a * b
 
 theorem mulBit_eq_one_iff (a b : ℕ) : mulBit a b = 1 ↔ a = 1 ∧ b = 1 := by
-  simpa [mulBit] using nat_mul_eq_one
+  simp [mulBit]
 
 theorem mulBit_le_one {a b : ℕ} (ha : a ≤ 1) (hb : b ≤ 1) : mulBit a b ≤ 1 := by
   unfold mulBit
@@ -2220,28 +2220,28 @@ theorem decodeFuelOkCharBody_eq (prev : ℕ → ℕ) (c : ℕ) :
   match tag : c.unpair.1 with
   | 0 =>
     have h10 : (1 - 0 : ℕ) = 1 := rfl
-    simp only [tag, h10, isOne_one, selectFn_one]
+    simp only [h10, isOne_one, selectFn_one]
   | 1 =>
     have h01 : (1 - 1 : ℕ) = 0 := rfl
     have h12 : (2 - 1 : ℕ) = 1 := rfl
-    simp only [tag, h01, h12, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01, h12, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | 2 =>
     have h01 : (1 - 2 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12 : (2 - 2 : ℕ) = 0 := rfl
     have h23 : (3 - 2 : ℕ) = 1 := rfl
-    simp only [tag, h01, h12, h23, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01, h23, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | 3 =>
     have h01 : (1 - 3 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12 : (2 - 3 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h23 : (3 - 3 : ℕ) = 0 := rfl
     have h34 : (4 - 3 : ℕ) = 1 := rfl
-    simp only [tag, h01, h12, h23, h34, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01, h34, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | t + 4 =>
     have hne1 : isOne (1 - (t + 4)) = 0 := isOne_of_ne_one (by omega)
     have hne2 : isOne (2 - (t + 4)) = 0 := isOne_of_ne_one (by omega)
     have hne3 : isOne (3 - (t + 4)) = 0 := isOne_of_ne_one (by omega)
     have hne4 : isOne (4 - (t + 4)) = 0 := isOne_of_ne_one (by omega)
-    simp only [tag, hne1, hne2, hne3, hne4, selectFn_zero]
+    simp only [hne1, hne2, hne3, hne4, selectFn_zero]
 
 theorem selectFn_isOne_one_sub_sigma (u : ℕ) :
     selectFn (isOne (1 - u)) 1 0 = 1 ↔ u = 0 := by
@@ -2265,10 +2265,10 @@ private theorem primrec_decodeFuelOkCharBody {prev : ℕ → ℕ} (hprev : Nat.P
   unfold decodeFuelOkCharBody
   have hleft : Nat.Primrec (fun c => prev c.unpair.2.unpair.1) :=
     (hprev.comp (Nat.Primrec.left.comp Nat.Primrec.right)).of_eq fun c => by
-      simp only [unpair_pair_fst, unpair_pair_snd]
+      simp only
   have hright : Nat.Primrec (fun c => prev c.unpair.2.unpair.2) :=
     (hprev.comp (Nat.Primrec.right.comp Nat.Primrec.right)).of_eq fun c => by
-      simp only [unpair_pair_fst, unpair_pair_snd]
+      simp only
   have hsub : Nat.Primrec (fun c => mulBit (prev c.unpair.2.unpair.1) (prev c.unpair.2.unpair.2)) :=
     primrec_mul₂ hleft hright
   have hf0 : Nat.Primrec (fun c => selectFn (isOne (1 - c.unpair.2)) 1 0) :=
@@ -2291,19 +2291,20 @@ theorem decodeFuelOkChar_le_one : ∀ fuel c, decodeFuelOkChar fuel c ≤ 1
     rw [decodeFuelOkChar, decodeFuelOkCharBody_eq]
     match tag : c.unpair.1 with
     | 0 =>
-      dsimp only
+      simp
       rcases (show isOne (1 - c.unpair.2) = 0 ∨ isOne (1 - c.unpair.2) = 1 by
         have := isOne_le_one (1 - c.unpair.2); omega) with h0 | h1
       · rw [h0, selectFn_zero]; exact Nat.zero_le 1
       · rw [h1, selectFn_one]
     | 1 =>
-      dsimp only
+      simp
       exact allBinDigitsChar_le_one _
     | 2 | 3 =>
-      dsimp only
+      simp
       exact mulBit_le_one (decodeFuelOkChar_le_one fuel c.unpair.2.unpair.1)
         (decodeFuelOkChar_le_one fuel c.unpair.2.unpair.2)
-    | _ + 4 => exact Nat.zero_le 1
+    | _ + 4 =>
+      simp
 
 /-! ### `decodeFuelOkChar` jointly primitive recursive in `(fuel, code)`
 
@@ -2327,11 +2328,11 @@ theorem primrec_decodeFuelOkCharLookup : Nat.Primrec decodeFuelOkCharLookup := b
   have hleft : Nat.Primrec (fun w => nthCode w.unpair.1 w.unpair.2.unpair.2.unpair.1 0) :=
     (primrec_nthCode.comp (Nat.Primrec.pair Nat.Primrec.left
       (Nat.Primrec.pair (Nat.Primrec.left.comp (Nat.Primrec.right.comp Nat.Primrec.right))
-        (Nat.Primrec.const 0)))).of_eq fun w => by simp [unpair_pair_fst, unpair_pair_snd]
+        (Nat.Primrec.const 0)))).of_eq fun w => by simp
   have hright : Nat.Primrec (fun w => nthCode w.unpair.1 w.unpair.2.unpair.2.unpair.2 0) :=
     (primrec_nthCode.comp (Nat.Primrec.pair Nat.Primrec.left
       (Nat.Primrec.pair (Nat.Primrec.right.comp (Nat.Primrec.right.comp Nat.Primrec.right))
-        (Nat.Primrec.const 0)))).of_eq fun w => by simp [unpair_pair_fst, unpair_pair_snd]
+        (Nat.Primrec.const 0)))).of_eq fun w => by simp
   have hsub : Nat.Primrec (fun w =>
       mulBit (nthCode w.unpair.1 w.unpair.2.unpair.2.unpair.1 0)
         (nthCode w.unpair.1 w.unpair.2.unpair.2.unpair.2 0)) :=
@@ -2360,35 +2361,35 @@ theorem primrec_decodeFuelOkCharLookup : Nat.Primrec decodeFuelOkCharLookup := b
   match tag : w.unpair.2.unpair.1 with
   | 0 =>
     have h10 : (1 - 0 : ℕ) = 1 := rfl
-    simp only [tag, h10, isOne_one, selectFn_one]
+    simp only [h10, isOne_one, selectFn_one]
   | 1 =>
     have h01' : (1 - 1 : ℕ) = 0 := rfl
     have h12' : (2 - 1 : ℕ) = 1 := rfl
-    simp only [tag, h01', h12', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01', h12', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | 2 =>
     have h01' : (1 - 2 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12' : (2 - 2 : ℕ) = 0 := rfl
     have h23' : (3 - 2 : ℕ) = 1 := rfl
-    simp only [tag, h01', h12', h23', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01', h23', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | 3 =>
     have h01' : (1 - 3 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12' : (2 - 3 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h23' : (3 - 3 : ℕ) = 0 := rfl
     have h34' : (4 - 3 : ℕ) = 1 := rfl
-    simp only [tag, h01', h12', h23', h34', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01', h34', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | t + 4 =>
     have h01' : (1 - (t + 4) : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12' : (2 - (t + 4) : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h23' : (3 - (t + 4) : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h34' : (4 - (t + 4) : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
-    simp only [tag, h01', h12', h23', h34', isOne_zero, selectFn_zero]
+    simp only [h01', h12', h23', h34', isOne_zero, selectFn_zero]
 
 theorem decodeFuelOkChar_fuelTable_eq :
     ∀ fuel bound c, c ≤ bound →
       nthCode (fuelTable decodeFuelOkCharLookup bound fuel) c 0 = decodeFuelOkChar fuel c :=
   fuelTable_eq_of_recursion (F := decodeFuelOkChar) (Body := decodeFuelOkCharBody)
     (fun _ => rfl) (fun _ _ => rfl)
-    (fun table c => by unfold decodeFuelOkCharLookup; simp [unpair_pair_fst, unpair_pair_snd])
+    (fun table c => by unfold decodeFuelOkCharLookup; simp)
     decodeFuelOkCharBody_local
 
 /-- **`decodeFuelOkChar` is jointly primitive recursive in `(fuel, code)`.** -/
@@ -2397,12 +2398,12 @@ theorem primrec_decodeFuelOkChar2 : Nat.Primrec (fun s => decodeFuelOkChar s.unp
   have hpack : Nat.Primrec (fun s : ℕ => Nat.pair s.unpair.2 s.unpair.1) :=
     Nat.Primrec.pair Nat.Primrec.right Nat.Primrec.left
   have hcomp : Nat.Primrec (fun s => fuelTable decodeFuelOkCharLookup s.unpair.2 s.unpair.1) :=
-    (hft.comp hpack).of_eq fun s => by simp [unpair_pair_fst, unpair_pair_snd]
+    (hft.comp hpack).of_eq fun s => by simp
   have hnth : Nat.Primrec
       (fun s => nthCode (fuelTable decodeFuelOkCharLookup s.unpair.2 s.unpair.1) s.unpair.2 0) :=
     (primrec_nthCode.comp
       (Nat.Primrec.pair hcomp (Nat.Primrec.pair Nat.Primrec.right (Nat.Primrec.const 0)))).of_eq
-      fun s => by simp [unpair_pair_fst, unpair_pair_snd]
+      fun s => by simp
   exact hnth.of_eq fun s => decodeFuelOkChar_fuelTable_eq s.unpair.1 s.unpair.2 s.unpair.2 (le_refl _)
 
 /-! ## Exercise 7.22 C9b2 — coded list length
@@ -2479,7 +2480,7 @@ theorem listEqStp_acc (flag rem x : ℕ) :
       selectFn (isZero rem) (Nat.pair 0 0)
         (Nat.pair (selectFn flag (natEqChar x ((rem - 1).unpair.1)) 0) ((rem - 1).unpair.2)) := by
   unfold listEqStp listEqStpNonzero
-  simp only [unpair_pair_fst, unpair_pair_snd, Nat.add_sub_cancel]
+  simp only [unpair_pair_fst, unpair_pair_snd]
 
 /-- `listEqChar c1 c2 = 1 ↔ decodeList c1 = decodeList c2`. -/
 def listEqChar (c1 c2 : ℕ) : ℕ :=
@@ -2507,14 +2508,14 @@ private theorem listEqStep_succ (flag x m : ℕ) :
   unfold listEqStep listEqStp listEqStpNonzero
   simp only [unpair_pair_fst, unpair_pair_snd]
   have hzero : isZero (m + 1) = 0 := by
-    unfold isZero; simp [show min (m + 1) 1 = 1 from by omega]
+    unfold isZero; simp
   rw [hzero, selectFn_zero, Nat.add_sub_cancel]
 
 private theorem listEq_foldl_zero (flag x : ℕ) (xs : List ℕ) :
     (List.foldl listEqStep (Nat.pair flag 0) (x :: xs)).unpair.1 = 0 := by
   rw [List.foldl_cons, listEqStep_zero]
   induction xs with
-  | nil => simp [List.foldl_nil, unpair_pair_fst]
+  | nil => simp [List.foldl_nil]
   | cons y ys ih =>
     rw [List.foldl_cons, listEqStep_zero, ih]
 
@@ -2632,7 +2633,7 @@ theorem primrec_listEqChar : Nat.Primrec (fun t => listEqChar t.unpair.1 t.unpai
       (foldCode listEqStp 0 (Nat.pair 1 t.unpair.2) t.unpair.1).unpair.2) :=
     Nat.Primrec.right.comp hfold
   exact (primrec_mulBit.comp (hflag.pair (primrec_isZero.comp hrem))).of_eq fun t => by
-    simp [listEqChar, unpair_pair_fst, unpair_pair_snd]
+    simp [listEqChar]
 
 /-! ## Exercise 7.22 C9b4 — coded list append / take / drop
 
@@ -2702,16 +2703,16 @@ theorem getD_drop_cf (l : List ℕ) (n i d : ℕ) (hi : i < (l.drop n).length) :
     (l.drop n).getD i d = l.getD (i + n) d := by
   induction n generalizing l i d with
   | zero =>
-    simp [List.drop_zero, Nat.zero_add] at hi ⊢
+    simp [List.drop_zero] at hi ⊢
   | succ n ih =>
     cases l with
     | nil => simp [List.drop, List.length_nil] at hi
     | cons a tl =>
       cases i with
       | zero =>
-        simp [List.drop, List.getD_cons_zero, List.getD_cons_succ, Nat.zero_add]
+        simp [List.drop]
       | succ i =>
-        simp only [List.drop, List.getD_cons_succ]
+        simp only [List.drop]
         exact ih tl (i + 1) d (by simpa [List.length_drop] using hi)
 
 private theorem isZero_succ_sub_len1 (i len1 : ℕ) :
@@ -2785,8 +2786,8 @@ theorem takeCode_eq (n c : ℕ) :
   · have hic : i < (decodeList c).length := Nat.lt_of_lt_of_le hi (Nat.min_le_right n _)
     rw [getD_map_range_cf (fun j => takeListTabFn (Nat.pair j (Nat.pair n c))) d hi,
       show takeListTabFn (Nat.pair i (Nat.pair n c)) = (decodeList c).getD i d by
-        have hc : (Nat.pair i (Nat.pair n c)).unpair.2.unpair.2 = c := by simp [unpair_pair_snd]
-        have hi' : (Nat.pair i (Nat.pair n c)).unpair.1 = i := by simp [unpair_pair_fst]
+        have hc : (Nat.pair i (Nat.pair n c)).unpair.2.unpair.2 = c := by simp
+        have hi' : (Nat.pair i (Nat.pair n c)).unpair.1 = i := by simp
         rw [takeListTabFn, hc, hi', nthCode_eq,
           show (decodeList c).getD i 0 = (decodeList c).getD i d from by
             rw [getD_eq_getElem_cf _ 0 hic, getD_eq_getElem_cf _ d hic]],
@@ -2805,9 +2806,9 @@ theorem dropCode_eq (n c : ℕ) :
   · have hic : i + n < (decodeList c).length := Nat.add_lt_of_lt_sub hi
     rw [getD_map_range_cf (fun j => dropListTabFn (Nat.pair j (Nat.pair n c))) d hi,
       show dropListTabFn (Nat.pair i (Nat.pair n c)) = (decodeList c).getD (i + n) d by
-        have hc : (Nat.pair i (Nat.pair n c)).unpair.2.unpair.2 = c := by simp [unpair_pair_snd]
-        have hn : (Nat.pair i (Nat.pair n c)).unpair.2.unpair.1 = n := by simp [unpair_pair_fst]
-        have hi' : (Nat.pair i (Nat.pair n c)).unpair.1 = i := by simp [unpair_pair_fst]
+        have hc : (Nat.pair i (Nat.pair n c)).unpair.2.unpair.2 = c := by simp
+        have hn : (Nat.pair i (Nat.pair n c)).unpair.2.unpair.1 = n := by simp
+        have hi' : (Nat.pair i (Nat.pair n c)).unpair.1 = i := by simp
         rw [dropListTabFn, hi', hn, hc, nthCode_eq,
           show (decodeList c).getD (i + n) 0 = (decodeList c).getD (i + n) d from by
             rw [getD_eq_getElem_cf _ 0 hic, getD_eq_getElem_cf _ d hic]],
@@ -2887,7 +2888,7 @@ theorem primrec_takeListTabFn : Nat.Primrec takeListTabFn :=
   (primrec_nthCode.comp
     ((Nat.Primrec.right.comp Nat.Primrec.right).pair
       (Nat.Primrec.left.pair (Nat.Primrec.const 0)))).of_eq fun w => by
-    simp [takeListTabFn, unpair_pair_fst, unpair_pair_snd]
+    simp [takeListTabFn]
 
 theorem primrec_min {f g : ℕ → ℕ} (hf : Nat.Primrec f) (hg : Nat.Primrec g) :
     Nat.Primrec (fun n => Nat.min (f n) (g n)) :=
@@ -2898,7 +2899,7 @@ theorem primrec_min {f g : ℕ → ℕ} (hf : Nat.Primrec f) (hg : Nat.Primrec g
     · have hlt : g n < f n := Nat.lt_of_not_ge h
       have hpos : 0 < f n - g n := Nat.sub_pos_of_lt hlt
       have hmin : min (f n - g n) 1 = 1 := Nat.min_eq_right (Nat.succ_le_iff.mpr hpos)
-      simp [isZero, hmin, Nat.min_eq_right (Nat.le_of_lt hlt)]
+      simp [hmin, Nat.min_eq_right (Nat.le_of_lt hlt)]
 
 theorem primrec_takeCode : Nat.Primrec (fun t => takeCode t.unpair.1 t.unpair.2) := by
   have hn := Nat.Primrec.left
@@ -2908,14 +2909,14 @@ theorem primrec_takeCode : Nat.Primrec (fun t => takeCode t.unpair.1 t.unpair.2)
   have hp := hn.pair hc
   have hr := (hB.pair hp).pair hB
   refine ((primrec_tabCode primrec_takeListTabFn).comp hr).of_eq fun t => by
-    simp [takeCode, unpair_pair_fst, unpair_pair_snd]
+    simp [takeCode]
 
 theorem primrec_dropListTabFn : Nat.Primrec dropListTabFn :=
   (primrec_nthCode.comp
     ((Nat.Primrec.right.comp Nat.Primrec.right).pair
       (Nat.Primrec.pair (primrec_add₂ Nat.Primrec.left (Nat.Primrec.left.comp Nat.Primrec.right))
         (Nat.Primrec.const 0)))).of_eq fun w => by
-    simp [dropListTabFn, unpair_pair_fst, unpair_pair_snd]
+    simp [dropListTabFn]
 
 theorem primrec_dropCode : Nat.Primrec (fun t => dropCode t.unpair.1 t.unpair.2) := by
   have hn := Nat.Primrec.left
@@ -2925,7 +2926,7 @@ theorem primrec_dropCode : Nat.Primrec (fun t => dropCode t.unpair.1 t.unpair.2)
   have hp := hn.pair hc
   have hr := (hB.pair hp).pair hB
   refine ((primrec_tabCode primrec_dropListTabFn).comp hr).of_eq fun t => by
-    simp [dropCode, unpair_pair_fst, unpair_pair_snd]
+    simp [dropCode]
 
 /-! ## Exercise 7.22 C9b5 — `autStateCardFuelChar`, `matchesBChar`
 
@@ -3030,28 +3031,28 @@ theorem autStateCardFuelCharBody_eq (prev : ℕ → ℕ) (c : ℕ) :
   match tag : c.unpair.1 with
   | 0 =>
     have h10 : (1 - 0 : ℕ) = 1 := rfl
-    simp only [tag, h10, isOne_one, selectFn_one]
+    simp only [h10, isOne_one, selectFn_one]
   | 1 =>
     have h01 : (1 - 1 : ℕ) = 0 := rfl
     have h12 : (2 - 1 : ℕ) = 1 := rfl
-    simp only [tag, h01, h12, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01, h12, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | 2 =>
     have h01 : (1 - 2 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12 : (2 - 2 : ℕ) = 0 := rfl
     have h23 : (3 - 2 : ℕ) = 1 := rfl
-    simp only [tag, h01, h12, h23, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01, h23, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | 3 =>
     have h01 : (1 - 3 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12 : (2 - 3 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h23 : (3 - 3 : ℕ) = 0 := rfl
     have h34 : (4 - 3 : ℕ) = 1 := rfl
-    simp only [tag, h01, h12, h23, h34, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01, h34, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | t + 4 =>
     have hne1 : isOne (1 - (t + 4)) = 0 := isOne_of_ne_one (by omega)
     have hne2 : isOne (2 - (t + 4)) = 0 := isOne_of_ne_one (by omega)
     have hne3 : isOne (3 - (t + 4)) = 0 := isOne_of_ne_one (by omega)
     have hne4 : isOne (4 - (t + 4)) = 0 := isOne_of_ne_one (by omega)
-    simp only [tag, hne1, hne2, hne3, hne4, selectFn_zero]
+    simp only [hne1, hne2, hne3, hne4, selectFn_zero]
 
 /-- Fuel-bounded mirror of `autStateCard` on Gödel codes. -/
 def autStateCardFuelChar : ℕ → ℕ → ℕ
@@ -3099,10 +3100,10 @@ private theorem primrec_autStateCardFuelCharBody {prev : ℕ → ℕ} (hprev : N
   unfold autStateCardFuelCharBody
   have hleft : Nat.Primrec (fun c => prev c.unpair.2.unpair.1) :=
     (hprev.comp (Nat.Primrec.left.comp Nat.Primrec.right)).of_eq fun c => by
-      simp only [unpair_pair_fst, unpair_pair_snd]
+      simp only
   have hright : Nat.Primrec (fun c => prev c.unpair.2.unpair.2) :=
     (hprev.comp (Nat.Primrec.right.comp Nat.Primrec.right)).of_eq fun c => by
-      simp only [unpair_pair_fst, unpair_pair_snd]
+      simp only
   have hadd := primrec_add₂ hleft hright
   have hmul := primrec_mul₂ hleft hright
   have hf1 := primrec_add₂ (primrec_listLenChar.comp Nat.Primrec.right) (Nat.Primrec.const 2)
@@ -3134,11 +3135,11 @@ theorem primrec_autStateCardFuelCharLookup : Nat.Primrec autStateCardFuelCharLoo
   have hleft : Nat.Primrec (fun w => nthCode w.unpair.1 w.unpair.2.unpair.2.unpair.1 0) :=
     (primrec_nthCode.comp (Nat.Primrec.pair Nat.Primrec.left
       (Nat.Primrec.pair (Nat.Primrec.left.comp (Nat.Primrec.right.comp Nat.Primrec.right))
-        (Nat.Primrec.const 0)))).of_eq fun w => by simp [unpair_pair_fst, unpair_pair_snd]
+        (Nat.Primrec.const 0)))).of_eq fun w => by simp
   have hright : Nat.Primrec (fun w => nthCode w.unpair.1 w.unpair.2.unpair.2.unpair.2 0) :=
     (primrec_nthCode.comp (Nat.Primrec.pair Nat.Primrec.left
       (Nat.Primrec.pair (Nat.Primrec.right.comp (Nat.Primrec.right.comp Nat.Primrec.right))
-        (Nat.Primrec.const 0)))).of_eq fun w => by simp [unpair_pair_fst, unpair_pair_snd]
+        (Nat.Primrec.const 0)))).of_eq fun w => by simp
   have hadd : Nat.Primrec (fun w =>
       nthCode w.unpair.1 w.unpair.2.unpair.2.unpair.1 0 +
         nthCode w.unpair.1 w.unpair.2.unpair.2.unpair.2 0) :=
@@ -3169,35 +3170,35 @@ theorem primrec_autStateCardFuelCharLookup : Nat.Primrec autStateCardFuelCharLoo
   match tag : w.unpair.2.unpair.1 with
   | 0 =>
     have h10 : (1 - 0 : ℕ) = 1 := rfl
-    simp only [tag, h10, isOne_one, selectFn_one]
+    simp only [h10, isOne_one, selectFn_one]
   | 1 =>
     have h01' : (1 - 1 : ℕ) = 0 := rfl
     have h12' : (2 - 1 : ℕ) = 1 := rfl
-    simp only [tag, h01', h12', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01', h12', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | 2 =>
     have h01' : (1 - 2 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12' : (2 - 2 : ℕ) = 0 := rfl
     have h23' : (3 - 2 : ℕ) = 1 := rfl
-    simp only [tag, h01', h12', h23', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01', h23', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | 3 =>
     have h01' : (1 - 3 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12' : (2 - 3 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h23' : (3 - 3 : ℕ) = 0 := rfl
     have h34' : (4 - 3 : ℕ) = 1 := rfl
-    simp only [tag, h01', h12', h23', h34', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01', h34', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | t + 4 =>
     have h01' : (1 - (t + 4) : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12' : (2 - (t + 4) : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h23' : (3 - (t + 4) : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h34' : (4 - (t + 4) : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
-    simp only [tag, h01', h12', h23', h34', isOne_zero, selectFn_zero]
+    simp only [h01', h12', h23', h34', isOne_zero, selectFn_zero]
 
 theorem autStateCardFuelChar_fuelTable_eq :
     ∀ fuel bound c, c ≤ bound →
       nthCode (fuelTable autStateCardFuelCharLookup bound fuel) c 0 = autStateCardFuelChar fuel c :=
   fuelTable_eq_of_recursion (F := autStateCardFuelChar) (Body := autStateCardFuelCharBody)
     (fun _ => rfl) (fun _ _ => rfl)
-    (fun table c => by unfold autStateCardFuelCharLookup; simp [unpair_pair_fst, unpair_pair_snd])
+    (fun table c => by unfold autStateCardFuelCharLookup; simp)
     autStateCardFuelCharBody_local
 
 /-- **`autStateCardFuelChar` is jointly primitive recursive in `(fuel, code)`.** -/
@@ -3207,12 +3208,12 @@ theorem primrec_autStateCardFuelChar2 :
   have hpack : Nat.Primrec (fun s : ℕ => Nat.pair s.unpair.2 s.unpair.1) :=
     Nat.Primrec.pair Nat.Primrec.right Nat.Primrec.left
   have hcomp : Nat.Primrec (fun s => fuelTable autStateCardFuelCharLookup s.unpair.2 s.unpair.1) :=
-    (hft.comp hpack).of_eq fun s => by simp [unpair_pair_fst, unpair_pair_snd]
+    (hft.comp hpack).of_eq fun s => by simp
   have hnth : Nat.Primrec
       (fun s => nthCode (fuelTable autStateCardFuelCharLookup s.unpair.2 s.unpair.1) s.unpair.2 0) :=
     (primrec_nthCode.comp
       (Nat.Primrec.pair hcomp (Nat.Primrec.pair Nat.Primrec.right (Nat.Primrec.const 0)))).of_eq
-      fun s => by simp [unpair_pair_fst, unpair_pair_snd]
+      fun s => by simp
   exact hnth.of_eq fun s =>
     autStateCardFuelChar_fuelTable_eq s.unpair.1 s.unpair.2 s.unpair.2 (le_refl _)
 
@@ -3252,28 +3253,28 @@ theorem matchesBCharBody_eq (prev : ℕ → ℕ) (c cw : ℕ) :
   match tag : c.unpair.1 with
   | 0 =>
     have h10 : (1 - 0 : ℕ) = 1 := rfl
-    simp only [tag, h10, isOne_one, selectFn_one]
+    simp only [h10, isOne_one, selectFn_one]
   | 1 =>
     have h01 : (1 - 1 : ℕ) = 0 := rfl
     have h12 : (2 - 1 : ℕ) = 1 := rfl
-    simp only [tag, h01, h12, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01, h12, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | 2 =>
     have h01 : (1 - 2 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12 : (2 - 2 : ℕ) = 0 := rfl
     have h23 : (3 - 2 : ℕ) = 1 := rfl
-    simp only [tag, h01, h12, h23, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01, h23, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | 3 =>
     have h01 : (1 - 3 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12 : (2 - 3 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h23 : (3 - 3 : ℕ) = 0 := rfl
     have h34 : (4 - 3 : ℕ) = 1 := rfl
-    simp only [tag, h01, h12, h23, h34, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01, h34, isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | t + 4 =>
     have hne1 : isOne (1 - (t + 4)) = 0 := isOne_of_ne_one (by omega)
     have hne2 : isOne (2 - (t + 4)) = 0 := isOne_of_ne_one (by omega)
     have hne3 : isOne (3 - (t + 4)) = 0 := isOne_of_ne_one (by omega)
     have hne4 : isOne (4 - (t + 4)) = 0 := isOne_of_ne_one (by omega)
-    simp only [tag, hne1, hne2, hne3, hne4, selectFn_zero]
+    simp only [hne1, hne2, hne3, hne4, selectFn_zero]
 
 /-- Fuel-bounded `{0,1}` mirror of `matchesB`. -/
 def matchesBChar : ℕ → ℕ → ℕ → ℕ
@@ -3288,7 +3289,7 @@ private theorem c9b5_matchesBCatG_char (fuel : ℕ) (a b : SExpr) (w : List Bool
             (c9b5_encodeListBool w))) =
       mulBit (matchesBChar fuel (c9b5_sexprGodelEncode a) (takeCode i (c9b5_encodeListBool w)))
         (matchesBChar fuel (c9b5_sexprGodelEncode b) (dropCode i (c9b5_encodeListBool w))) := by
-  simp [matchesBCatG, unpair_pair_fst, unpair_pair_snd]
+  simp [matchesBCatG]
 
 set_option maxHeartbeats 1600000 in
 theorem matchesBChar_eq_one_iff {fuel : ℕ} {e : SExpr} {w : List Bool}
@@ -3400,11 +3401,10 @@ private theorem primrec_matchesBCharBody {prev : ℕ → ℕ} (hprev : Nat.Primr
     rw [matchesBCharBody_eq]
     match tag : (t.unpair.1).unpair.1 with
     | 0 | 1 | 2 | 3 =>
-      simp [tag, selectFn, isOne, min, Nat.sub_eq_zero_iff_le, mulBit, unpair_pair_fst,
-        unpair_pair_snd]
+      simp [selectFn, isOne, mulBit,
+        ]
     | _ + 4 =>
-      simp [selectFn, isOne, min, Nat.sub_eq_zero_iff_le, mulBit, unpair_pair_fst, unpair_pair_snd]
-      all_goals try omega
+      simp [selectFn, isOne, mulBit]
 
 theorem primrec_matchesBChar : ∀ fuel, Nat.Primrec (fun t => matchesBChar fuel t.unpair.1 t.unpair.2)
   | 0 => Nat.Primrec.const 0
@@ -3421,7 +3421,6 @@ theorem matchesBChar_le_one : ∀ fuel c cw, matchesBChar fuel c cw ≤ 1
     | 1 => exact listEqChar_le_one _ _
     | 2 => exact bExistsFn_le_one _ _ _
     | 3 =>
-      dsimp only
       exact mulBit_le_one (matchesBChar_le_one fuel _ _) (matchesBChar_le_one fuel _ _)
     | _ + 4 => simp
 
@@ -3439,7 +3438,7 @@ private theorem matchesBCharBody_local (f g : ℕ → ℕ) (c cw : ℕ)
   | 0 => rfl
   | 1 => rfl
   | 2 =>
-    dsimp only
+    simp
     apply bExistsFn_congr
     intro i _
     unfold matchesBCatG
@@ -3450,7 +3449,7 @@ private theorem matchesBCharBody_local (f g : ℕ → ℕ) (c cw : ℕ)
       pair_le_pair (le_trans (unpair_snd_le c.unpair.2) (unpair_snd_le c)) (dropCode_le i cw)
     rw [h _ h1, h _ h2]
   | 3 =>
-    dsimp only
+    simp
     have h1 : Nat.pair c.unpair.2.unpair.1 cw ≤ Nat.pair c cw :=
       pair_le_pair (le_trans (unpair_left_le c.unpair.2) (unpair_snd_le c)) (le_refl cw)
     have h2 : Nat.pair c.unpair.2.unpair.2 cw ≤ Nat.pair c cw :=
@@ -3552,16 +3551,16 @@ theorem primrec_matchesBCharBodyLookup : Nat.Primrec matchesBCharBodyLookup := b
   match tag : w.unpair.2.unpair.1.unpair.1 with
   | 0 =>
     have h10 : (1 - 0 : ℕ) = 1 := rfl
-    simp only [tag, h10, isOne_one, selectFn_one]
+    simp only [h10, isOne_one, selectFn_one]
   | 1 =>
     have h01' : (1 - 1 : ℕ) = 0 := rfl
     have h12' : (2 - 1 : ℕ) = 1 := rfl
-    simp only [tag, h01', h12', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01', h12', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
   | 2 =>
     have h01' : (1 - 2 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12' : (2 - 2 : ℕ) = 0 := rfl
     have h23' : (3 - 2 : ℕ) = 1 := rfl
-    simp only [tag, h01', h12', h23', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
+    simp only [h01', h23', isOne_zero, isOne_one, selectFn_zero, selectFn_one]
     apply eq_of_le_one_iff_one (bExistsFn_le_one _ _ _) (bExistsFn_le_one _ _ _)
     rw [bExistsFn_eq_one_iff, bExistsFn_eq_one_iff]
     refine exists_congr fun i => and_congr_right fun _ => ?_
@@ -3571,14 +3570,14 @@ theorem primrec_matchesBCharBodyLookup : Nat.Primrec matchesBCharBodyLookup := b
     have h12' : (2 - 3 : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h23' : (3 - 3 : ℕ) = 0 := rfl
     have h34' : (4 - 3 : ℕ) = 1 := rfl
-    simp only [tag, h01', h12', h23', h34', isOne_zero, isOne_one, selectFn_zero, selectFn_one,
+    simp only [h01', h34', isOne_zero, isOne_one, selectFn_zero, selectFn_one,
       mulBit]
   | t + 4 =>
     have h01' : (1 - (t + 4) : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h12' : (2 - (t + 4) : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h23' : (3 - (t + 4) : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
     have h34' : (4 - (t + 4) : ℕ) = 0 := Nat.sub_eq_zero_of_le (by omega)
-    simp only [tag, h01', h12', h23', h34', isOne_zero, selectFn_zero]
+    simp only [h01', h12', h23', h34', isOne_zero, selectFn_zero]
 
 theorem matchesBChar_fuelTable_eq :
     ∀ fuel bound code, code ≤ bound →
@@ -3588,7 +3587,7 @@ theorem matchesBChar_fuelTable_eq :
     (F := fun fuel code => matchesBChar fuel code.unpair.1 code.unpair.2)
     (Body := fun prev code => matchesBCharBody prev code.unpair.1 code.unpair.2)
     (fun _ => rfl) (fun _ _ => rfl)
-    (fun table code => by unfold matchesBCharBodyLookup; simp [unpair_pair_fst, unpair_pair_snd])
+    (fun table code => by unfold matchesBCharBodyLookup; simp)
     (fun f g code h => matchesBCharBody_local f g code.unpair.1 code.unpair.2 (by
       simpa [pair_unpair] using h))
 
@@ -3599,12 +3598,12 @@ theorem primrec_matchesBChar2 :
   have hpack : Nat.Primrec (fun s : ℕ => Nat.pair s.unpair.2 s.unpair.1) :=
     Nat.Primrec.pair Nat.Primrec.right Nat.Primrec.left
   have hcomp : Nat.Primrec (fun s => fuelTable matchesBCharBodyLookup s.unpair.2 s.unpair.1) :=
-    (hft.comp hpack).of_eq fun s => by simp [unpair_pair_fst, unpair_pair_snd]
+    (hft.comp hpack).of_eq fun s => by simp
   have hnth : Nat.Primrec
       (fun s => nthCode (fuelTable matchesBCharBodyLookup s.unpair.2 s.unpair.1) s.unpair.2 0) :=
     (primrec_nthCode.comp
       (Nat.Primrec.pair hcomp (Nat.Primrec.pair Nat.Primrec.right (Nat.Primrec.const 0)))).of_eq
-      fun s => by simp [unpair_pair_fst, unpair_pair_snd]
+      fun s => by simp
   exact hnth.of_eq fun s => by
     rw [matchesBChar_fuelTable_eq s.unpair.1 s.unpair.2 s.unpair.2 (le_refl _)]
 
@@ -3888,12 +3887,12 @@ theorem subsetBChar_eq_one_iff {fuel : ℕ} {e1 e2 : SExpr}
     rw [hguard1, selectFn_one] at hi
     by_cases hc1 : matchesBChar fuel (c9b5_sexprGodelEncode e1) (c9b5_encodeListBool w) = 1
     · rw [hc1, selectFn_one] at hi
-      simp only [Bool.or_eq_true, Bool.not_eq_true]
+      simp only [Bool.or_eq_true]
       exact Or.inr ((matchesBChar_eq_one_iff h2).mp hi)
     · have hc1' : matchesBChar fuel (c9b5_sexprGodelEncode e1) (c9b5_encodeListBool w) = 0 := by
         have := matchesBChar_le_one fuel (c9b5_sexprGodelEncode e1) (c9b5_encodeListBool w)
         omega
-      simp only [Bool.or_eq_true, Bool.not_eq_true]
+      simp only [Bool.or_eq_true]
       refine Or.inl ?_
       by_contra hcontra
       exact hc1 ((matchesBChar_eq_one_iff h1).mpr (by simpa using hcontra))
@@ -3924,7 +3923,7 @@ theorem subsetBChar_eq_one_iff {fuel : ℕ} {e1 e2 : SExpr}
       · rw [hc1, selectFn_one]
         have hc1matches : matchesB e1 (c9b6_decodeListBool i) = true :=
           (matchesBChar_eq_one_iff h1).mp hc1
-        simp only [Bool.or_eq_true, Bool.not_eq_true] at hspec
+        simp only [Bool.or_eq_true] at hspec
         rcases hspec with hf | ht
         · rw [hc1matches] at hf; simp at hf
         · exact (matchesBChar_eq_one_iff h2).mpr ht

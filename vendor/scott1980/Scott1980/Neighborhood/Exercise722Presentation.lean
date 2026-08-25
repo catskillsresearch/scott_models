@@ -47,7 +47,7 @@ private def decodeListBool (n : ℕ) : Option (List Bool) :=
 
 private theorem decodeListBool_encodeListBool (σ : List Bool) :
     decodeListBool (encodeListBool σ) = some σ := by
-  simp [decodeListBool, encodeListBool, decodeList_encodeList, List.mapM_map, List.map_map]
+  simp [decodeListBool, encodeListBool, decodeList_encodeList, List.mapM_map]
   induction σ with
   | nil => rfl
   | cons b bs ih =>
@@ -81,7 +81,7 @@ private theorem mapM_natBool_isSome_iff (l : List ℕ) :
         cases htx : xs.mapM natBool with
         | none => simp [hnx, htx] at h
         | some ts =>
-          have hxs' : (xs.mapM natBool).isSome = true := by simp [htx, h]
+          have hxs' : (xs.mapM natBool).isSome = true := by simp [htx]
           intro y hy
           rcases List.mem_cons.mp hy with hEq | hyTail
           · rw [hEq]
@@ -100,7 +100,7 @@ private theorem mapM_natBool_isSome_iff (l : List ℕ) :
       | some b =>
         cases htx : xs.mapM natBool with
         | none => simp [htx] at hxs
-        | some ts => simp [hnx, htx, hx, hxs]
+        | some ts => simp
 
 /-- **7.22i(b)1(d):** list decode succeeds iff every coded entry is a binary digit. -/
 theorem decodeListBool_isSome_iff (n : ℕ) :
@@ -146,7 +146,7 @@ theorem decodeFuel_encode {fuel : ℕ} {e : SExpr} (h : sexprDepth e ≤ fuel) :
     cases fuel with
     | zero => simp [sexprDepth] at h
     | succ fuel =>
-      simp [decodeFuel, SExpr.encode, sexprDepth]
+      simp [decodeFuel, SExpr.encode]
   | single σ =>
     cases fuel with
     | zero => simp [sexprDepth] at h
@@ -235,6 +235,7 @@ theorem decodeFuelOkChar_eq_one_iff (fuel c : ℕ) :
       rw [decodeFuel_succ_single fuel c tag]
       simp [decodeListBool_isSome_iff, Option.isSome_map]
     | 2 =>
+      simp
       rw [decodeFuel_succ_cat fuel c tag, mulBit_eq_one_iff, decodeFuel_pair_cat_isSome_iff]
       have ih1 := ih c.unpair.2.unpair.1
       have ih2 := ih c.unpair.2.unpair.2
@@ -244,6 +245,7 @@ theorem decodeFuelOkChar_eq_one_iff (fuel c : ℕ) :
       · intro ⟨h1, h2⟩
         exact ⟨ih1.mpr h1, ih2.mpr h2⟩
     | 3 =>
+      simp
       rw [decodeFuel_succ_cap fuel c tag, mulBit_eq_one_iff, decodeFuel_pair_cap_isSome_iff]
       have ih1 := ih c.unpair.2.unpair.1
       have ih2 := ih c.unpair.2.unpair.2
@@ -254,7 +256,7 @@ theorem decodeFuelOkChar_eq_one_iff (fuel c : ℕ) :
         exact ⟨ih1.mpr h1, ih2.mpr h2⟩
     | t + 4 =>
       rw [decodeFuel_succ_junk fuel c (by omega)]
-      simp [tag]
+      simp
 
 /-- Index for the enumeration: code plus depth (fuel for decoding). -/
 def SExpr.index (e : SExpr) : ℕ := Nat.pair (encode e) (sexprDepth e)
@@ -322,11 +324,11 @@ def safeDecodeActive (n : ℕ) : SExpr :=
 theorem SsysX_eq_denote_safe (n : ℕ) : SsysX n = denote (safeDecodeActive n) := by
   unfold SsysX safeDecodeActive
   cases hdec : SExpr.decode n with
-  | none => simp [hdec, denote_sigma, SsysX_default]
+  | none => simp [denote_sigma, SsysX_default]
   | some e =>
     by_cases hb : decideNonemptyB e = true
-    · simp [hdec, hb]
-    · simp [hdec, hb, denote_sigma, SsysX_default]
+    · simp [hb]
+    · simp [hb, denote_sigma, SsysX_default]
 
 theorem ssys_inter_nonempty_iff_consistent (n m : ℕ) :
     (SsysX n ∩ SsysX m).Nonempty ↔ consistentB (safeDecodeActive n) (safeDecodeActive m) = true := by
@@ -364,7 +366,7 @@ theorem safeDecodeActive_inactive (n : ℕ) (h : ssysActive n = false) : safeDec
     by_cases hb : decideNonemptyB e
     · exfalso
       simp [hdec, hb] at h
-    · simp [hdec, hb]
+    · simp [hb]
 
 theorem safeDecodeActive_nonempty (n : ℕ) : (denote (safeDecodeActive n)).Nonempty := by
   unfold safeDecodeActive
@@ -372,9 +374,8 @@ theorem safeDecodeActive_nonempty (n : ℕ) : (denote (safeDecodeActive n)).None
   | none => exact Set.univ_nonempty
   | some e =>
     by_cases hb : decideNonemptyB e = true
-    · have hne : (denote e).Nonempty := (decideNonemptyB_iff e).1 hb
-      simpa [hdec, hb] using hne
-    · simpa [hdec, hb, denote_sigma] using Set.univ_nonempty
+    · simp [hb]; exact (decideNonemptyB_iff e).mp hb
+    · simp [hb, denote_sigma]
 
 theorem consistentB_sigma_safe (m : ℕ) : consistentB .sigma (safeDecodeActive m) = true := by
   rw [consistentB_iff, denote_cap, denote_sigma, Set.univ_inter]
@@ -661,7 +662,7 @@ theorem ssysActiveChar_eq_one_iff (n : ℕ) : ssysActiveChar n = 1 ↔ ssysActiv
   simp only [ssysActiveChar, ssysActive, SExpr.decode, mulBit_eq_one_iff,
     decodeFuelOkChar_eq_one_iff]
   cases hdec : decodeFuel (n.unpair.2 + 1) n.unpair.1 with
-  | none => simp [hdec]
+  | none => simp
   | some e =>
     have hc : n.unpair.1 = SExpr.encode e := decodeFuel_sound hdec
     have hdepth : Domain.Recursive.c9b5_sexprDepth e ≤ n.unpair.2 + 1 := by

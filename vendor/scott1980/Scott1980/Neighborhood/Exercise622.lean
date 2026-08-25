@@ -60,6 +60,7 @@ def Cnat : ScottSys where
   sys :=
     { mem := fun X => X = {([false] : Str)} ∨ X = {([false] : Str), ([] : Str)}
       master := {([false] : Str), ([] : Str)}
+      master_nonempty := ⟨[false], Set.mem_insert _ _⟩
       master_mem := Or.inr rfl
       inter_mem := by
         have hAB : ({([false] : Str)} : Set Str) ⊆ {([false] : Str), ([] : Str)} :=

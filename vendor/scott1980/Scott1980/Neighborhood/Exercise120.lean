@@ -69,6 +69,7 @@ master is `↑Δ`; the intersection law uses the consistency witness `Z ∈ ↑Z
 def powerSystem : NeighborhoodSystem (Set α) where
   mem S := ∃ X, V.mem X ∧ S = V.upSet X
   master := V.upSet V.master
+  master_nonempty := ⟨V.master, V.master_mem, subset_rfl⟩
   master_mem := ⟨V.master, V.master_mem, rfl⟩
   inter_mem := by
     rintro S T W ⟨X, hX, rfl⟩ ⟨Y, hY, rfl⟩ ⟨Z, hZ, rfl⟩ hWsub

@@ -8,7 +8,7 @@ Github:  https://github.com/catskillsresearch/scott1980
 import Scott1980.Neighborhood.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Data.Real.Archimedean
+import Mathlib.Algebra.Order.Archimedean.Real.Basic
 import Mathlib.Tactic
 
 /-!
@@ -73,6 +73,7 @@ theorem inter_mem' {X Y : Set ℝ} (hX : ratIntervalMem X) (hY : ratIntervalMem 
 def ratIntervalSystem : NeighborhoodSystem ℝ where
   mem := ratIntervalMem
   master := Set.univ
+  master_nonempty := Set.univ_nonempty
   master_mem := Or.inl rfl
   inter_mem := by
     intro X Y Z hX hY hZ hZsub

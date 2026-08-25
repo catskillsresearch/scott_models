@@ -171,7 +171,7 @@ theorem PFmap_rel_fin (f : ApproximableMap V W) {L₁ : List (Set α)} {L₂ : L
 theorem PFmap_idMap (V : NeighborhoodSystem α) : PFmap (idMap V) = idMap V.PowerDomain := by
   apply ApproximableMap.ext
   intro A B
-  simp only [PFmap_rel, idMap_rel, PowerDomain_mem]
+  simp only [PFmap_rel, idMap_rel]
   constructor
   · rintro ⟨hA, hB, hbody⟩
     refine ⟨hA, hB, ?_⟩

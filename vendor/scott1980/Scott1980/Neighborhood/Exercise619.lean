@@ -90,6 +90,7 @@ def sumTok (D₀ D₁ : NeighborhoodSystem Str)
   mem W := W = sumTokMaster D₀ D₁ ∨ (∃ X, D₀.mem X ∧ W = embBit false X) ∨
     (∃ Y, D₁.mem Y ∧ W = embBit true Y)
   master := sumTokMaster D₀ D₁
+  master_nonempty := ⟨[], nil_mem_sumTokMaster⟩
   master_mem := Or.inl rfl
   sub_master := by
     rintro W (rfl | ⟨X, hX, rfl⟩ | ⟨Y, hY, rfl⟩)
@@ -464,6 +465,7 @@ together with the factors' closure. -/
 def prodTok (D₀ D₁ : NeighborhoodSystem Str) : NeighborhoodSystem Str where
   mem W := ∃ X Y, D₀.mem X ∧ D₁.mem Y ∧ W = prodTokNbhd X Y
   master := prodTokNbhd D₀.master D₁.master
+  master_nonempty := ⟨[], mem_prodTokNbhd_nil⟩
   master_mem := ⟨D₀.master, D₁.master, D₀.master_mem, D₁.master_mem, rfl⟩
   inter_mem := by
     rintro W W' Z ⟨X, Y, hX, hY, rfl⟩ ⟨X', Y', hX', hY', rfl⟩ ⟨Z₀, Z₁, hZ₀, hZ₁, rfl⟩ hsub

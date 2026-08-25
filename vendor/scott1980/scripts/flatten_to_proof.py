@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """Flatten every Scott1980 Lean module into a single proof.lean.
 
+Use this to export the whole library as one file for LLMs or other tools that
+cannot browse a multi-file repo locally (unlike Cursor's project indexing).
+
 Internal `import Scott1980.*` lines are dropped (the bodies are concatenated in
 dependency order). External/Mathlib imports are hoisted to the top of the file.
+
+Output: `proof.lean` at the repo root (gitignored; regenerate after library changes).
 """
 
 from __future__ import annotations

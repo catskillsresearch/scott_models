@@ -264,12 +264,10 @@ theorem V_diff_computable : RecDecidable₂ (fun n m => ∃ k, VX k = VX n \ VX 
       (Nat.Primrec.right.comp hvr))).of_eq fun t => by simp only [unpair_pair_fst, unpair_pair_snd]
   refine RecDecidable₂.of_paired_zero_one_char hfprim ?_ ?_
   · intro t
-    dsimp only
     have := myLevelSetNonempty_le_one (VdiffRaw t.unpair.1 t.unpair.2).unpair.1
       (VdiffRaw t.unpair.1 t.unpair.2).unpair.2
     omega
   · intro n m
-    dsimp only
     rw [unpair_pair_fst, unpair_pair_snd, Vdiff_iff_nonempty, ← levelSet_VdiffRaw,
       myLevelSetNonempty_eq_one_iff]
 

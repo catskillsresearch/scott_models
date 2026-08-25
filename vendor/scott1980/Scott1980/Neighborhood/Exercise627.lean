@@ -535,6 +535,7 @@ theorem subsingleton_element_of_only_master {γ : Type*} {V : NeighborhoodSystem
 def twoPt : NeighborhoodSystem Str where
   mem X := X = Set.univ ∨ X = {[]}
   master := Set.univ
+  master_nonempty := ⟨[], Set.mem_univ _⟩
   master_mem := Or.inl rfl
   sub_master := by
     rintro X (rfl | rfl)

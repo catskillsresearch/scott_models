@@ -81,8 +81,8 @@ theorem idxSet_inter_eq_iff_DAtom {β : Type*} {V : NeighborhoodSystem β}
       show IPos Q [i, j] ∩ {m | ∀ j' ∈ ([k] : List ℕ), m ∉ idxSet Q.X j'} = _
       rw [hIPos]
       ext m
-      simp [Set.mem_diff]
-    rw [hDAtom_eq, Set.diff_eq_empty]
+      simp [Set.mem_sdiff]
+    rw [hDAtom_eq, Set.sdiff_eq_empty]
   constructor
   · intro heq
     have h1 : idxSet Q.X k ⊆ idxSet Q.X i := by rw [← heq]; exact Set.inter_subset_left

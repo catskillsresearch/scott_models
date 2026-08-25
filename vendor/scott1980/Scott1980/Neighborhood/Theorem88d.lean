@@ -180,7 +180,7 @@ def packState (remK posC negC uCode : ℕ) : ℕ := Nat.pair remK (Nat.pair posC
 @[simp] theorem stateNeg_packState (a b c d : ℕ) : stateNeg (packState a b c d) = c := by
   unfold stateNeg packState; simp only [unpair_pair_fst, unpair_pair_snd]
 @[simp] theorem stateCode_packState (a b c d : ℕ) : stateCode (packState a b c d) = d := by
-  unfold stateCode packState; simp only [unpair_pair_fst, unpair_pair_snd]
+  unfold stateCode packState; simp only [unpair_pair_snd]
 
 /-- The initial state at depth `0`: no constraints yet (`posC = negC = 0`, the empty-list code),
 `U`-side code is `U.master`'s (`UmasterIdx`), and the unconsumed bit-source is the whole of `k`. -/
@@ -301,7 +301,7 @@ noncomputable def atomUCodeState (t : ℕ) : ℕ :=
   t.unpair.2.rec (atomBase t.unpair.1) (fun y IH => atomStep (datomDec P) (Nat.pair t.unpair.1 (Nat.pair y IH)))
 
 theorem primrec_atomUCodeState : Nat.Primrec (atomUCodeState P) :=
-  (Nat.Primrec.prec primrec_atomBase (primrec_atomStep (primrec_datomDec P))).of_eq fun t => rfl
+  (Nat.Primrec.prec primrec_atomBase (primrec_atomStep (primrec_datomDec P))).of_eq fun _t => rfl
 
 /-- **The depth-`n` accumulated positive-index code**, for bit-source `k`. -/
 noncomputable def atomUPos (n k : ℕ) : ℕ := statePos (atomUCodeState P (Nat.pair k n))
@@ -335,7 +335,7 @@ theorem DAtom_cons_pos (Q : ComputablePresentation D) (i : ℕ) (pos neg : List 
 theorem DAtom_cons_neg (Q : ComputablePresentation D) (j : ℕ) (pos neg : List ℕ) :
     DAtom Q pos (j :: neg) = (Set.univ \ idxSet Q.X j) ∩ DAtom Q pos neg := by
   ext m
-  simp only [mem_DAtom, List.mem_cons, Set.mem_inter_iff, Set.mem_diff, Set.mem_univ, true_and,
+  simp only [mem_DAtom, List.mem_cons, Set.mem_inter_iff, Set.mem_sdiff, Set.mem_univ, true_and,
     mem_idxSet]
   constructor
   · rintro ⟨hpos, hneg⟩
@@ -1024,7 +1024,7 @@ theorem atomUCode_succ_true {k n : ℕ} (hne : atomUEmpty P (n + 1) k = 0)
       have hcode_eq'' : atomUCode P (n + 1) (i + 2 ^ n) = atomUCode P (n + 1) k :=
         (atomUCodeState_congr P hagreeFull).2.2
       rw [← hcode_eq'']; exact hz
-    · push_neg at hagree'
+    · push Not at hagree'
       obtain ⟨l, hl, hlne⟩ := hagree'
       have hd : UX (atomUCode P n (i + 2 ^ n)) ∩ UX (atomUCode P n k) = ∅ :=
         atomUCode_disjoint P n (i + 2 ^ n) k (atomUEmpty_zero_of_succ P hie)
@@ -1069,7 +1069,7 @@ theorem atomUCode_disjoint_YseqCode_of_posTwin_empty {n k' : ℕ} (hk' : atomUEm
   · rw [hij] at hie; exact absurd hie (by omega)
   · have hdisagree : ∃ l < n, deltaOf (i + 2 ^ n) l ≠ deltaOf k' l := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       apply hij
       apply eq_of_deltaOf_agree_of_lt_two_pow hilt hjlt
       intro l hl
@@ -1175,7 +1175,7 @@ theorem atomUCode_succ_false {k n : ℕ} (hne : atomUEmpty P (n + 1) k = 0)
         have hz' : z ∈ UX (atomUCode P n k) ∩ UX (YseqCode P n) := ⟨hz, hzY⟩
         rw [hcdisj] at hz'
         exact hz'
-      · exact Set.diff_subset
+      · exact Set.sdiff_subset
     rw [hncode, hI, selectFn_one]
     exact hEq
 
@@ -1342,7 +1342,7 @@ theorem genAtom_Yc_empty_iff (n k : ℕ) :
           rw [← heq]
           exact atomUCode_inter_succ_empty_of_junk P hn0 h1
         exact ⟨fun _ => h1, fun _ => hempty⟩
-      · push_neg at hn0
+      · push Not at hn0
         have hle0 : atomUEmpty P n k ≤ 1 := datomDec_le_one P _
         have hn1 : atomUEmpty P n k = 1 := by omega
         have hprev : genAtom (Yc P) U.master (deltaOf k) n = ∅ := ih.mpr hn1

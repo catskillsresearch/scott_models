@@ -78,7 +78,7 @@ theorem treeFold_eq_or_pairBots (t : TreeToken α) :
     · cases t with
       | bot => exact Or.inr ⟨rfl, rfl⟩
       | atom _ | pairL _ | pairR _ => exact False.elim (nomatch hb)
-    · exact Or.inl rfl
+    · exact Or.inl (if_neg hb)
 
 private def unfoldInsert (t : TreeToken α) :
     Finset (SumToken α (ProdToken (treeSystem A) (treeSystem A))) →

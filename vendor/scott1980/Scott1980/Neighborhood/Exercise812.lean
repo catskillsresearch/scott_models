@@ -205,6 +205,7 @@ rather than `Definition87.lean`'s `U`. -/
 def V : NeighborhoodSystem ℕ where
   mem X := ∃ k m, X = levelSet k m ∧ X.Nonempty
   master := Set.univ
+  master_nonempty := Set.univ_nonempty
   master_mem := ⟨0, 1, levelSet_zero_one.symm, Set.univ_nonempty⟩
   inter_mem := by
     rintro X Y Z ⟨k₁, m₁, rfl, -⟩ ⟨k₂, m₂, rfl, -⟩ ⟨k₃, m₃, rfl, hZne⟩ hZsub

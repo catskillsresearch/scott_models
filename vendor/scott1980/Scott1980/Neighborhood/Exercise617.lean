@@ -108,7 +108,7 @@ theorem sum3_nonempty {α β γ : Type*} {V₀ : NeighborhoodSystem α} {V₁ : 
 /-- **The functor `T(X) = 𝟙 + X + X` on objects.** Over `D`, the system is the genuine three-way
 separated sum `𝟙 + D + D` (Example 6.2's `sum3`, with `𝟙 = unitSys`), again `∅`-free by
 `sum3_nonempty`. -/
-def tcObj (D : StrictDomainObj.{w}) : StrictDomainObj.{w} where
+abbrev tcObj (D : StrictDomainObj.{w}) : StrictDomainObj.{w} where
   carrier := Option (Unit ⊕ D.carrier ⊕ D.carrier)
   sys := sum3 unitSys D.sys D.sys Example62C.unitSys_nonempty D.nonempty D.nonempty
   nonempty := sum3_nonempty
@@ -630,7 +630,7 @@ def tcMapHom {D E : StrictDomainObj.{w}} (f : Category.Hom D E) :
 open Example62C in
 /-- **Exercise 6.17 — the functor `T(X) = 𝟙 + X + X`** on the category of `∅`-free domains and strict
 maps. On objects, `T(D) = 𝟙 + D + D` (Example 6.2's three-way sum); on maps, `T(f) = I_𝟙 + f + f`. -/
-def Tc : Endofunctor StrictDomainObj.{w} where
+abbrev Tc : Endofunctor StrictDomainObj.{w} where
   obj := tcObj
   map := tcMapHom
   map_id D := Subtype.ext (by
@@ -663,19 +663,19 @@ theorem isStrict_ofIso {α β : Type*} {V₀ : NeighborhoodSystem α} {V₁ : Ne
 
 open Example44 Example62C ExampleB in
 /-- `C` (Example 4.4: finite-or-infinite binary sequences) as an object of the `∅`-free category. -/
-def Cobj : StrictDomainObj.{0} := ⟨Str, C, C_nonempty⟩
+abbrev Cobj : StrictDomainObj.{0} := ⟨Str, C, C_nonempty⟩
 
 open Example44 Example62C in
 /-- **The `T`-algebra structure on `C`.** `(tcObj Cobj).sys = 𝟙 + C + C` (definitionally Example 6.2's
 `CC`), and the structure map `i : 𝟙 + C + C → C` is the inverse of the domain-equation isomorphism
 `ccEquiv` (Example 6.2), realised as an approximable map by `ofIso`; it is strict by `isStrict_ofIso`.
 Concretely `i` sends the terminator to `Λ̂` and each `b`-copy of `x` to `b·x`. -/
-def cStr : Category.Hom (Tc.obj Cobj) Cobj :=
+abbrev cStr : Category.Hom (Tc.obj Cobj) Cobj :=
   ⟨ofIso (by exact ccEquiv.symm), isStrict_ofIso _⟩
 
 open Example44 Example62C in
 /-- **`C` is a `T`-algebra**, `(C, i)` with `T(X) = 𝟙 + X + X`. -/
-def Calg : TAlgebra Tc := ⟨Cobj, cStr⟩
+abbrev Calg : TAlgebra Tc := ⟨Cobj, cStr⟩
 
 /-! ## Initiality of `(C, i)`: the unique homomorphism into any `T`-algebra
 
@@ -982,7 +982,7 @@ def descAlgHom : AlgHom Calg B where
   hom := descStrict B
   comm := by
     apply Subtype.ext
-    simp only [StrictDomainObj.comp_val, Tc_map_val]
+    simp only [StrictDomainObj.comp_val]
     exact descComm B
 
 /-- **Uniqueness.** Any `T`-algebra homomorphism out of `(C, i)` equals `descAlgHom`. -/
@@ -993,9 +993,8 @@ theorem descAlgHom_uniq (h' : AlgHom Calg B) : h' = descAlgHom B := by
     have hc : hom.1.comp (ofIso ccEquiv.symm)
         = B.str.1.comp (sumMap3 (h₀ := Example62C.unitSys_nonempty) (h₁ := Example62C.C_nonempty)
           (h₂ := Example62C.C_nonempty) (h₀' := Example62C.unitSys_nonempty) (h₁' := B.carrier.nonempty)
-          (h₂' := B.carrier.nonempty) (idMap unitSys) hom.1 hom.1) := by
-      have hcomm := congrArg Subtype.val comm
-      simpa only [StrictDomainObj.comp_val, Tc_map_val] using hcomm
+          (h₂' := B.carrier.nonempty) (idMap unitSys) hom.1 hom.1) :=
+      congrArg Subtype.val comm
     have h2 := congrArg (fun m => m.comp (ofIso ccEquiv)) hc
     simp only at h2
     rw [comp_assoc] at h2

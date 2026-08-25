@@ -106,12 +106,22 @@ theorem FinSupp.inter {X X' : ∀ i, Set (α i)}
   rw [List.mem_append, not_or] at hi
   simp only [hl i hi.1, hl' i hi.2, Set.inter_self]
 
+section IndexedProduct
+
+variable [Nonempty ι]
+
 variable (D) in
-/-- **Exercise 6.29 — the indexed product `∏_i D_i`.** Neighbourhoods are cylinders: tuples
-`X i ∈ 𝒟ᵢ` that are the master in all but finitely many coordinates. -/
+/-- **Exercise 6.29 — the indexed product `∏_i D_i`.** The index type is non-empty so the
+dependent-sum token set contains a token. Neighbourhoods are cylinders: tuples `X i ∈ 𝒟ᵢ`
+that are the master in all but finitely many coordinates. -/
 def iprod : NeighborhoodSystem (Σ i, α i) where
   mem W := ∃ X : ∀ i, Set (α i), (∀ i, (D i).mem (X i)) ∧ FinSupp D X ∧ W = iprodNbhd X
   master := iprodNbhd (fun i => (D i).master)
+  master_nonempty := by
+    cases ‹Nonempty ι› with
+    | intro i =>
+      obtain ⟨a, ha⟩ := (D i).master_nonempty
+      exact ⟨⟨i, a⟩, ha⟩
   master_mem := ⟨fun i => (D i).master, fun i => (D i).master_mem, FinSupp.master, rfl⟩
   sub_master := by
     rintro W ⟨X, hX, _, rfl⟩
@@ -140,9 +150,11 @@ variable [DecidableEq ι]
 def updTuple (D : ∀ i, NeighborhoodSystem (α i)) (i : ι) (U : Set (α i)) : ∀ j, Set (α j) :=
   Function.update (fun j => (D j).master) i U
 
+omit [Nonempty ι] in
 @[simp] theorem updTuple_apply_self (i : ι) (U : Set (α i)) : updTuple D i U i = U := by
   simp [updTuple]
 
+omit [Nonempty ι] in
 theorem updTuple_apply_ne {i j : ι} (U : Set (α i)) (h : j ≠ i) :
     updTuple D i U j = (D j).master := by
   simp [updTuple, Function.update_of_ne h]
@@ -151,6 +163,7 @@ theorem updTuple_apply_ne {i j : ι} (U : Set (α i)) (h : j ≠ i) :
 def slice (D : ∀ i, NeighborhoodSystem (α i)) (i : ι) (U : Set (α i)) : Set (Σ i, α i) :=
   iprodNbhd (updTuple D i U)
 
+omit [Nonempty ι] in
 theorem slice_eq (i : ι) (U : Set (α i)) : slice D i U = iprodNbhd (updTuple D i U) := rfl
 
 /-- A slice has support `⊆ {i}`, hence is a neighbourhood of the product when `U ∈ 𝒟ᵢ`. -/
@@ -170,6 +183,7 @@ theorem iprod_mem_slice_inv {i : ι} {U : Set (α i)} (h : (iprod D).mem (slice 
   have hi := hX i
   rwa [← hXeq, updTuple_apply_self] at hi
 
+omit [Nonempty ι] in
 /-- Slices at the same coordinate intersect by intersecting their data. -/
 theorem slice_inter (i : ι) (U U' : Set (α i)) :
     slice D i U ∩ slice D i U' = slice D i (U ∩ U') := by
@@ -180,6 +194,7 @@ theorem slice_inter (i : ι) (U U' : Set (α i)) :
   · rw [updTuple_apply_ne U h, updTuple_apply_ne U' h, updTuple_apply_ne (U ∩ U') h,
       Set.inter_self]
 
+omit [Nonempty ι] in
 /-- Slices are monotone in their data. -/
 theorem slice_subset (i : ι) {U U' : Set (α i)} (hUU' : U ⊆ U') : slice D i U ⊆ slice D i U' := by
   rw [slice_eq, slice_eq, iprodNbhd_subset_iff]
@@ -188,6 +203,7 @@ theorem slice_subset (i : ι) {U U' : Set (α i)} (hUU' : U ⊆ U') : slice D i 
   · subst h; rw [updTuple_apply_self, updTuple_apply_self]; exact hUU'
   · rw [updTuple_apply_ne U h, updTuple_apply_ne U' h]
 
+omit [Nonempty ι] in
 /-- A cylinder is contained in each of its own slices. -/
 theorem iprodNbhd_subset_slice {X : ∀ i, Set (α i)} (hX : ∀ i, (D i).mem (X i)) (i : ι) :
     iprodNbhd X ⊆ slice D i (X i) := by
@@ -251,6 +267,7 @@ theorem fromPi_mem_slice (x : ∀ i, (D i).Element) (i : ι) (U : Set (α i)) :
 def restrictTo (D : ∀ i, NeighborhoodSystem (α i)) (l : List ι) (X : ∀ i, Set (α i)) :
     ∀ j, Set (α j) := fun j => if j ∈ l then X j else (D j).master
 
+omit [Nonempty ι] in
 theorem iprodNbhd_restrictTo_cons {X : ∀ i, Set (α i)} (hXsub : ∀ i, X i ⊆ (D i).master)
     (a : ι) (l : List ι) :
     iprodNbhd (restrictTo D (a :: l) X) = slice D a (X a) ∩ iprodNbhd (restrictTo D l X) := by
@@ -340,6 +357,8 @@ def iprodEquiv (D : ∀ i, NeighborhoodSystem (α i)) :
 
 end Iso
 
+end IndexedProduct
+
 /-! ## `+` generalizes to `∑`: the indexed separated sum
 
 Tokens live in `Option (Σ i, α i)`: the `none` basepoint plus tagged copies `inj i X` of the
@@ -416,6 +435,7 @@ def isum (D : ∀ i, NeighborhoodSystem (α i))
     NeighborhoodSystem (Option (Σ i, α i)) where
   mem W := W = sumMasterI D ∨ ∃ i, ∃ X : Set (α i), (D i).mem X ∧ W = injI i X
   master := sumMasterI D
+  master_nonempty := ⟨none, none_mem_sumMasterI⟩
   master_mem := Or.inl rfl
   sub_master := by
     rintro W (rfl | ⟨i, X, hX, rfl⟩)
@@ -484,6 +504,7 @@ def ioplus (D : ∀ i, NeighborhoodSystem (α i))
     NeighborhoodSystem (Option (Σ i, α i)) where
   mem W := W = sumMasterI D ∨ ∃ i, ∃ X : Set (α i), (D i).mem X ∧ X ≠ (D i).master ∧ W = injI i X
   master := sumMasterI D
+  master_nonempty := ⟨none, none_mem_sumMasterI⟩
   master_mem := Or.inl rfl
   sub_master := by
     rintro W (rfl | ⟨i, X, hX, _, rfl⟩)
@@ -518,14 +539,20 @@ The smash product keeps only those tuples that are *proper* (`≠` master) in **
 requirement that any neighbourhood imposes — there are no proper neighbourhoods at all, so the
 infinite smash collapses to the one-point domain. -/
 
-/-- **Exercise 6.29 — the indexed smash product `⊗_i D_i`.** A proper neighbourhood is a cylinder
-proper in *every* coordinate; closure under intersection is as for `iprod` plus the observation that
+/-- **Exercise 6.29 — the indexed smash product `⊗_i D_i`.** The index type is non-empty so its
+dependent-sum token set is non-empty. A proper neighbourhood is a cylinder proper in *every*
+coordinate; closure under intersection is as for `iprod` plus the observation that
 `X i ∩ X' i ⊆ X i ≠` master stays proper. -/
-def iotimes (D : ∀ i, NeighborhoodSystem (α i)) : NeighborhoodSystem (Σ i, α i) where
+def iotimes [Nonempty ι] (D : ∀ i, NeighborhoodSystem (α i)) : NeighborhoodSystem (Σ i, α i) where
   mem W := W = iprodNbhd (fun i => (D i).master) ∨
     ∃ X : ∀ i, Set (α i), (∀ i, (D i).mem (X i)) ∧ (∀ i, X i ≠ (D i).master) ∧
       FinSupp D X ∧ W = iprodNbhd X
   master := iprodNbhd (fun i => (D i).master)
+  master_nonempty := by
+    cases ‹Nonempty ι› with
+    | intro i =>
+      obtain ⟨a, ha⟩ := (D i).master_nonempty
+      exact ⟨⟨i, a⟩, ha⟩
   master_mem := Or.inl rfl
   sub_master := by
     rintro W (rfl | ⟨X, hX, _, _, rfl⟩)

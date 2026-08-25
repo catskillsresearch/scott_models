@@ -95,21 +95,47 @@ theorem presentedIntervals_inter (L1 L2 : List (ℚ × ℚ)) :
 
 /-! ### `𝒰`, the universal neighbourhood system over `[0,1) ⊆ ℚ` -/
 
+/-- Membership in Scott's universal family: non-empty subsets of `[0,1)` presentable as a
+finite union of rational half-open intervals. -/
+def UMem (X : Set ℚ) : Prop :=
+  (∃ L : List (ℚ × ℚ), X = presentedIntervals L) ∧ X.Nonempty ∧ X ⊆ Set.Ico (0 : ℚ) 1
+
+/-- Scott's master neighbourhood `Δ = [0,1)` for `𝒰`. -/
+abbrev UMaster : Set ℚ := Set.Ico (0 : ℚ) 1
+
+/-- `[0,1)` is presented by the single interval `[0,1)`. -/
+theorem U_master_mem : UMem UMaster :=
+  ⟨⟨[(0, 1)], by rw [presentedIntervals_cons, presentedIntervals_nil, Set.union_empty]⟩,
+    ⟨0, by norm_num⟩, subset_rfl⟩
+
+/-- Scott's token set `[0,1)` is non-empty. -/
+theorem UMaster_nonempty : UMaster.Nonempty := by
+  exact ⟨0, by simp [UMaster]⟩
+
+/-- Intersection of two presentable sets is presentable, via `combineIntervals`. -/
+theorem U_inter_mem {X Y Z : Set ℚ} (hX : UMem X) (hY : UMem Y) (hZ : UMem Z)
+    (hZsub : Z ⊆ X ∩ Y) : UMem (X ∩ Y) := by
+  rcases hX with ⟨⟨L1, rfl⟩, -, hXsub⟩
+  rcases hY with ⟨⟨L2, rfl⟩, -, -⟩
+  rcases hZ with ⟨-, hZne, -⟩
+  exact ⟨⟨combineIntervals L1 L2, presentedIntervals_inter L1 L2⟩,
+    hZne.mono hZsub, Set.inter_subset_left.trans hXsub⟩
+
+/-- Every `UMem` set is contained in `[0,1)`. -/
+theorem U_sub_master {X : Set ℚ} (hX : UMem X) : X ⊆ UMaster := hX.2.2
+
 /-- **Definition 8.7 (Scott 1981, PRG-19).** The neighbourhood system `𝒰` over `[0,1) ⊆ ℚ`: its
 neighbourhoods are the non-empty subsets of `[0,1)` presentable as a finite union of rational
 intervals `[r,s)` (see the module docstring for why the raw endpoints need no `0 ≤ r < s ≤ 1`
-side-condition, and `mem_iff_scott` for the literal reconciliation). -/
+side-condition, and `mem_iff_scott` for the literal reconciliation). Proof fields are named
+theorems so Palomar can lock this value without generated `._proof_N` constants. -/
 def U : NeighborhoodSystem ℚ where
-  mem X := (∃ L : List (ℚ × ℚ), X = presentedIntervals L) ∧ X.Nonempty ∧ X ⊆ Set.Ico (0 : ℚ) 1
-  master := Set.Ico 0 1
-  master_mem :=
-    ⟨⟨[(0, 1)], by rw [presentedIntervals_cons, presentedIntervals_nil, Set.union_empty]⟩,
-      ⟨0, by norm_num⟩, subset_rfl⟩
-  inter_mem := by
-    rintro X Y Z ⟨⟨L1, rfl⟩, -, hXsub⟩ ⟨⟨L2, rfl⟩, -, -⟩ ⟨-, hZne, -⟩ hZsub
-    exact ⟨⟨combineIntervals L1 L2, presentedIntervals_inter L1 L2⟩,
-      hZne.mono hZsub, Set.inter_subset_left.trans hXsub⟩
-  sub_master h := h.2.2
+  mem := UMem
+  master := UMaster
+  master_nonempty := UMaster_nonempty
+  master_mem := U_master_mem
+  inter_mem := U_inter_mem
+  sub_master := U_sub_master
 
 /-! ### Faithfulness: `U.mem` literally matches Scott's per-pair-bounded description -/
 

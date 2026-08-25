@@ -49,15 +49,15 @@ attribute [instance] InfoSysObj.decEq
 
 namespace InfoSysObj
 
-def prod (A B : InfoSysObj) : InfoSysObj where
+abbrev prod (A B : InfoSysObj) : InfoSysObj where
   Token := ProdToken A.sys B.sys
   sys := productSystem A.sys B.sys
 
-def exp (A B : InfoSysObj) : InfoSysObj where
+abbrev exp (A B : InfoSysObj) : InfoSysObj where
   Token := FunToken A.sys B.sys
   sys := functionSystem A.sys B.sys
 
-def unit : InfoSysObj where
+abbrev unit : InfoSysObj where
   Token := PUnit
   sys := unitSystem
 
@@ -151,13 +151,15 @@ open ApproximableMap
 
 /-! ## Category -/
 
-instance : Category.{u, u + 1} InfoSysObj.{u} where
+abbrev instCategoryInfoSysObj : Category.{u, u + 1} InfoSysObj.{u} where
   Hom A B := ApproximableMap A.sys B.sys
   id A := idMap A.sys
   comp f g := acomp f g
   id_comp := id_acomp
   comp_id := acomp_id
   assoc := acomp_assoc
+
+attribute [instance] instCategoryInfoSysObj
 
 /-! ## Finite products -/
 
@@ -184,40 +186,135 @@ def productLimitCone (X Y : InfoSysObj.{u}) : LimitCone (pair X Y) where
       exact @pairMap_unique X.Token Y.Token T.Token _ _ _
         X.sys Y.sys T.sys f g m hf hg
 
-noncomputable instance : CartesianMonoidalCategory.{u, u + 1} InfoSysObj.{u} :=
+noncomputable abbrev instCartesianMonoidalCategoryInfoSysObj :
+    CartesianMonoidalCategory.{u, u + 1} InfoSysObj.{u} :=
   CartesianMonoidalCategory.ofChosenFiniteProducts terminalLimitCone productLimitCone
 
+attribute [instance] instCartesianMonoidalCategoryInfoSysObj
+
 theorem tensorObj_eq_prod (A Y : InfoSysObj.{u}) : A ⊗ Y = InfoSysObj.prod A Y := rfl
+
+private theorem tensorHom_eq_productMap (A Y Z : InfoSysObj.{u}) :
+    (A ⊗ Y ⟶ Z) = ApproximableMap (productSystem A.sys Y.sys) Z.sys := by
+  rfl
+
+private theorem tensorElement_eq_productElement (A Y : InfoSysObj.{u}) :
+    (A ⊗ Y).sys.Element = (productSystem A.sys Y.sys).Element := by
+  rfl
+
+private def tensorHomToProdHom (A Y Z : InfoSysObj.{u}) (h : A ⊗ Y ⟶ Z) :
+    ApproximableMap (productSystem A.sys Y.sys) Z.sys :=
+  cast (tensorHom_eq_productMap A Y Z) h
+
+private def prodHomToTensorHom (A Y Z : InfoSysObj.{u})
+    (h : ApproximableMap (productSystem A.sys Y.sys) Z.sys) : A ⊗ Y ⟶ Z :=
+  cast (tensorHom_eq_productMap A Y Z).symm h
+
+private def tensorElementToProdElement (A Y : InfoSysObj.{u})
+    (p : (A ⊗ Y).sys.Element) : (productSystem A.sys Y.sys).Element :=
+  cast (tensorElement_eq_productElement A Y) p
+
+private def prodElementToTensorElement (A Y : InfoSysObj.{u})
+    (p : (productSystem A.sys Y.sys).Element) : (A ⊗ Y).sys.Element :=
+  cast (tensorElement_eq_productElement A Y).symm p
+
+private theorem tensorElementToProdElement_prodElementToTensorElement
+    (A Y : InfoSysObj.{u}) (p : (productSystem A.sys Y.sys).Element) :
+    tensorElementToProdElement A Y (prodElementToTensorElement A Y p) = p := by
+  unfold tensorElementToProdElement prodElementToTensorElement
+  simp
+
+private theorem tensorMap_eq_productMap (A Y Y' : InfoSysObj.{u}) :
+    (A ⊗ Y ⟶ A ⊗ Y') =
+      ApproximableMap (productSystem A.sys Y.sys) (productSystem A.sys Y'.sys) := by
+  rfl
+
+private def productMapToTensorMap (A Y Y' : InfoSysObj.{u})
+    (f : ApproximableMap (productSystem A.sys Y.sys) (productSystem A.sys Y'.sys)) :
+    A ⊗ Y ⟶ A ⊗ Y' :=
+  cast (tensorMap_eq_productMap A Y Y').symm f
+
+private theorem productMapToTensorMap_toElement (A Y Y' : InfoSysObj.{u})
+    (f : ApproximableMap (productSystem A.sys Y.sys) (productSystem A.sys Y'.sys))
+    (p : (A ⊗ Y).sys.Element) :
+    (productMapToTensorMap A Y Y' f).toElement p =
+      prodElementToTensorElement A Y'
+        (f.toElement (tensorElementToProdElement A Y p)) := by
+  unfold productMapToTensorMap prodElementToTensorElement tensorElementToProdElement
+  generalize tensorMap_eq_productMap A Y Y' = eh
+  generalize tensorElement_eq_productElement A Y = es
+  generalize tensorElement_eq_productElement A Y' = et
+  cases eh
+  cases es
+  cases et
+  rfl
+
+private theorem productMapToTensorMap_comp_toElement (A Y Y' Z : InfoSysObj.{u})
+    (f : ApproximableMap (productSystem A.sys Y.sys) (productSystem A.sys Y'.sys))
+    (g : A ⊗ Y' ⟶ Z) (p : (A ⊗ Y).sys.Element) :
+    (productMapToTensorMap A Y Y' f ≫ g).toElement p =
+      g.toElement (prodElementToTensorElement A Y'
+        (f.toElement (tensorElementToProdElement A Y p))) := by
+  unfold instCategoryInfoSysObj productMapToTensorMap
+    prodElementToTensorElement tensorElementToProdElement
+  generalize tensorMap_eq_productMap A Y Y' = eh
+  generalize tensorElement_eq_productElement A Y = es
+  generalize tensorElement_eq_productElement A Y' = et
+  cases eh
+  cases es
+  cases et
+  exact acomp_toElement _ _ _
+
+private theorem prodHomToTensorHom_toElement (A Y Z : InfoSysObj.{u})
+    (h : ApproximableMap (productSystem A.sys Y.sys) Z.sys)
+    (p : (A ⊗ Y).sys.Element) :
+    (prodHomToTensorHom A Y Z h).toElement p =
+      h.toElement (tensorElementToProdElement A Y p) := by
+  unfold prodHomToTensorHom tensorElementToProdElement
+  generalize tensorHom_eq_productMap A Y Z = eh
+  generalize tensorElement_eq_productElement A Y = ee
+  cases eh
+  cases ee
+  rfl
+
+private def curryProduct (A Y Z : InfoSysObj.{u})
+    (h : ApproximableMap (productSystem A.sys Y.sys) Z.sys) :
+    Y ⟶ InfoSysObj.exp A Z :=
+  curryMap Y.sys A.sys Z.sys (acomp (swapMap Y.sys A.sys) h)
+
+private def uncurryProduct (A Y Z : InfoSysObj.{u})
+    (k : Y ⟶ InfoSysObj.exp A Z) :
+    ApproximableMap (productSystem A.sys Y.sys) Z.sys :=
+  acomp (swapMap A.sys Y.sys) (uncurryMap Y.sys A.sys Z.sys k)
 
 /-! ## Braided curry (Mathlib convention) -/
 
 /-- `Hom(A ⊗ Y, Z) → Hom(Y, A → Z)` via Scott curry after swap. -/
 noncomputable def curryRight (A Y Z : InfoSysObj.{u}) (h : A ⊗ Y ⟶ Z) :
     Y ⟶ InfoSysObj.exp A Z :=
-  curryMap Y.sys A.sys Z.sys (acomp (swapMap Y.sys A.sys) h)
+  curryProduct A Y Z (tensorHomToProdHom A Y Z h)
 
 /-- Inverse of `curryRight`. -/
 noncomputable def uncurryRight (A Y Z : InfoSysObj.{u}) (k : Y ⟶ InfoSysObj.exp A Z) :
     A ⊗ Y ⟶ Z :=
-  acomp (swapMap A.sys Y.sys) (uncurryMap Y.sys A.sys Z.sys k)
+  prodHomToTensorHom A Y Z (uncurryProduct A Y Z k)
 
 theorem uncurryRight_curryRight (A Y Z : InfoSysObj.{u}) (h : A ⊗ Y ⟶ Z) :
     uncurryRight A Y Z (curryRight A Y Z h) = h := by
-  simp only [uncurryRight, curryRight]
-  have huc := uncurry_curryMap Y.sys A.sys Z.sys (acomp (swapMap Y.sys A.sys) h)
-  calc
-    acomp (swapMap A.sys Y.sys)
-          (uncurryMap Y.sys A.sys Z.sys
-            (curryMap Y.sys A.sys Z.sys (acomp (swapMap Y.sys A.sys) h)))
-        = acomp (swapMap A.sys Y.sys) (acomp (swapMap Y.sys A.sys) h) := by rw [huc]
-    _ = acomp (acomp (swapMap A.sys Y.sys) (swapMap Y.sys A.sys)) h :=
-        (acomp_assoc _ _ _).symm
-    _ = acomp (idMap (productSystem A.sys Y.sys)) h := by rw [swapMap_acomp_swapMap]
-    _ = h := id_acomp _
+  unfold uncurryRight curryRight uncurryProduct curryProduct
+  rw [uncurry_curryMap, ← acomp_assoc, swapMap_acomp_swapMap, id_acomp]
+  unfold prodHomToTensorHom tensorHomToProdHom
+  simp
 
 theorem curryRight_uncurryRight (A Y Z : InfoSysObj.{u}) (k : Y ⟶ InfoSysObj.exp A Z) :
     curryRight A Y Z (uncurryRight A Y Z k) = k := by
-  simp only [curryRight, uncurryRight]
+  unfold curryRight uncurryRight
+  rw [show tensorHomToProdHom A Y Z
+      (prodHomToTensorHom A Y Z (uncurryProduct A Y Z k)) =
+      uncurryProduct A Y Z k by
+    unfold tensorHomToProdHom prodHomToTensorHom
+    simp]
+  unfold curryProduct uncurryProduct
   have hred :
       acomp (swapMap Y.sys A.sys)
         (acomp (swapMap A.sys Y.sys) (uncurryMap Y.sys A.sys Z.sys k)) =
@@ -244,7 +341,9 @@ noncomputable def tensorExpEquiv (A : InfoSysObj.{u}) (Y Z : InfoSysObj.{u}) :
 /-- `A ◁ f` is the pairing `⟨fst, snd ≫ f⟩`. -/
 theorem tensorLeft_map_eq (A : InfoSysObj.{u}) {Y Y' : InfoSysObj.{u}} (f : Y ⟶ Y') :
     (tensorLeft A).map f =
-      pairMap A.sys Y'.sys (fstMap A.sys Y.sys) (acomp (sndMap A.sys Y.sys) f) := by
+      productMapToTensorMap A Y Y'
+        (pairMap A.sys Y'.sys (fstMap A.sys Y.sys)
+          (acomp (sndMap A.sys Y.sys) f)) := by
   refine pairMap_unique A.sys Y'.sys
       (fstMap A.sys Y.sys) (acomp (sndMap A.sys Y.sys) f)
       ((tensorLeft A).map f) ?_ ?_
@@ -256,7 +355,7 @@ theorem tensorLeft_map_eq (A : InfoSysObj.{u}) {Y Y' : InfoSysObj.{u}} (f : Y �
 /-! ## Left naturality of uncurry / MonoidalClosed -/
 
 private theorem lift_snd_toElement (A : InfoSysObj.{u}) {Y Y' : InfoSysObj.{u}}
-    (f : Y' ⟶ Y) (p : (A ⊗ Y').sys.Element) :
+    (f : Y' ⟶ Y) (p : (productSystem A.sys Y'.sys).Element) :
     (sndMap A.sys Y.sys).toElement
         ((pairMap A.sys Y.sys (fstMap A.sys Y'.sys)
             (acomp (sndMap A.sys Y'.sys) f)).toElement p) =
@@ -266,10 +365,18 @@ private theorem lift_snd_toElement (A : InfoSysObj.{u}) {Y Y' : InfoSysObj.{u}}
         (sndMap A.sys Y.sys) =
       acomp (sndMap A.sys Y'.sys) f := by
     simp only [acomp, comp_sndMap_pairMap]
-  simpa [acomp_toElement] using congrArg (fun φ => φ.toElement p) e
+  calc
+    (sndMap A.sys Y.sys).toElement
+        ((pairMap A.sys Y.sys (fstMap A.sys Y'.sys)
+          (acomp (sndMap A.sys Y'.sys) f)).toElement p) =
+      (acomp (pairMap A.sys Y.sys (fstMap A.sys Y'.sys)
+        (acomp (sndMap A.sys Y'.sys) f)) (sndMap A.sys Y.sys)).toElement p :=
+      (acomp_toElement _ _ _).symm
+    _ = (acomp (sndMap A.sys Y'.sys) f).toElement p := congrArg (fun φ => φ.toElement p) e
+    _ = f.toElement ((sndMap A.sys Y'.sys).toElement p) := acomp_toElement _ _ _
 
 private theorem lift_fst_toElement (A : InfoSysObj.{u}) {Y Y' : InfoSysObj.{u}}
-    (f : Y' ⟶ Y) (p : (A ⊗ Y').sys.Element) :
+    (f : Y' ⟶ Y) (p : (productSystem A.sys Y'.sys).Element) :
     (fstMap A.sys Y.sys).toElement
         ((pairMap A.sys Y.sys (fstMap A.sys Y'.sys)
             (acomp (sndMap A.sys Y'.sys) f)).toElement p) =
@@ -279,10 +386,17 @@ private theorem lift_fst_toElement (A : InfoSysObj.{u}) {Y Y' : InfoSysObj.{u}}
         (fstMap A.sys Y.sys) =
       fstMap A.sys Y'.sys := by
     simp only [acomp, comp_fstMap_pairMap]
-  simpa [acomp_toElement] using congrArg (fun φ => φ.toElement p) e
+  calc
+    (fstMap A.sys Y.sys).toElement
+        ((pairMap A.sys Y.sys (fstMap A.sys Y'.sys)
+          (acomp (sndMap A.sys Y'.sys) f)).toElement p) =
+      (acomp (pairMap A.sys Y.sys (fstMap A.sys Y'.sys)
+        (acomp (sndMap A.sys Y'.sys) f)) (fstMap A.sys Y.sys)).toElement p :=
+      (acomp_toElement _ _ _).symm
+    _ = (fstMap A.sys Y'.sys).toElement p := congrArg (fun φ => φ.toElement p) e
 
 private theorem pair_after_swap_toElement (A Y Z : InfoSysObj.{u})
-    (φ : Y ⟶ InfoSysObj.exp A Z) (p : (A ⊗ Y).sys.Element) :
+    (φ : Y ⟶ InfoSysObj.exp A Z) (p : (productSystem A.sys Y.sys).Element) :
     (pairMap (functionSystem A.sys Z.sys) A.sys
         (ApproximableMap.comp φ (fstMap Y.sys A.sys))
         (sndMap Y.sys A.sys)).toElement ((swapMap A.sys Y.sys).toElement p) =
@@ -300,31 +414,45 @@ theorem uncurryRight_toElement (A Y Z : InfoSysObj.{u})
     (uncurryRight A Y Z φ).toElement q =
       (element_toApproxMap A.sys Z.sys
           (φ.toElement ((fstMap Y.sys A.sys).toElement
-            ((swapMap A.sys Y.sys).toElement q)))).toElement
-        ((sndMap Y.sys A.sys).toElement ((swapMap A.sys Y.sys).toElement q)) := by
-  simp only [uncurryRight, acomp_toElement, uncurryMap]
-  change (ApproximableMap.comp (applyMap (B := A.sys) (C := Z.sys))
-      (pairMap _ _ (ApproximableMap.comp φ (fstMap _ _)) (sndMap _ _))).toElement
-    ((swapMap A.sys Y.sys).toElement q) = _
-  rw [comp_toElement, pair_after_swap_toElement A Y Z φ q, applyMap_toElement]
+            ((swapMap A.sys Y.sys).toElement
+              (tensorElementToProdElement A Y q))))).toElement
+        ((sndMap Y.sys A.sys).toElement
+          ((swapMap A.sys Y.sys).toElement
+            (tensorElementToProdElement A Y q))) := by
+  rw [show (uncurryRight A Y Z φ).toElement q =
+      (uncurryProduct A Y Z φ).toElement
+        (tensorElementToProdElement A Y q) by
+    exact prodHomToTensorHom_toElement A Y Z (uncurryProduct A Y Z φ) q]
+  unfold uncurryProduct
+  rw [acomp_toElement]
+  unfold uncurryMap
+  rw [comp_toElement,
+    pair_after_swap_toElement A Y Z φ (tensorElementToProdElement A Y q),
+    applyMap_toElement]
 
 theorem uncurryRight_comp_left (A : InfoSysObj.{u}) {Y Y' Z : InfoSysObj.{u}}
     (f : Y' ⟶ Y) (g : Y ⟶ InfoSysObj.exp A Z) :
     uncurryRight A Y' Z (f ≫ g) = (tensorLeft A).map f ≫ uncurryRight A Y Z g := by
-  rw [tensorLeft_map_eq]
   refine (ext_iff_toElement _ _).2 fun p => ?_
+  let p' := tensorElementToProdElement A Y' p
   set lift :=
     pairMap A.sys Y.sys (fstMap A.sys Y'.sys) (acomp (sndMap A.sys Y'.sys) f)
+  let q := prodElementToTensorElement A Y (lift.toElement p')
   have hgoal :
       (uncurryRight A Y' Z (f ≫ g)).toElement p =
-        (uncurryRight A Y Z g).toElement (lift.toElement p) := by
+        (uncurryRight A Y Z g).toElement q := by
     rw [uncurryRight_toElement A Y' Z (f ≫ g) p,
-      uncurryRight_toElement A Y Z g (lift.toElement p)]
+      uncurryRight_toElement A Y Z g q]
+    simp only [q, tensorElementToProdElement_prodElementToTensorElement]
     rw [swap_fst_toElement, swap_snd_toElement, swap_fst_toElement, swap_snd_toElement,
-      lift_snd_toElement A f p, lift_fst_toElement A f p]
+      lift_snd_toElement A f p', lift_fst_toElement A f p']
     simp only [CategoryStruct.comp, acomp_toElement]
-  change _ = (acomp lift (uncurryRight A Y Z g)).toElement p
-  exact hgoal.trans (acomp_toElement lift (uncurryRight A Y Z g) p).symm
+    rfl
+  calc
+    (uncurryRight A Y' Z (f ≫ g)).toElement p =
+        (uncurryRight A Y Z g).toElement q := hgoal
+    _ = ((tensorLeft A).map f ≫ uncurryRight A Y Z g).toElement p := by
+      rw [tensorLeft_map_eq, productMapToTensorMap_comp_toElement]
 
 theorem tensorExpEquiv_natural (A : InfoSysObj.{u}) {Y' Y Z : InfoSysObj.{u}}
     (f : Y' ⟶ Y) (g : A ⊗ Y ⟶ Z) :
@@ -338,7 +466,6 @@ theorem tensorExpEquiv_natural (A : InfoSysObj.{u}) {Y' Y Z : InfoSysObj.{u}}
   have h := uncurryRight_comp_left A f (curryRight A Y Z g)
   rw [uncurryRight_curryRight] at h
   rw [uncurryRight_curryRight, h]
-  rfl
 
 /-- Right adjoint to `tensorLeft A` from the curry equivalence. -/
 noncomputable def expFunctor (A : InfoSysObj.{u}) : InfoSysObj.{u} ⥤ InfoSysObj.{u} :=

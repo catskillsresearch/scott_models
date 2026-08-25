@@ -128,6 +128,7 @@ def funSpace (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β) :
   mem W := (∃ L : List (Set α × Set β), (∀ p ∈ L, V₀.mem p.1 ∧ V₁.mem p.2) ∧ W = stepFun L)
     ∧ W.Nonempty
   master := Set.univ
+  master_nonempty := ⟨constMap V₀ V₁.bot, Set.mem_univ _⟩
   master_mem := ⟨⟨[], by simp, stepFun_nil.symm⟩, ⟨constMap V₀ V₁.bot, Set.mem_univ _⟩⟩
   inter_mem := by
     rintro W W' Z ⟨⟨L, hL, rfl⟩, _⟩ ⟨⟨L', hL', rfl⟩, _⟩ ⟨_, hZne⟩ hZsub
@@ -318,7 +319,7 @@ theorem mem_interYs {m : Set β} {L : List (Set α × Set β)} {X : Set α} {z :
   | nil => simp
   | cons p L ih =>
     rw [interYs_cons]
-    simp only [Set.mem_inter_iff, Set.mem_setOf_eq, ih, List.mem_cons]
+    simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, ih, List.mem_cons]
     constructor
     · rintro ⟨hp, hm, hL⟩
       refine ⟨hm, ?_⟩
@@ -394,12 +395,12 @@ theorem rel_interYs {L : List (Set α × Set β)} {f : ApproximableMap V₀ V₁
       have hXp2 : f.rel X p.2 := f.mono hp hXp subset_rfl hX (f.rel_cod hp)
       have heq : interYs V₁.master (p :: L) X = p.2 ∩ interYs V₁.master L X := by
         rw [interYs_cons]; ext z
-        simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+        simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
         exact ⟨fun ⟨h1, h2⟩ => ⟨h1 hXp, h2⟩, fun ⟨h1, h2⟩ => ⟨fun _ => h1, h2⟩⟩
       rw [heq]; exact f.inter_right hXp2 htail
     · have heq : interYs V₁.master (p :: L) X = interYs V₁.master L X := by
         rw [interYs_cons]; ext z
-        simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+        simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
         exact ⟨fun h => h.2, fun h => ⟨fun hc => absurd hc hXp, h⟩⟩
       rw [heq]; exact htail
 

@@ -258,14 +258,17 @@ to round filters. An extended form routes through the ideal-completion subtype.
 larger than `D`. The equivalence is on the **round** corner that matches continuous
 lattice points.
 
-**Axioms.** ⊆ `{propext, Quot.sound}`.
+**Axioms.** Under Mathlib 4.33 the kernel audit includes
+`{propext, Classical.choice, Quot.sound}` through the inherited InfoSys/`Finset`
+instance frontier described in §4; the round-filter construction itself performs no
+choice-based witness extraction.
 
 ### 3.7 Constructions (`infoSys_constructions_equiv`)
 
 #### Products
 
 `|A| × |B| ≃o |A × B|` via 1982 `pairElements` / `fstMap` / `sndMap` (Prop 6.2).
-Choice-free; axioms ⊆ `{propext, Quot.sound}`.
+The maps use explicit projections and assembly, with no witness selection.
 
 #### Separated sums
 
@@ -277,14 +280,14 @@ footprint).
 
 `ApproximableMap A B ≃o |A → B|` packages Theorem 7.2
 (`approxMap_toElement` / `element_toApproxMap`) with pointwise `Le` as `PartialOrder`.
-Axioms ⊆ `{propext, Quot.sound}`.
+No additional choice is used beyond the inherited InfoSys/`Finset` instance frontier.
 
 #### Factoid 4.6 bridge
 
 `ApproximableMap A B ≃o ScottContinuous A B` via `toScottContinuous` /
 `ofScottContinuous`, using Prop 5.3(v) (`rel_iff_closure_le`) and
-`closure_le_element` for the round-trip on relations. Constructive:
-`{propext, Quot.sound}`.
+`closure_le_element` for the round-trip on relations. The relation-level proof performs
+no witness extraction; its kernel audit inherits the InfoSys/`Finset` frontier in §4.
 
 #### ScottMap conjugation
 
@@ -305,18 +308,24 @@ with `ScottMap D E` (needs roundness preservation of approximable maps), and rel
 
 | Bridge | Footprint | Notes |
 | --- | --- | --- |
-| Nbhd ↔ InfoSys (both directions) | `{propext, Quot.sound}` | Decidable coding; avoid classical `simp` traps |
+| Nbhd ↔ InfoSys (both directions) | + inherited `Classical.choice` | Decidable coding; Mathlib 4.33 `Finset` instance frontier |
 | CL ↔ RoundFilter | `{propext, Quot.sound}` | Roundness is order-theoretic |
-| InfoSys ↔ Ideal | `{propext, Quot.sound}` | Factoids 4.4–4.5 |
+| InfoSys ↔ Ideal | + inherited `Classical.choice` | Factoids 4.4–4.5; type-level `Finset` frontier |
 | Algebraic ⇒ CL | classical | 1972 topological `≪` |
-| Product / function space (1982) | `{propext, Quot.sound}` | |
+| Product / function space (1982) | + inherited `Classical.choice` | No witness extraction in the maps |
 | Separated sum (1982) | + `Classical.choice` | Token polarity trichotomy |
-| Factoid 4.6 ApproxMap ↔ ScottContinuous | `{propext, Quot.sound}` | |
+| Factoid 4.6 ApproxMap ↔ ScottContinuous | + inherited `Classical.choice` | Type-level `Finset` frontier |
 | ScottMap conjugation | + `Classical.choice` | Via 1972 `ScottMap` |
 
 Target discipline (from the 1982 package): prefer constructive proofs wherever Scott’s
 1982 text emphasizes constructivity; call out classical frontiers explicitly rather than
 hiding choice in automation.
+
+Mathlib 4.33 makes `Finset.instSetLike` and `Finset.instPartialOrder` depend on
+`Classical.choice`. Consequently `#print axioms` reports choice for declarations whose
+types traverse `InfoSys`, even when their proof terms only manipulate explicit finite
+data. Here “no witness extraction” distinguishes that inherited library-instance
+footprint from genuine uses such as separated-sum polarity classification.
 
 ---
 

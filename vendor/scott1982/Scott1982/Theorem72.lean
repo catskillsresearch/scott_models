@@ -30,13 +30,21 @@ namespace InfoSys
 
 set_option linter.unusedSectionVars false
 
-variable {α β γ : Type*} [DecidableEq α] [DecidableEq β] [DecidableEq γ]
+universe u v w
+
+variable {α : Type u} {β : Type v} {γ : Type w}
+  [DecidableEq α] [DecidableEq β] [DecidableEq γ]
 variable (A : InfoSys α) (B : InfoSys β) (C : InfoSys γ)
+
+/-- Consistency of a packaged function-space token. -/
+theorem mkFunToken_property (u : Finset α) (v : Finset β) (hu : u ∈ A.Con) (hv : v ∈ B.Con) :
+    u ∈ A.Con ∧ v ∈ B.Con :=
+  ⟨hu, hv⟩
 
 /-- Package a consistent pair as a function-space token. -/
 def mkFunToken (u : Finset α) (v : Finset β) (hu : u ∈ A.Con) (hv : v ∈ B.Con) :
     FunToken A B :=
-  ⟨(u, v), ⟨hu, hv⟩⟩
+  ⟨(u, v), mkFunToken_property A B u v hu hv⟩
 
 theorem mkFunToken_eq (p : FunToken A B) :
     mkFunToken A B p.val.1 p.val.2 p.property.1 p.property.2 = p :=
@@ -93,122 +101,173 @@ theorem rel_input_output_union (f : ApproximableMap A B)
     rw [funInputUnion_insert, funOutputUnion_insert]
     exact f.union_right h1 h2
 
-namespace ApproximableMap
+open ApproximableMap
 
 theorem funCon_of_approxMap (f : ApproximableMap A B) (w : Finset (FunToken A B))
     (hw : ∀ p ∈ w, f.rel p.val.1 p.val.2) : FunCon A B w :=
   fun s hs hin =>
     f.rel_cod (rel_input_output_union A B f s (fun q hq => hw q (hs hq)) hin)
 
+/-- Consistency of the token-set of an approximable map. -/
+theorem approxMap_toElement_consistent (f : ApproximableMap A B)
+    (Y : Finset (FunToken A B))
+    (hY : (Y : Set (FunToken A B)) ⊆ {p : FunToken A B | f.rel p.val.1 p.val.2}) :
+    Y ∈ (functionSystem A B).Con :=
+  funCon_of_approxMap A B f Y fun _ hp => hY (Finset.mem_coe.2 hp)
+
+/-- Deductive closure of the token-set of an approximable map. -/
+theorem approxMap_toElement_closed (f : ApproximableMap A B)
+    (Y : Finset (FunToken A B)) (p : FunToken A B)
+    (hY : (Y : Set (FunToken A B)) ⊆ {p : FunToken A B | f.rel p.val.1 p.val.2})
+    (hEnt : (functionSystem A B).Ent Y p) :
+    p ∈ {q : FunToken A B | f.rel q.val.1 q.val.2} := by
+  obtain ⟨_hCon, s, hs, hEntIn, hEntOut⟩ := hEnt
+  have hrel : ∀ q ∈ s, f.rel q.val.1 q.val.2 := fun q hq =>
+    hY (Finset.mem_coe.2 (hs hq))
+  have hin_s : funInputUnion A B s ∈ A.Con :=
+    A.con_subset
+      (proposition_2_3_ii A p.property.1 (entSet_inputUnion_of_ent A B hEntIn))
+      (subset_funion_right _ _)
+  have hIO := rel_input_output_union A B f s hrel hin_s
+  have hU : f.rel p.val.1 (funOutputUnion A B s) :=
+    f.mono hIO (entSet_inputUnion_of_ent A B hEntIn)
+      (proposition_2_3_iii B (f.rel_cod hIO)) p.property.1 (f.rel_cod hIO)
+  exact f.mono hU (proposition_2_3_iii A p.property.1) hEntOut p.property.1 p.property.2
+
 /-- **Theorem 7.2.** Approximable map as an element of `|A → B|`. -/
 def approxMap_toElement (f : ApproximableMap A B) : (functionSystem A B).Element where
   carrier := {p : FunToken A B | f.rel p.val.1 p.val.2}
-  consistent := by
-    intro Y hY
-    exact funCon_of_approxMap A B f Y fun p hp => hY (Finset.mem_coe.2 hp)
-  closed := by
-    intro Y p hY hEnt
-    obtain ⟨_hCon, s, hs, hEntIn, hEntOut⟩ := hEnt
-    have hrel : ∀ q ∈ s, f.rel q.val.1 q.val.2 := fun q hq =>
-      hY (Finset.mem_coe.2 (hs hq))
-    have hin_s : funInputUnion A B s ∈ A.Con :=
-      A.con_subset
-        (proposition_2_3_ii A p.property.1 (entSet_inputUnion_of_ent A B hEntIn))
-        (subset_funion_right _ _)
-    have hIO := rel_input_output_union A B f s hrel hin_s
-    have hU : f.rel p.val.1 (funOutputUnion A B s) :=
-      f.mono hIO (entSet_inputUnion_of_ent A B hEntIn)
-        (proposition_2_3_iii B (f.rel_cod hIO)) p.property.1 (f.rel_cod hIO)
-    exact f.mono hU (proposition_2_3_iii A p.property.1) hEntOut p.property.1 p.property.2
+  consistent := approxMap_toElement_consistent A B f
+  closed := approxMap_toElement_closed A B f
 
 theorem mem_approxMap_toElement (f : ApproximableMap A B) {p : FunToken A B} :
     p ∈ (approxMap_toElement A B f).carrier ↔ f.rel p.val.1 p.val.2 :=
   Iff.rfl
 
+/-- Domain of the relation recovered from a function-space element. -/
+theorem element_toApproxMap_rel_dom (x : (functionSystem A B).Element) :
+    ∀ {u : Finset α} {v : Finset β},
+      (∃ (hu : u ∈ A.Con) (hv : v ∈ B.Con), mkFunToken A B u v hu hv ∈ x.carrier) →
+      u ∈ A.Con :=
+  fun ⟨hu, _, _⟩ => hu
+
+/-- Codomain of the relation recovered from a function-space element. -/
+theorem element_toApproxMap_rel_cod (x : (functionSystem A B).Element) :
+    ∀ {u : Finset α} {v : Finset β},
+      (∃ (hu : u ∈ A.Con) (hv : v ∈ B.Con), mkFunToken A B u v hu hv ∈ x.carrier) →
+      v ∈ B.Con :=
+  fun ⟨_, hv, _⟩ => hv
+
+/-- The empty pair is related. -/
+theorem element_toApproxMap_empty_rel (x : (functionSystem A B).Element) :
+    ∃ (hu : (∅ : Finset α) ∈ A.Con) (hv : (∅ : Finset β) ∈ B.Con),
+      mkFunToken A B ∅ ∅ hu hv ∈ x.carrier := by
+  refine ⟨A.con_empty, B.con_empty, ?_⟩
+  change funBot A B ∈ x.carrier
+  exact factoid_3_2 (functionSystem A B) x
+
+/-- Output-union of two related pairs remains related. -/
+theorem element_toApproxMap_union_right (x : (functionSystem A B).Element) :
+    ∀ {u : Finset α} {v v' : Finset β},
+      (∃ (hu : u ∈ A.Con) (hv : v ∈ B.Con), mkFunToken A B u v hu hv ∈ x.carrier) →
+      (∃ (hu : u ∈ A.Con) (hv : v' ∈ B.Con), mkFunToken A B u v' hu hv ∈ x.carrier) →
+      ∃ (hu : u ∈ A.Con) (hv : v ∪' v' ∈ B.Con),
+        mkFunToken A B u (v ∪' v') hu hv ∈ x.carrier := by
+  rintro u v v' ⟨hu, hv, hp⟩ ⟨hu', hv', hq⟩
+  have hvU : v ∪' v' ∈ B.Con := by
+    have hCon : FunCon A B
+        (insert (mkFunToken A B u v' hu' hv') {mkFunToken A B u v hu hv}) := by
+      apply x.consistent
+      intro r hr
+      rcases Finset.mem_insert.mp (Finset.mem_coe.1 hr) with rfl | hr
+      · exact hq
+      · have : r = mkFunToken A B u v hu hv := Finset.mem_singleton.mp hr
+        subst this
+        exact hp
+    have hin : funInputUnion A B
+        (insert (mkFunToken A B u v' hu' hv') {mkFunToken A B u v hu hv}) ∈ A.Con := by
+      rw [funInputUnion_insert, funInputUnion_singleton]
+      change u ∪' u ∈ A.Con
+      rw [funion_self]
+      exact hu
+    have hout := hCon _ (Finset.Subset.refl _) hin
+    rw [funOutputUnion_insert, funOutputUnion_singleton, funion_comm_β] at hout
+    exact hout
+  refine ⟨hu, hvU, ?_⟩
+  let p := mkFunToken A B u v hu hv
+  let q := mkFunToken A B u v' hu' hv'
+  let r := mkFunToken A B u (v ∪' v') hu hvU
+  let w : Finset (FunToken A B) := insert q {p}
+  have hwsub : (↑w : Set _) ⊆ x.carrier := by
+    intro t ht
+    rcases Finset.mem_insert.mp (Finset.mem_coe.1 ht) with rfl | ht
+    · exact hq
+    · have : t = p := Finset.mem_singleton.mp ht
+      subst this
+      exact hp
+  have hEnt : FunEnt A B w r := by
+    refine ⟨x.consistent w hwsub, w, Finset.Subset.refl _, ?_, ?_⟩
+    · intro t ht
+      rcases Finset.mem_insert.mp ht with rfl | ht
+      · exact proposition_2_3_iii A hu'
+      · have : t = p := Finset.mem_singleton.mp ht
+        subst this
+        exact proposition_2_3_iii A hu
+    · have houtEq : funOutputUnion A B w = v' ∪' v := by
+        change funOutputUnion A B
+          (insert (mkFunToken A B u v' hu' hv') {mkFunToken A B u v hu hv}) = v' ∪' v
+        rw [funOutputUnion_insert, funOutputUnion_singleton]
+        simp only [mkFunToken]
+      rw [houtEq, funion_comm_β]
+      exact proposition_2_3_iii B hvU
+  exact x.closed w r hwsub hEnt
+
+/-- The recovered relation is monotone for entailment. -/
+theorem element_toApproxMap_mono (x : (functionSystem A B).Element) :
+    ∀ {u u' : Finset α} {v v' : Finset β},
+      (∃ (hu : u ∈ A.Con) (hv : v ∈ B.Con), mkFunToken A B u v hu hv ∈ x.carrier) →
+      A.EntSet u' u → B.EntSet v v' → u' ∈ A.Con → v' ∈ B.Con →
+      ∃ (hu : u' ∈ A.Con) (hv : v' ∈ B.Con),
+        mkFunToken A B u' v' hu hv ∈ x.carrier := by
+  rintro u u' v v' ⟨hu, hv, hp⟩ hEntu hEntv hu' hv'
+  refine ⟨hu', hv', ?_⟩
+  let p := mkFunToken A B u v hu hv
+  let r := mkFunToken A B u' v' hu' hv'
+  have hwsub : (↑({p} : Finset (FunToken A B)) : Set _) ⊆ x.carrier := by
+    intro t ht
+    have : t = p := Finset.mem_singleton.mp (Finset.mem_coe.1 ht)
+    subst this
+    exact hp
+  have hEnt : FunEnt A B {p} r := by
+    refine ⟨x.consistent {p} hwsub, {p}, Finset.Subset.refl _, ?_, ?_⟩
+    · intro t ht
+      have : t = p := Finset.mem_singleton.mp ht
+      subst this
+      exact hEntu
+    · rw [funOutputUnion_singleton]
+      exact hEntv
+  exact x.closed {p} r hwsub hEnt
+
 /-- **Theorem 7.2.** Element of `|A → B|` as an approximable map. -/
 def element_toApproxMap (x : (functionSystem A B).Element) : ApproximableMap A B where
   rel u v := ∃ (hu : u ∈ A.Con) (hv : v ∈ B.Con), mkFunToken A B u v hu hv ∈ x.carrier
-  rel_dom := fun ⟨hu, _, _⟩ => hu
-  rel_cod := fun ⟨_, hv, _⟩ => hv
-  empty_rel := by
-    refine ⟨A.con_empty, B.con_empty, ?_⟩
-    change funBot A B ∈ x.carrier
-    exact factoid_3_2 (functionSystem A B) x
-  union_right := by
-    rintro u v v' ⟨hu, hv, hp⟩ ⟨hu', hv', hq⟩
-    have hvU : v ∪' v' ∈ B.Con := by
-      have hCon : FunCon A B
-          (insert (mkFunToken A B u v' hu' hv') {mkFunToken A B u v hu hv}) := by
-        apply x.consistent
-        intro r hr
-        rcases Finset.mem_insert.mp (Finset.mem_coe.1 hr) with rfl | hr
-        · exact hq
-        · have : r = mkFunToken A B u v hu hv := Finset.mem_singleton.mp hr
-          subst this
-          exact hp
-      have hin : funInputUnion A B
-          (insert (mkFunToken A B u v' hu' hv') {mkFunToken A B u v hu hv}) ∈ A.Con := by
-        rw [funInputUnion_insert, funInputUnion_singleton]
-        change u ∪' u ∈ A.Con
-        rw [funion_self]
-        exact hu
-      have hout := hCon _ (Finset.Subset.refl _) hin
-      rw [funOutputUnion_insert, funOutputUnion_singleton, funion_comm_β] at hout
-      exact hout
-    refine ⟨hu, hvU, ?_⟩
-    let p := mkFunToken A B u v hu hv
-    let q := mkFunToken A B u v' hu' hv'
-    let r := mkFunToken A B u (v ∪' v') hu hvU
-    let w : Finset (FunToken A B) := insert q {p}
-    have hwsub : (↑w : Set _) ⊆ x.carrier := by
-      intro t ht
-      rcases Finset.mem_insert.mp (Finset.mem_coe.1 ht) with rfl | ht
-      · exact hq
-      · have : t = p := Finset.mem_singleton.mp ht
-        subst this
-        exact hp
-    have hEnt : FunEnt A B w r := by
-      refine ⟨x.consistent w hwsub, w, Finset.Subset.refl _, ?_, ?_⟩
-      · intro t ht
-        rcases Finset.mem_insert.mp ht with rfl | ht
-        · exact proposition_2_3_iii A hu'
-        · have : t = p := Finset.mem_singleton.mp ht
-          subst this
-          exact proposition_2_3_iii A hu
-      · have houtEq : funOutputUnion A B w = v' ∪' v := by
-          simp only [w, q, p, funOutputUnion_insert, funOutputUnion_singleton, mkFunToken]
-        rw [houtEq, funion_comm_β]
-        exact proposition_2_3_iii B hvU
-    exact x.closed w r hwsub hEnt
-  mono := by
-    rintro u u' v v' ⟨hu, hv, hp⟩ hEntu hEntv hu' hv'
-    refine ⟨hu', hv', ?_⟩
-    let p := mkFunToken A B u v hu hv
-    let r := mkFunToken A B u' v' hu' hv'
-    have hwsub : (↑({p} : Finset (FunToken A B)) : Set _) ⊆ x.carrier := by
-      intro t ht
-      have : t = p := Finset.mem_singleton.mp (Finset.mem_coe.1 ht)
-      subst this
-      exact hp
-    have hEnt : FunEnt A B {p} r := by
-      refine ⟨x.consistent {p} hwsub, {p}, Finset.Subset.refl _, ?_, ?_⟩
-      · intro t ht
-        have : t = p := Finset.mem_singleton.mp ht
-        subst this
-        exact hEntu
-      · rw [funOutputUnion_singleton]
-        exact hEntv
-    exact x.closed {p} r hwsub hEnt
+  rel_dom := element_toApproxMap_rel_dom A B x
+  rel_cod := element_toApproxMap_rel_cod A B x
+  empty_rel := element_toApproxMap_empty_rel A B x
+  union_right := element_toApproxMap_union_right A B x
+  mono := element_toApproxMap_mono A B x
 
 theorem element_toApproxMap_approxMap_toElement (f : ApproximableMap A B) :
     element_toApproxMap A B (approxMap_toElement A B f) = f := by
   refine ApproximableMap.ext fun u v => ?_
   constructor
   · rintro ⟨hu, hv, hp⟩
-    simpa [mem_approxMap_toElement, mkFunToken] using hp
+    change f.rel u v at hp
+    exact hp
   · intro hrel
     exact ⟨f.rel_dom hrel, f.rel_cod hrel, by
-      simpa [mem_approxMap_toElement, mkFunToken] using hrel⟩
+      change f.rel u v
+      exact hrel⟩
 
 theorem approxMap_toElement_element_toApproxMap (x : (functionSystem A B).Element) :
     approxMap_toElement A B (element_toApproxMap A B x) = x := by
@@ -947,3 +1006,20 @@ theorem curryMap_unique (h : ApproximableMap (productSystem A B) C)
     rw [← approxMap_toElement_element_toApproxMap B C (k.toElement x),
       ← approxMap_toElement_element_toApproxMap B C ((curryMap A B C h).toElement x), hx]
   rw [this]
+
+/-- **Theorem 7.2, first sentence (Scott 1982).** Approximable maps `A → B` are
+exactly the elements of the Definition 7.1 function-space system `|A → B|`.
+The `apply` / `curry` clauses of the same numbered theorem are proved above
+and are not this compared declaration. -/
+theorem theorem_7_2 {α : Type u} {β : Type v} [DecidableEq α] [DecidableEq β]
+    (A : InfoSys α) (B : InfoSys β) :
+    (∀ f : ApproximableMap A B,
+      element_toApproxMap A B (approxMap_toElement A B f) = f) ∧
+    (∀ x : (functionSystem A B).Element,
+      approxMap_toElement A B (element_toApproxMap A B x) = x) :=
+  ⟨element_toApproxMap_approxMap_toElement A B,
+    approxMap_toElement_element_toApproxMap A B⟩
+
+end InfoSys
+
+end Scott1982

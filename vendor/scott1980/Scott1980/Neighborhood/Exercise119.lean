@@ -41,6 +41,7 @@ open Scott1980.Neighborhood
 literally **is** `(X ∩ Y).Nonempty`, so (ii′) is `Iff.rfl`. -/
 def positiveExample : NeighborhoodSystem (Fin 2) :=
   NeighborhoodSystem.ofPositive (fun X => X.Nonempty) Set.univ
+    (by exact ⟨(0 : Fin 2), Set.mem_univ 0⟩)
     (by exact ⟨(0 : Fin 2), Set.mem_univ 0⟩) (by intro X _; exact Set.subset_univ X)
     (by intro X Y _ _; exact Iff.rfl)
 
@@ -120,6 +121,7 @@ consistency witness `Z ⊆ {1}` with `Z ∈ 𝒟` does not exist (`not_mem_sub_o
 def notPositiveSystem : NeighborhoodSystem Tok where
   mem := mem
   master := master
+  master_nonempty := Set.univ_nonempty
   master_mem := mem_master
   sub_master := fun _ => Set.subset_univ _
   inter_mem := by

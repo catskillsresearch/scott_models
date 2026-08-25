@@ -49,13 +49,17 @@ The two conditions are exactly Scott's:
 
 We keep `master` as a field (rather than hard-wiring `Set.univ`) to stay faithful to
 Scott's `Δ` notation, and record Scott's standing assumption `𝒟 ⊆ 𝒫(Δ)` as the field
-`sub_master` (every neighbourhood is a subset of `Δ`). The latter is what makes the principal
-filter `↑X` (Definition 1.7) contain `Δ`, and underlies the least element `⊥ = ↑Δ`. -/
+`sub_master` (every neighbourhood is a subset of `Δ`). Scott also assumes from the outset
+that the token set `Δ` is non-empty; `master_nonempty` records this standing assumption
+explicitly. The subset condition is what makes the principal filter `↑X` (Definition 1.7)
+contain `Δ`, and underlies the least element `⊥ = ↑Δ`. -/
 structure NeighborhoodSystem (α : Type*) where
   /-- `mem X` holds iff `X` is a neighbourhood of the system (`X ∈ 𝒟`). -/
   mem : Set α → Prop
   /-- Scott's distinguished least-informative neighbourhood `Δ`. -/
   master : Set α
+  /-- Scott's standing assumption that the token set `Δ` is non-empty. -/
+  master_nonempty : master.Nonempty
   /-- (i) `Δ ∈ 𝒟`. -/
   master_mem : mem master
   /-- (ii) Closure under intersection of a *consistent* pair: if `X, Y, Z ∈ 𝒟` with the
@@ -77,13 +81,14 @@ nested-or-disjoint **is** a neighbourhood system. This uniformly explains why Ex
 
 The verification of condition (ii) needs no choice: if `X, Y` are nested then `X ∩ Y` is the
 smaller (already in `𝒟`); if they are disjoint then the consistency witness `Z ⊆ X ∩ Y = ∅`
-forces `Z = ∅`, whence `X ∩ Y = ∅ = Z ∈ 𝒟`. The caller supplies `sub_master` (Scott's
-`𝒟 ⊆ 𝒫(Δ)`) directly. -/
+forces `Z = ∅`, whence `X ∩ Y = ∅ = Z ∈ 𝒟`. The caller supplies `master_nonempty`
+(Scott's standing `Δ ≠ ∅` assumption) and `sub_master` (`𝒟 ⊆ 𝒫(Δ)`) directly. -/
 def NeighborhoodSystem.ofNestedOrDisjoint {α : Type*} (mem : Set α → Prop) (master : Set α)
-    (master_mem : mem master) (hnd : NestedOrDisjoint mem)
+    (master_nonempty : master.Nonempty) (master_mem : mem master) (hnd : NestedOrDisjoint mem)
     (sub_master : ∀ {X : Set α}, mem X → X ⊆ master) : NeighborhoodSystem α where
   mem := mem
   master := master
+  master_nonempty := master_nonempty
   master_mem := master_mem
   sub_master := sub_master
   inter_mem := by
@@ -107,11 +112,13 @@ positive neighbourhood system is indeed a neighbourhood system*". From the raw d
 witness `Z ⊆ X ∩ Y` with `Z ∈ 𝒟` is itself non-empty (apply (ii′) to `Z ∩ Z = Z`), so
 `X ∩ Y ⊇ Z` is non-empty, whence `X ∩ Y ∈ 𝒟` by (ii′). Choice-free. -/
 def NeighborhoodSystem.ofPositive {α : Type*} (mem : Set α → Prop) (master : Set α)
-    (master_mem : mem master) (sub_master : ∀ {X : Set α}, mem X → X ⊆ master)
+    (master_nonempty : master.Nonempty) (master_mem : mem master)
+    (sub_master : ∀ {X : Set α}, mem X → X ⊆ master)
     (pos : ∀ ⦃X Y : Set α⦄, mem X → mem Y → (mem (X ∩ Y) ↔ (X ∩ Y).Nonempty)) :
     NeighborhoodSystem α where
   mem := mem
   master := master
+  master_nonempty := master_nonempty
   master_mem := master_mem
   sub_master := sub_master
   inter_mem := by
@@ -123,9 +130,10 @@ def NeighborhoodSystem.ofPositive {α : Type*} (mem : Set α → Prop) (master :
 
 /-- The system built by `ofPositive` is indeed positive. -/
 theorem NeighborhoodSystem.ofPositive_isPositive {α : Type*} (mem : Set α → Prop)
-    (master : Set α) (master_mem : mem master) (sub_master : ∀ {X : Set α}, mem X → X ⊆ master)
+    (master : Set α) (master_nonempty : master.Nonempty) (master_mem : mem master)
+    (sub_master : ∀ {X : Set α}, mem X → X ⊆ master)
     (pos : ∀ ⦃X Y : Set α⦄, mem X → mem Y → (mem (X ∩ Y) ↔ (X ∩ Y).Nonempty)) :
-    (NeighborhoodSystem.ofPositive mem master master_mem sub_master pos).IsPositive :=
+    (NeighborhoodSystem.ofPositive mem master master_nonempty master_mem sub_master pos).IsPositive :=
   pos
 
 namespace NeighborhoodSystem
@@ -259,14 +267,35 @@ theorem Element.mem_interUpTo_iff {α : Type*} {V : NeighborhoodSystem α} (x : 
     exact x.up_mem h (hX i hi) (V.interUpTo_subset X hi)
   · exact x.mem_interUpTo X
 
+/-- Filter-inclusion order on elements (Scott's approximation order, Definition 1.8).
+Named so Palomar can lock the `PartialOrder` relation without inlining it. -/
+def element_le (x y : V.Element) : Prop :=
+  ∀ X, x.mem X → y.mem X
+
+/-- Reflexivity of the filter-inclusion order. Named so Palomar can lock the
+`PartialOrder` instance without a generated `._proof_N`. -/
+theorem element_le_refl (x : V.Element) : ∀ X, x.mem X → x.mem X :=
+  fun _ h => h
+
+/-- Transitivity of the filter-inclusion order. -/
+theorem element_le_trans (x y z : V.Element)
+    (hxy : ∀ X, x.mem X → y.mem X) (hyz : ∀ X, y.mem X → z.mem X) :
+    ∀ X, x.mem X → z.mem X :=
+  fun X h => hyz X (hxy X h)
+
+/-- Antisymmetry of the filter-inclusion order. -/
+theorem element_le_antisymm (x y : V.Element)
+    (hxy : ∀ X, x.mem X → y.mem X) (hyx : ∀ X, y.mem X → x.mem X) :
+    x = y :=
+  @Element.ext α V x y fun X => ⟨hxy X, hyx X⟩
+
 /-- Elements are ordered by inclusion of their membership predicates (Scott's approximation
 order, Definition 1.8). -/
 instance : PartialOrder V.Element where
-  le x y := ∀ X, x.mem X → y.mem X
-  le_refl x X h := h
-  le_trans x y z h1 h2 X h := h2 X (h1 X h)
-  le_antisymm x y h1 h2 :=
-    @Element.ext α V x y fun X => ⟨h1 X, h2 X⟩
+  le := element_le V
+  le_refl := element_le_refl V
+  le_trans := element_le_trans V
+  le_antisymm := element_le_antisymm V
 
 /-- The **limit family** of a sequence of neighbourhoods (Scott, the prose before Definition
 1.6): `x = {Z ∈ 𝒟 ∣ Xₙ ⊆ Z for some n}` — the family of all neighbourhoods eventually reached

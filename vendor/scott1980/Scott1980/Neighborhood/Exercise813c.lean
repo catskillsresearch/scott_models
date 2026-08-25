@@ -151,7 +151,7 @@ theorem isOpen_iff_exists_iUnion_generatedBy {O : Set (ℕ → Bool)} :
   · intro hO
     refine ⟨{Y | GeneratedBy genPoint Y ∧ Y ⊆ O}, fun Y hY => hY.1, ?_⟩
     ext x
-    simp only [Set.mem_iUnion, Set.mem_setOf_eq]
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
     constructor
     · intro hx
       obtain ⟨I, u, hu, hIu⟩ := isOpen_pi_iff.mp hO x hx
@@ -222,7 +222,7 @@ theorem generatedBy_iff_exists_evalSet' {Y : Set (ℕ → Bool)} :
   · rintro ⟨φ, rfl⟩
     induction φ with
     | var i => exact GeneratedBy.of i
-    | bot => simpa using GeneratedBy.univ.compl
+    | bot => simpa [evalSet'] using GeneratedBy.univ.compl
     | top => exact GeneratedBy.univ
     | neg φ ih => exact ih.compl
     | and φ ψ ihφ ihψ => exact ihφ.inter ihψ
@@ -271,7 +271,7 @@ theorem Lindenbaum.toSet'_injective : Function.Injective Lindenbaum.toSet' := by
 theorem Lindenbaum.range_toSet' :
     Set.range Lindenbaum.toSet' = {Y | GeneratedBy genPoint Y} := by
   ext Y
-  simp only [Set.mem_range, Set.mem_setOf_eq, generatedBy_iff_exists_evalSet']
+  simp only [Set.mem_range, Set.mem_ofPred_eq, generatedBy_iff_exists_evalSet']
   constructor
   · rintro ⟨x, rfl⟩
     induction x using Quotient.ind with

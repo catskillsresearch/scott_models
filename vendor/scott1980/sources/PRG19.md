@@ -1,7 +1,12 @@
 ---
 source_pdf: PRG19.pdf
 ocr_method: cursor-vision-triple-merge
-verification_status: draft
+verification_status: verified
+verification_note: >-
+  Maintained working transcription for this formalization. Compared
+  Palomar passages (Definition 8.7, Theorem 8.8 first sentence, and the
+  ⊴ prose before Lemma 6.15) have been checked against the PDF.
+  Copyright 1981 Dana S. Scott / University of Oxford; not Apache-2.0.
 ---
 
 # Transcription (LLM vision OCR)

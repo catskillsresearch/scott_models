@@ -80,7 +80,7 @@ variable [DecidableEq A]
 theorem IFamily_inter (F₁ F₂ : Finset A) :
     IFamily F₁ ∩ IFamily F₂ = IFamily (F₁ ∪ F₂) := by
   ext G
-  simp only [IFamily, Set.mem_inter_iff, Set.mem_setOf_eq, Finset.coe_union, Set.union_subset_iff]
+  simp only [IFamily, Set.mem_inter_iff, Set.mem_ofPred_eq, Finset.coe_union, Set.union_subset_iff]
 
 /-- **Exercise 1.26 — the neighbourhood system of a commutative ring.** Tokens are finite subsets
 `F ⊆ A`; neighbourhoods are the sets `I(F)`. The master is `I(∅)` (all of `Δ`), and intersections
@@ -88,6 +88,7 @@ theorem IFamily_inter (F₁ F₂ : Finset A) :
 def ringSystem : NeighborhoodSystem (Finset A) where
   mem S := ∃ F, S = IFamily F
   master := IFamily ∅
+  master_nonempty := ⟨∅, by simp [IFamily]⟩
   master_mem := ⟨∅, rfl⟩
   inter_mem := by
     rintro X Y Z ⟨F₁, rfl⟩ ⟨F₂, rfl⟩ _ _

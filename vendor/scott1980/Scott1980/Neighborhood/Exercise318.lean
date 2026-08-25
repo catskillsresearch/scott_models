@@ -158,6 +158,7 @@ def sum (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β)
     NeighborhoodSystem (Option (α ⊕ β)) where
   mem W := W = sumMaster V₀ V₁ ∨ (∃ X, V₀.mem X ∧ W = inj₀ X) ∨ (∃ Y, V₁.mem Y ∧ W = inj₁ Y)
   master := sumMaster V₀ V₁
+  master_nonempty := ⟨none, none_mem_sumMaster⟩
   master_mem := Or.inl rfl
   sub_master := by
     rintro W (rfl | ⟨X, hX, rfl⟩ | ⟨Y, hY, rfl⟩)
@@ -229,11 +230,11 @@ def rightPart (V₁ : NeighborhoodSystem β) (W : Set (Option (α ⊕ β))) : Se
 
 @[simp] theorem mem_leftPart {V₀ : NeighborhoodSystem α} {W : Set (Option (α ⊕ β))} {a : α} :
     a ∈ leftPart V₀ W ↔ il a ∈ W ∨ (a ∈ V₀.master ∧ ((∃ b : β, ir b ∈ W) ∨ none ∈ W)) := by
-  simp only [leftPart, Set.mem_union, Set.mem_preimage, Set.mem_setOf_eq]
+  simp only [leftPart, Set.mem_union, Set.mem_preimage, Set.mem_ofPred_eq]
 
 @[simp] theorem mem_rightPart {V₁ : NeighborhoodSystem β} {W : Set (Option (α ⊕ β))} {b : β} :
     b ∈ rightPart V₁ W ↔ ir b ∈ W ∨ (b ∈ V₁.master ∧ ((∃ a : α, il a ∈ W) ∨ none ∈ W)) := by
-  simp only [rightPart, Set.mem_union, Set.mem_preimage, Set.mem_setOf_eq]
+  simp only [rightPart, Set.mem_union, Set.mem_preimage, Set.mem_ofPred_eq]
 
 theorem leftPart_mono (V₀ : NeighborhoodSystem α) {W W' : Set (Option (α ⊕ β))} (h : W ⊆ W') :
     leftPart V₀ W ⊆ leftPart V₀ W' := by

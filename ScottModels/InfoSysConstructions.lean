@@ -71,7 +71,14 @@ noncomputable def productDomainIso :
     intro p q
     constructor
     · intro h
-      simpa [unpair, fstMap_pairElements, sndMap_pairElements] using unpair_mono A B h
+      change pairElements A B p.1 p.2 ≤ pairElements A B q.1 q.2 at h
+      constructor
+      · have hp := (fstMap A B).toElement_mono h
+        rw [fstMap_pairElements A B p.1 p.2, fstMap_pairElements A B q.1 q.2] at hp
+        exact hp
+      · have hp := (sndMap A B).toElement_mono h
+        rw [sndMap_pairElements A B p.1 p.2, sndMap_pairElements A B q.1 q.2] at hp
+        exact hp
     · intro h
       exact pairElements_mono A B h.1 h.2
 
@@ -230,34 +237,28 @@ theorem sum_element_trichotomy (z : (sumSystem A B).Element) :
     · exact Or.inl (eq_botElement_of_no_injections A B z
         (fun x hx => hL ⟨x, hx⟩) (fun y hy => hR ⟨y, hy⟩))
 
-/-- Classify a sum-domain element as `WithBot (|A| ⊕ |B|)`. Classical. -/
-noncomputable def classifySum (z : (sumSystem A B).Element) :
-    WithBot (A.Element ⊕ B.Element) := by
-  classical
-  exact if hL : ∃ x : α, SumToken.left x ∈ z.carrier then
-    let x0 := Classical.choose hL
-    some (.inl (sumElementLft A B z x0 (Classical.choose_spec hL)))
-  else if hR : ∃ y : β, SumToken.right y ∈ z.carrier then
-    let y0 := Classical.choose hR
-    some (.inr (sumElementRht A B z y0 (Classical.choose_spec hR)))
-  else
-    ⊥
-
 /-- Assemble a sum-domain element from a separated-sum code. -/
 def assembleSum : WithBot (A.Element ⊕ B.Element) → (sumSystem A B).Element
   | ⊥ => (sumSystem A B).botElement
   | some (.inl x) => (inlMap A B).toElement x
   | some (.inr y) => (inrMap A B).toElement y
 
+/-- Every sum-domain element has a separated-sum code. -/
+private theorem exists_assembleSum_eq (z : (sumSystem A B).Element) :
+    ∃ w : WithBot (A.Element ⊕ B.Element), assembleSum A B w = z := by
+  rcases sum_element_trichotomy A B z with hbot | ⟨x, hx⟩ | ⟨y, hy⟩
+  · exact ⟨⊥, hbot.symm⟩
+  · exact ⟨some (.inl x), hx.symm⟩
+  · exact ⟨some (.inr y), hy.symm⟩
+
+/-- Classify a sum-domain element as `WithBot (|A| ⊕ |B|)`. Classical. -/
+noncomputable def classifySum (z : (sumSystem A B).Element) :
+    WithBot (A.Element ⊕ B.Element) :=
+  Classical.choose (exists_assembleSum_eq A B z)
+
 theorem assembleSum_classifySum (z : (sumSystem A B).Element) :
-    assembleSum A B (classifySum A B z) = z := by
-  classical
-  simp only [classifySum, assembleSum]
-  split_ifs with hL hR
-  · exact inlMap_toElement_sumElementLft A B z _ _
-  · exact inrMap_toElement_sumElementRht A B z _ _
-  · exact (eq_botElement_of_no_injections A B z
-      (fun x hx => hL ⟨x, hx⟩) (fun y hy => hR ⟨y, hy⟩)).symm
+    assembleSum A B (classifySum A B z) = z :=
+  Classical.choose_spec (exists_assembleSum_eq A B z)
 
 theorem not_left_mem_sum_botElement {x : α} :
     SumToken.left x ∉ ((sumSystem A B).botElement).carrier := by
@@ -284,41 +285,66 @@ theorem sumElementRht_eq {z : (sumSystem A B).Element} {y0 y1 : β}
     sumElementRht A B z y0 hy0 = sumElementRht A B z y1 hy1 := by
   refine le_antisymm ?_ ?_ <;> intro b hb <;> exact hb
 
+theorem assembleSum_injective :
+    Function.Injective (assembleSum A B) := by
+  intro w₁ w₂ h
+  cases w₁ with
+  | bot =>
+    cases w₂ with
+    | bot => rfl
+    | coe s₂ =>
+      cases s₂ with
+      | inl x =>
+        change (sumSystem A B).botElement = (inlMap A B).toElement x at h
+        have hx := left_bot_mem_inlMap_toElement A B x
+        rw [← h] at hx
+        exact False.elim (not_left_mem_sum_botElement A B hx)
+      | inr y =>
+        change (sumSystem A B).botElement = (inrMap A B).toElement y at h
+        have hy := right_bot_mem_inrMap_toElement A B y
+        rw [← h] at hy
+        exact False.elim (not_right_mem_sum_botElement A B hy)
+  | coe s₁ =>
+    cases w₂ with
+    | bot =>
+      cases s₁ with
+      | inl x =>
+        change (inlMap A B).toElement x = (sumSystem A B).botElement at h
+        have hx := left_bot_mem_inlMap_toElement A B x
+        rw [h] at hx
+        exact False.elim (not_left_mem_sum_botElement A B hx)
+      | inr y =>
+        change (inrMap A B).toElement y = (sumSystem A B).botElement at h
+        have hy := right_bot_mem_inrMap_toElement A B y
+        rw [h] at hy
+        exact False.elim (not_right_mem_sum_botElement A B hy)
+    | coe s₂ =>
+      cases s₁ with
+      | inl x =>
+        cases s₂ with
+        | inl x' => exact congrArg (fun t => some (Sum.inl t)) (inlMap_toElement_injective A B h)
+        | inr y' =>
+          change (inlMap A B).toElement x = (inrMap A B).toElement y' at h
+          have hx := left_bot_mem_inlMap_toElement A B x
+          rw [h] at hx
+          exact False.elim <| not_mem_right_of_mem_left A B ((inrMap A B).toElement y')
+            hx
+            (right_bot_mem_inrMap_toElement A B y')
+      | inr y =>
+        cases s₂ with
+        | inl x' =>
+          change (inrMap A B).toElement y = (inlMap A B).toElement x' at h
+          have hy := right_bot_mem_inrMap_toElement A B y
+          rw [h] at hy
+          exact False.elim <| not_mem_right_of_mem_left A B ((inlMap A B).toElement x')
+            (left_bot_mem_inlMap_toElement A B x')
+            hy
+        | inr y' => exact congrArg (fun t => some (Sum.inr t)) (inrMap_toElement_injective A B h)
+
 theorem classifySum_assembleSum (w : WithBot (A.Element ⊕ B.Element)) :
     classifySum A B (assembleSum A B w) = w := by
-  classical
-  cases w with
-  | bot =>
-    simp only [assembleSum, classifySum]
-    split_ifs with hL hR
-    · exact False.elim (not_left_mem_sum_botElement A B (Classical.choose_spec hL))
-    · exact False.elim (not_right_mem_sum_botElement A B (Classical.choose_spec hR))
-    · rfl
-  | coe s =>
-    cases s with
-    | inl x =>
-      have hx : SumToken.left A.bot ∈ ((inlMap A B).toElement x).carrier :=
-        left_bot_mem_inlMap_toElement A B x
-      simp only [assembleSum, classifySum]
-      have hL : ∃ a : α, SumToken.left a ∈ ((inlMap A B).toElement x).carrier := ⟨A.bot, hx⟩
-      rw [dif_pos hL]
-      congr 2
-      -- choose_spec gives some witness; sumElementLft equals via bot witness
-      exact (sumElementLft_eq A B (Classical.choose_spec hL) hx).trans
-        (sumElementLft_inlMap_toElement A B x)
-    | inr y =>
-      have hy : SumToken.right B.bot ∈ ((inrMap A B).toElement y).carrier :=
-        right_bot_mem_inrMap_toElement A B y
-      simp only [assembleSum, classifySum]
-      have hR : ∃ b : β, SumToken.right b ∈ ((inrMap A B).toElement y).carrier := ⟨B.bot, hy⟩
-      -- Need ¬∃ left, so first if is false
-      have hL : ¬∃ a : α, SumToken.left a ∈ ((inrMap A B).toElement y).carrier := by
-        intro ⟨a, ha⟩
-        exact not_mem_right_of_mem_left A B _ ha hy
-      rw [dif_neg hL, dif_pos hR]
-      congr 2
-      exact (sumElementRht_eq A B (Classical.choose_spec hR) hy).trans
-        (sumElementRht_inrMap_toElement A B y)
+  apply assembleSum_injective A B
+  exact assembleSum_classifySum A B (assembleSum A B w)
 
 theorem inlMap_toElement_le_iff {x y : A.Element} :
     (inlMap A B).toElement x ≤ (inlMap A B).toElement y ↔ x ≤ y := by

@@ -1,0 +1,282 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Scott 1981 — D ⊴ U (Theorem 8.8, first sentence + two corollaries)"
+  description: >-
+    A Lean 4 / mathlib formalization of Dana Scott's 1980 Oxford lectures,
+    published May 1981 as PRG-19 Lectures on a Mathematical Theory of
+    Computation. The principal sourced Palomar result is the first sentence
+    of Theorem 8.8: the neighbourhood system U over [0,1) ⊆ ℚ is universal,
+    in the sense that every countable neighbourhood system D embeds as a
+    subdomain (D ⊴ U). Comparator also selects two new formal corollaries:
+    P4_embeds for Scott's Example 1.5 and Ssys_embeds for Exercise 7.22.
+    Scott defines those systems but does not separately state the embeddings.
+    Challenge.lean fixes the neighbourhood-system vocabulary, including
+    Scott's standing assumption that the master token set Δ is non-empty,
+    Scott's ⊴, and the concrete Definition 8.7 family U. This
+    foundational universality result supplies a concrete host for all
+    countable domains; it is relevant to domain theory, denotational
+    semantics, mathematical logic, and formalized mathematics. The
+    broader Lectures I–VIII development lives in Scott1980/Neighborhood/*
+    and is not the advertised Comparator result. The informal account is
+    arxiv.md; the working transcription is sources/PRG19.md. Lean was
+    written by AI agents under the direction and review of the author.
+    Dana Scott did not participate in or endorse this formalization. There
+    is no sorry outside the deliberate holes in Challenge.lean, no
+    project-defined axiom, and Mathlib is the only Lake dependency.
+  authors:
+    - "Lars Warren Ericson"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Lars Warren Ericson"
+
+classification:
+  arxiv: [cs.LO, math.LO]
+  msc2020: ["68Q55", "06B35", "03B70"]
+
+status:
+  scope: >-
+    Complete for the three compared embedding results. The principal sourced
+    declaration is theorem_8_8: for every countable neighbourhood system D
+    one has D ⊴ U, i.e. D ≅ D' for some subsystem D' ◁ U. This is Scott's
+    first Theorem 8.8 sentence. The other compared declarations are two new
+    formal corollaries obtained by specialization: Example 1.5 (`P4_embeds`)
+    and Exercise 7.22's system S (`Ssys_embeds`). Scott defines those systems
+    but does not separately state these embeddings. Challenge.lean also locks
+    the filter-element order (element_le), the Definition 8.7 membership
+    predicate UMem, the non-emptiness of the master token sets, and the
+    concrete value of U. The
+    broader book is formalized in the same library but is not part of
+    the advertised Comparator result; Exercise 8.17 Part 2 remains a
+    documented deferral. Additional Comparator theorem targets are
+    proof obligations used only to lock these concrete definition
+    bodies.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+  main_results:
+    - declaration: "Scott1980.Neighborhood.theorem_8_8"
+      file: "Scott1980/Neighborhood/Theorem88a.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+    - declaration: "Scott1980.Neighborhood.Example15.P4_embeds"
+      file: "Scott1980/Neighborhood/PalomarExamples.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+    - declaration: "Scott1980.Neighborhood.Exercise722.Ssys_embeds"
+      file: "Scott1980/Neighborhood/PalomarExamples.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+
+fidelity:
+  divergences: >-
+    Working source: sources/PRG19.md. Theorem 8.8 there is quoted in
+    Challenge.lean and as theorem_8_8. Scott writes D ⊴ U; Lean Trianglelefteq
+    is the prose before Lemma 6.15 (D ≅ D' for some D' ◁ U). Scott's standing
+    assumption immediately before Definition 1.1 that the master token set Δ
+    is non-empty is enforced by NeighborhoodSystem.master_nonempty.
+    Definition 8.7
+    takes U as the non-empty finite unions of rational [r,s) inside [0,1).
+    Lean UMem presents those unions by List (ℚ × ℚ) without per-pair bound
+    side-conditions; U_mem_iff_scott in Definition87.lean proves this is
+    equivalent to Scott's literal per-pair 0 ≤ r < s ≤ 1 family. The
+    principal compared theorem is the general (non-effective) first sentence
+    of 8.8; P4_embeds and Ssys_embeds are new formal corollaries. The
+    effective refinement theorem_8_8_b and the finitary-projection
+    correspondence theorem_8_8_c are proved in the library but are not
+    Comparator targets.
+
+sources:
+  - title: "Lectures on a Mathematical Theory of Computation"
+    authors: ["Dana S. Scott"]
+    type: "paper"
+    location: "Technical Monograph PRG-19, Oxford University Computing Laboratory, Programming Research Group, May 1981. First sentence of Theorem 8.8."
+    relationship: formalizes
+    author_endorsement: not-contacted
+    note: >-
+      Primary source (© 1981 Dana S. Scott / University of Oxford). Dana
+      Scott was not contacted and did not participate in or endorse this
+      formalization. The principal sourced compared claim is the first
+      sentence of Theorem 8.8 (general universality); the other two selected
+      embeddings are identified as new formal corollaries. Working transcription:
+      sources/PRG19.md, which is not licensed under this repository's
+      Apache-2.0 terms. Narrative inventory: arxiv.md. Lectures 1980;
+      monograph May 1981.
+
+  - title: "A Lean 4 Formalization of Scott's Lectures on a Mathematical Theory of Computation (PRG-19)"
+    authors: ["Lars Warren Ericson"]
+    type: "other"
+    relationship: other
+    author_endorsement: participated
+    note: >-
+      The author's write-up of this formalization in arxiv.md, not the
+      1981 source monograph.
+
+related_formalizations:
+  - id: "https://github.com/catskillsresearch/scott1972"
+    relationship: other
+    note: >-
+      Same-author formalization of Scott 1972 Continuous Lattices. Not
+      imported here. Palomar packaging follows that repository's
+      Challenge / Solution pattern.
+
+  - id: "https://github.com/catskillsresearch/scott1982"
+    relationship: other
+    note: "Same-author formalization of Scott 1982 information systems; not imported here."
+
+  - id: "https://github.com/catskillsresearch/scott_models"
+    relationship: other
+    note: >-
+      Same-author sibling with cross-presentation equivalence theorems
+      for Scott 1972 / 1980 / 1982. Not imported here.
+
+  - id: "https://github.com/catskillsresearch/cardb"
+    relationship: other
+    note: "Same-author Palomar template source; not imported here."
+
+automation:
+  methods:
+    - method: agent
+      models: ["Cursor Grok 4.6 High Fast (SpaceXAI / Cursor)"]
+      framework: "Cursor"
+      role: >-
+        Primary agent for Lean 4 / mathlib formalization, lake build
+        repair, Palomar Challenge / Solution packaging, and arxiv.md
+        drafting.
+    - method: agent
+      models: ["Cursor Composer 2.5 Fast"]
+      framework: "Cursor"
+      role: "Routine scaffolding and medium-complexity proof obligations."
+    - method: agent
+      models: ["Anthropic Claude Sonnet 5 (medium reasoning)"]
+      framework: "Cursor"
+      role: "Day-to-day formalization and proof-engineering."
+    - method: agent
+      models: ["Anthropic Claude Opus 4.8 (high reasoning)"]
+      framework: "Cursor"
+      role: "Heaviest proof work including Theorem 8.8."
+    - method: agent
+      models: ["GPT-5.6 Sol"]
+      framework: "Cursor"
+      role: >-
+        Palomar v2 fidelity migration: structural non-empty master token
+        sets, constructor repair, public scope alignment, and validation.
+    - method: manual
+      models: []
+      role: >-
+        The author chose the formalization route, reviewed every
+        definition and claim, and takes sole responsibility for the
+        mathematical content. Dana Scott was not consulted.
+  notes: >-
+    Palomar Challenge / Solution / comparator / formalization.yaml
+    packaging was added under the author's direction, following the
+    cardb and scott1972 templates.
+
+review:
+  status: self-assessed
+  reviewers:
+    - "Lars Warren Ericson"
+  notes: >-
+    The author directed and reviewed the development. No external review
+    of the Lean source, and no review or endorsement by Dana Scott.
+    Every proof step is checked by the Lean kernel. Palomar's automated v1
+    review identified two non-blocking presentation/fidelity warnings; this
+    version addresses both before a fresh v2 review.
+
+known_gaps:
+  - >-
+    Palomar compares the first sentence of Theorem 8.8 (`theorem_8_8`) plus
+    the new formal corollaries `P4_embeds` and `Ssys_embeds`. The effective
+    second sentence (`theorem_8_8_b`) and finitary-projection third sentence
+    (`theorem_8_8_c`) are in the library, not in Comparator.
+  - >-
+    Exercise 8.17 Part 2 (whether U+U, U×U, or U→U is isomorphic to U) is
+    deliberately deferred. Scott flagged the function-space case as open.
+  - >-
+    NeighborhoodSystem, Element, Subsystem, and the PartialOrder instance
+    are structures or instances and cannot be listed as ordinary Comparator
+    definition targets. Their reached structure declarations, selected proof
+    fields (including concrete master-nonemptiness proofs), and the named
+    relation element_le are compared instead.
+
+limitations:
+  - >-
+    The Comparator-compared embedding results are the first sentence of
+    Theorem 8.8 (general universality D ⊴ U) and the two new formal
+    corollaries P4_embeds and Ssys_embeds. The full three-sentence theorem
+    and the PRG-19 inventory in arxiv.md are not Comparator scope.
+  - >-
+    The compared embedding theorems depend on propext, Classical.choice,
+    and Quot.sound. Classical.choice enters via Countable.nonempty
+    surjections and Mathlib's order instance on ℚ.
+  - >-
+    Challenge.lean states the claim with deliberate sorries; Solution.lean
+    and Scott1980/Neighborhood/* supply the proofs.
+
+alignment:
+  namespace: "Scott1980.Neighborhood"
+  statements:
+    - source: >-
+        sources/PRG19.md, first sentence of Theorem 8.8: The system U is
+        universal in the sense that, for every countable neighbourhood
+        system D, we have D ⊴ U.
+      lean: "theorem_8_8"
+      module: "Challenge (statement), Theorem88a.lean (proof)"
+      status: proved
+      note: >-
+        Challenge quotes that first sentence only. The library proves it
+        by packaging theorem_8_8_a (D ≅ D' ∧ D' ◁ U) as D ⊴ U.
+
+    - source: "Scott 1981, Definition 8.7: the universal neighbourhood system U"
+      lean: "U"
+      module: "Challenge (definition), Definition87.lean"
+      status: proved
+      note: >-
+        Compared as a definition. Membership is UMem (list presentation;
+        equivalent to Scott's per-pair 0 ≤ r < s ≤ 1 family by
+        U_mem_iff_scott).
+
+    - source: "Scott 1981, Definition 1.1: neighbourhood system"
+      lean: "NeighborhoodSystem"
+      module: "Challenge (structure), Basic.lean"
+      status: proved
+      note: >-
+        Structure; compared through the reached statement closure. Its
+        master_nonempty field records Scott's standing non-empty-Δ
+        assumption immediately before Definition 1.1.
+
+    - source: "Scott 1981, Definition 1.6 / 1.9: elements and domain isomorphism"
+      lean: "DomainIso"
+      module: "Challenge (definition), Basic.lean"
+      status: proved
+      note: "Compared as a definition."
+
+    - source: "Scott 1981, Definition 6.10 and the prose before Lemma 6.15: ◁ and ⊴"
+      lean: "Trianglelefteq"
+      module: "Challenge (definition), Lemma615.lean"
+      status: proved
+      note: "Compared as a definition."
+
+    - source: "Scott 1981, Example 1.5: all nonempty subsets of {0,1,2,3}"
+      lean: "P4_embeds"
+      module: "Challenge (statement), PalomarExamples.lean"
+      status: proved
+      note: >-
+        New formal corollary, not separately stated by Scott: applying
+        theorem_8_8 to Scott's finite Example 1.5 gives the embedding.
+
+    - source: "Scott 1981, Exercise 7.22: the least-fixed-point family S over {0,1}*"
+      lean: "Ssys_embeds"
+      module: "Challenge (statement), PalomarExamples.lean"
+      status: proved
+      note: >-
+        New formal corollary, not separately stated by Scott: countability
+        via SExpr lets theorem_8_8 embed Scott's system S into U. SExpr is
+        shown in Challenge.lean but is not Comparator-locked.

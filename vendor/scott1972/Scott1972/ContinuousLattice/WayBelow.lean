@@ -35,12 +35,18 @@ This is the classical/topological version of the theory, so we reason classicall
 
 namespace Scott1972.ContinuousLattice
 
-variable {D : Type*} [CompleteLattice D]
+universe u
+
+variable {D : Type u} [CompleteLattice D]
 
 /-- **Scott 1972, §2, the induced topology.** `U` is *Scott-open* when it is an upper set and
 is inaccessible by suprema of non-empty directed sets: if a non-empty directed `S` has its
 supremum in `U`, then some member of `S` already lies in `U`. -/
 def ScottOpen (U : Set D) : Prop :=
+  letI : LE D :=
+    (CompleteLattice.toCompleteSemilatticeInf (α := D)).toPartialOrder.toPreorder.toLE
+  letI : SupSet D :=
+    (CompleteLattice.toCompleteSemilatticeSup (α := D)).toSupSet
   IsUpperSet U ∧
     ∀ ⦃S : Set D⦄, S.Nonempty → DirectedOn (· ≤ ·) S → sSup S ∈ U → (S ∩ U).Nonempty
 
@@ -70,6 +76,10 @@ theorem scottOpen_sUnion {C : Set (Set D)} (hC : ∀ U ∈ C, ScottOpen U) :
 principal up-set `Set.Ici x` for the induced topology, witnessed by a Scott-open
 neighbourhood of `y` contained in `Set.Ici x`. -/
 def WayBelow (x y : D) : Prop :=
+  letI : LE D :=
+    (CompleteLattice.toCompleteSemilatticeInf (α := D)).toPartialOrder.toPreorder.toLE
+  letI : Preorder D :=
+    (CompleteLattice.toCompleteSemilatticeInf (α := D)).toPartialOrder.toPreorder
   ∃ U : Set D, ScottOpen U ∧ y ∈ U ∧ U ⊆ Set.Ici x
 
 @[inherit_doc] scoped infix:50 " ≪ " => WayBelow
@@ -140,7 +150,9 @@ theorem wayBelow_sSup_iff {x : D} {S : Set D} (hS : S.Nonempty)
 
 /-- **Scott 1972, Definition 2.3.** A complete lattice `D` is a *continuous lattice* when every
 element is the supremum of the elements way below it: `y = ⊔ {x | x ≪ y}`. -/
-def IsContinuousLattice (D : Type*) [CompleteLattice D] : Prop :=
+def IsContinuousLattice (D : Type u) [CompleteLattice D] : Prop :=
+  letI : LE D :=
+    (CompleteLattice.toCompleteSemilatticeInf (α := D)).toPartialOrder.toPreorder.toLE
   ∀ y : D, IsLUB {x | x ≪ y} y
 
 /-- In a continuous lattice, `y` is the actual supremum of `{x | x ≪ y}`. -/

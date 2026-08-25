@@ -193,7 +193,7 @@ theorem mem_decodeQPairList_canonFilterStep (e : ℕ) (p : ℚ × ℚ) :
       (qpClip (decodeRatPair e)).1 < (qpClip (decodeRatPair e)).2 ∧ p = qpClip (decodeRatPair e) := by
   rw [decodeQPairList_canonFilterStep]
   by_cases h : (qpClip (decodeRatPair e)).1 < (qpClip (decodeRatPair e)).2
-  · simp [h, eq_comm]
+  · simp [h]
   · simp [h]
 
 /-- **`canonListCode` realizes the clip-and-filter pass at the set level.** -/

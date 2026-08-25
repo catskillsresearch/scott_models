@@ -152,7 +152,7 @@ formula). -/
 theorem Ico_diff_Ico (a b c d : ℚ) :
     Set.Ico a b \ Set.Ico c d = Set.Ico a (b ⊓ c) ∪ Set.Ico (a ⊔ d) b := by
   ext x
-  simp only [Set.mem_diff, Set.mem_Ico, Set.mem_union, lt_inf_iff, sup_le_iff]
+  simp only [Set.mem_sdiff, Set.mem_Ico, Set.mem_union, lt_inf_iff, sup_le_iff]
   constructor
   · rintro ⟨⟨ha, hb⟩, hcd⟩
     rcases lt_or_ge x c with hc | hc
@@ -185,7 +185,7 @@ theorem presentedIntervals_diffSingleList (L : List (ℚ × ℚ)) (q : ℚ × �
   | cons a l ih =>
     rw [show diffSingleList (a :: l) q = diffOneList a q ++ diffSingleList l q from rfl,
       presentedIntervals_append, presentedIntervals_diffOneList, ih, presentedIntervals_cons,
-      Set.union_diff_distrib]
+      Set.union_sdiff_distrib]
 
 /-- **Subtract a whole presenting list `L2` from a single interval-pair `p`**, by folding
 `diffSingleList` over `L2`, starting from `[p]`. -/
@@ -199,7 +199,7 @@ theorem presentedIntervals_foldl_diffSingleList (L2 : List (ℚ × ℚ)) :
   | cons a l ih =>
     intro acc
     rw [List.foldl_cons, ih (diffSingleList acc a), presentedIntervals_diffSingleList,
-      presentedIntervals_cons, Set.diff_diff]
+      presentedIntervals_cons, Set.sdiff_sdiff]
 
 theorem presentedIntervals_diffAllList (p : ℚ × ℚ) (L2 : List (ℚ × ℚ)) :
     presentedIntervals (diffAllList p L2) = Set.Ico p.1 p.2 \ presentedIntervals L2 := by
@@ -218,7 +218,7 @@ theorem presentedIntervals_diffLists (L1 L2 : List (ℚ × ℚ)) :
   | cons a l ih =>
     rw [show diffLists (a :: l) L2 = diffAllList a L2 ++ diffLists l L2 from rfl,
       presentedIntervals_append, presentedIntervals_diffAllList, ih, presentedIntervals_cons,
-      Set.union_diff_distrib]
+      Set.union_sdiff_distrib]
 
 /-! ### The code level: `diffOneCode`/`diffSingleCode`/`diffAllCode`/`diffCode` -/
 
@@ -323,7 +323,7 @@ theorem presentedIntervals_decodeQPairList_foldl_diffAllStep (L2list : List ℕ)
     intro acc
     rw [List.foldl_cons, diffAllStep_eq, ih (diffSingleCode acc a),
       presentedIntervals_decodeQPairList_diffSingleCode, List.map_cons, presentedIntervals_cons,
-      Set.diff_diff]
+      Set.sdiff_sdiff]
 
 theorem presentedIntervals_decodeQPairList_diffAllCode (pc L2 : ℕ) :
     presentedIntervals (decodeQPairList (diffAllCode pc L2))
@@ -360,7 +360,7 @@ theorem presentedIntervals_decodeQPairList_flatMap_diffAllCode (c1list : List �
   | cons a l ih =>
     rw [List.flatMap_cons, List.map_cons, presentedIntervals_append,
       presentedIntervals_decodeQPairList_diffAllCode, ih, presentedIntervals_cons,
-      Set.union_diff_distrib]
+      Set.union_sdiff_distrib]
 
 /-- **`diffCode` realizes `diffLists` (hence set difference) at the set level.** -/
 theorem presentedIntervals_decodeQPairList_diffCode (c1 c2 : ℕ) :
@@ -447,7 +447,7 @@ theorem recDecidable_presentedIntervals_nonempty :
 theorem presentedIntervals_decodeQPairList_subset_iff (c1 c2 : ℕ) :
     presentedIntervals (decodeQPairList c1) ⊆ presentedIntervals (decodeQPairList c2) ↔
       ¬ (presentedIntervals (decodeQPairList (diffCode c1 c2))).Nonempty := by
-  rw [presentedIntervals_decodeQPairList_diffCode, Set.not_nonempty_iff_eq_empty, Set.diff_eq_empty]
+  rw [presentedIntervals_decodeQPairList_diffCode, Set.not_nonempty_iff_eq_empty, Set.sdiff_eq_empty]
 
 /-- **Subset between `presentedIntervals`-coded sets is recursively decidable.** -/
 theorem recDecidable₂_presentedIntervals_subset :

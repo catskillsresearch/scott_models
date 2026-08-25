@@ -1,21 +1,29 @@
 # Frozen sibling checkouts vendored for one Palomar SHA.
 # Same author (Lars Warren Ericson). Remotes remain the per-paper homes.
-# Copied 2026-08-20 (UTC). No .git / .lake directories.
+# Copied 2026-08-24 (UTC). No .git / .lake directories.
+#
+# scott1982: vendor/scott1982/Scott1982/Factoid81.lean carries a bridge patch
+# (TreeEntPayload kernel disjuncts + TreeCon_insert_bot) required for
+# ScottModels/SexDomainEquation.lean; upstream at rev below is Scott-faithful only.
+# The v4.33 compatibility layer also patches Constructive/Proposition23
+# (`funion_empty_right`), Factoid77 (explicit tensor/product transports),
+# Factoid82, Fixpoint, and Theorem72 (proofs robust to stricter transparency).
+# Its lake-manifest.json is refreshed from mathlib v4.33.0.
 
 vendor/scott1972
   origin: https://github.com/catskillsresearch/scott1972
-  rev:    36bf01f99f00fcb78b999052212372ba026521ba
+  rev:    278ba1745b6fb023fc3e9ffe53b7106ce60222c1
   from:   /home/catskills/Desktop/scott1972
-  date:   2026-08-20
+  date:   2026-08-24
 
 vendor/scott1980
   origin: https://github.com/catskillsresearch/scott1980
-  rev:    f6cbc2d62a636ab24e60d185f80c0f61daf73fe1
+  rev:    ef6c05671582b7883ecd40b7081b642ce5351963
   from:   /home/catskills/Desktop/scott1980
-  date:   2026-08-20
+  date:   2026-08-24
 
 vendor/scott1982
   origin: https://github.com/catskillsresearch/scott1982
-  rev:    7ed95c16db5be1131f79af84cdf29ba18f07646a
+  rev:    d3221eec09505aa75e1b818aabc73f1f04339bdc
   from:   /home/catskills/Desktop/scott1982
-  date:   2026-08-20
+  date:   2026-08-24

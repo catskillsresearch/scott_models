@@ -116,7 +116,7 @@ theorem PDsingleton_mono {X X' : Set α} (hX : V.mem X) (hX' : V.mem X') (hX'X :
 /-- **Proposition 7.12 — the singleton approximable map `λ x. {x}`.** Built from Exercise 2.8's
 extension principle: on the finite element `↑X` the value is `{↑X}`. -/
 def PDsingletonApproxMap : ApproximableMap V V.PowerDomain :=
-  ofMono (fun X hX => V.PDsingleton (V.principal hX))
+  ofMono (fun _X hX => V.PDsingleton (V.principal hX))
     (fun X X' hX hX' hX'X => @PDsingleton_mono α V X X' hX hX' hX'X)
 
 @[simp] theorem PDsingletonApproxMap_rel {X : Set α} {W : Set (Set α)} (hX : V.mem X) :
@@ -177,7 +177,7 @@ theorem PDfinJoin_pair (x y : V.Element) :
   apply PDext
   intro W
   simp only [PDsingletonMeet_mem, PDmem_singleton, PDfinJoin, PDmem_finJoinSucc, PDmemFinJoin,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Fin.forall_fin_two]
+    ]
   constructor
   · rintro ⟨X, hX, hPD, hsub⟩
     exact ⟨⟨X 0, hX 0, hPD, hsub 0⟩, ⟨X 1, hX 1, hPD, hsub 1⟩⟩
@@ -243,7 +243,7 @@ theorem finJoinMap_prod_toElementMap (x y : V.Element) :
     (finJoinMap_prod (V := V)).rel (prodNbhd X Y) W ↔
       (PDfinJoinApproxMap₂ (V := V)).rel X Y W := by
   dsimp [finJoinMap_prod, ofMap₂]
-  simp only [prod_mem_prodNbhd, inl_preimage_prodNbhd, inr_preimage_prodNbhd]
+  simp only [inl_preimage_prodNbhd, inr_preimage_prodNbhd]
   exact ⟨fun ⟨_, h⟩ => h, fun h => ⟨prod_mem_prodNbhd hX hY, h⟩⟩
 
 /-! ### Part D — computability. -/
@@ -251,7 +251,7 @@ theorem finJoinMap_prod_toElementMap (x y : V.Element) :
 variable (P : ComputablePresentation V)
 
 /-- **Proposition 7.12 — binary join reduces to two singleton tests.** -/
-theorem PDfinJoinApproxMap₂_rel_iff {X Y : Set α} (hX : V.mem X) (hY : V.mem Y) {W : Set (Set α)} :
+theorem PDfinJoinApproxMap₂_rel_iff {X Y : Set α} (_hX : V.mem X) (_hY : V.mem Y) {W : Set (Set α)} :
     (PDfinJoinApproxMap₂ (V := V)).rel X Y W ↔
       (PDsingletonApproxMap (V := V)).rel X W ∧ (PDsingletonApproxMap (V := V)).rel Y W := Iff.rfl
 
@@ -291,7 +291,7 @@ theorem singleton_isComputable (cons : ℕ → ℕ) (hconsp : Nat.Primrec cons)
   refine (RecDecidable.of_iff (fun s => ?_) h).re
   show PDsingletonApproxMap (V := V).rel (P.X s.unpair.1) ((V.PDPresentation P cons hconsp hcons).X s.unpair.2) ↔
       ∃ e ∈ decodeList s.unpair.2, P.X s.unpair.1 ⊆ P.X e
-  simp only [unpair_pair_fst, unpair_pair_snd, PDPresentation]
+  simp only [PDPresentation]
   apply PDsingletonApproxMap_rel_Ypd_iff (V := V)
 
 /-- **Proposition 7.12 — the binary join map is computable.** Two independent singleton tests. -/
@@ -307,8 +307,8 @@ theorem PDfinJoinApproxMap₂_isComputable (cons : ℕ → ℕ) (hconsp : Nat.Pr
     (Nat.Primrec.right.comp Nat.Primrec.left).pair Nat.Primrec.right
   refine REPred.of_iff (fun t => by
     dsimp [prodPresentation_X, finJoinMap_prod, ofMap₂]
-    simp only [prod_mem_prodNbhd, inl_preimage_prodNbhd, inr_preimage_prodNbhd,
-      PDfinJoinApproxMap₂_rel_iff, PDPresentation, unpair_pair_fst, unpair_pair_snd]
+    simp only [inl_preimage_prodNbhd, inr_preimage_prodNbhd,
+      PDPresentation, unpair_pair_fst, unpair_pair_snd]
     constructor
     · rintro ⟨_, ⟨h1, h2⟩⟩
       exact ⟨h1, h2⟩
@@ -346,7 +346,7 @@ def improperTop (E : NeighborhoodSystem γ)
 /-- An unconditionally ∩-closed system has a greatest element. -/
 theorem hasTop_of_inter_closed (E : NeighborhoodSystem γ)
     (hcl : ∀ {X Y : Set γ}, E.mem X → E.mem Y → E.mem (X ∩ Y)) : HasTop E :=
-  ⟨improperTop E hcl, fun x X hX => x.sub hX⟩
+  ⟨improperTop E hcl, fun x _X hX => x.sub hX⟩
 
 /-- A subsystem of an unconditionally ∩-closed system is itself unconditionally ∩-closed: the
 `◁`-clause `inter_closed` routes the intersection through `E`. -/
@@ -398,6 +398,7 @@ a genuine Scott neighbourhood system whose two singletons are *inconsistent*. -/
 def Vshape : NeighborhoodSystem Bool where
   mem X := X = Set.univ ∨ X = {true} ∨ X = {false}
   master := Set.univ
+  master_nonempty := ⟨true, Set.mem_univ _⟩
   master_mem := Or.inl rfl
   sub_master _ := Set.subset_univ _
   inter_mem := by

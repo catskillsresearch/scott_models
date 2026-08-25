@@ -1,0 +1,18 @@
+This repository's original Lean, scripts, and author-written documentation
+are licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party source material (not Apache-2.0)
+--------------------------------------------
+
+sources/PRG19.pdf is Dana S. Scott, Lectures on a Mathematical Theory of
+Computation, Technical Monograph PRG-19, Oxford University Computing
+Laboratory, Programming Research Group, May 1981. Copyright 1981 by
+Dana S. Scott, University of Oxford. It is included only as the cited
+primary source for this formalization. Palomar and other redistributors
+must not treat it as licensed under Apache-2.0.
+
+sources/PRG19.md is a working transcription of that monograph. Scott's
+wording remains Scott's copyright. The YAML header, page markers, and
+editorial notes are part of this repository's documentation.
+
+See sources/README.md.

@@ -109,6 +109,7 @@ neighbourhood `Δ = univ`. Its domain `|𝟙|` has exactly one element (`⊥ = {
 def unitSys : NeighborhoodSystem Unit where
   mem X := X = Set.univ
   master := Set.univ
+  master_nonempty := ⟨(), Set.mem_univ _⟩
   master_mem := rfl
   inter_mem := by rintro X Y Z rfl rfl _ _; simp
   sub_master := by rintro X rfl; exact subset_rfl

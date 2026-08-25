@@ -79,6 +79,7 @@ theorem con_of_basicOpen_subset {u w : Finset α} (hw : w ∈ A.Con)
 def toNeighborhoodSystem : NeighborhoodSystem A.Element where
   mem X := ∃ u, u ∈ A.Con ∧ X = A.basicOpen u
   master := Set.univ
+  master_nonempty := ⟨A.closure ∅ A.con_empty, Set.mem_univ _⟩
   master_mem := ⟨∅, A.con_empty, (basicOpen_empty A).symm⟩
   inter_mem := by
     intro X Y Z hX hY hZ hZsub
@@ -98,7 +99,10 @@ theorem mem_basicOpen_of_singletons (f : (toNeighborhoodSystem A).Element) {Y : 
     f.mem (A.basicOpen Y) := by
   induction Y using Finset.induction with
   | empty =>
-    simpa [basicOpen_empty] using f.master_mem
+    rw [basicOpen_empty]
+    have hmaster : (toNeighborhoodSystem A).master = (Set.univ : Set A.Element) := rfl
+    rw [← hmaster]
+    exact f.master_mem
   | insert a s _ha ih =>
     have hA := hY a (Finset.mem_insert_self a s)
     have hSm := ih fun i hi => hY i (Finset.mem_insert_of_mem hi)

@@ -33,8 +33,7 @@ import Mathlib.Data.Set.Insert
 This file formalises the **algebraic core** of the exercise, fully and choice-free:
 
 * the least-fixed-point family `S` as an inductive predicate `InS` over tokens `Σ = {0,1}* = List Bool`;
-* `S` is a **positive neighbourhood system** `Ssys` (Definition 1.1 / Exercise 1.19), built choice-free
-  via `NeighborhoodSystem.ofPositive`;
+* `S` is a **positive neighbourhood system** `Ssys` (Definition 1.1 / Exercise 1.19);
 * the **multiplication** `xy` on the domain `|S|` and the proof that it is **associative**, so `|S|`
   is a semigroup (`mulElem`, `mulElem_assoc`);
 * the **embedding** `σ ↦ {X ∈ S ∣ σ ∈ X}` of the free monoid into `|S|`, proved a semigroup
@@ -153,13 +152,32 @@ theorem InS.nonempty {X : Set (List Bool)} (h : InS X) : X.Nonempty := by
 
 /-! ## `S` is a positive neighbourhood system -/
 
+/-- `Σ` is a neighbourhood of `S`. -/
+theorem Ssys_master_mem : InS Set.univ := InS.univ
+
+/-- The token set `Σ = {0,1}*` is non-empty. -/
+theorem Ssys_master_nonempty : (Set.univ : Set (List Bool)).Nonempty := by
+  exact ⟨[], Set.mem_univ []⟩
+
+/-- Every member of `S` is a subset of `Σ`. -/
+theorem Ssys_sub_master {X : Set (List Bool)} (_h : InS X) : X ⊆ Set.univ :=
+  Set.subset_univ _
+
+/-- Intersection of two members of `S` is again in `S` when a consistency witness exists. -/
+theorem Ssys_inter_mem {X Y Z : Set (List Bool)}
+    (hX : InS X) (hY : InS Y) (hZ : InS Z) (hZsub : Z ⊆ X ∩ Y) : InS (X ∩ Y) :=
+  InS.inter hX hY (hZ.nonempty.mono hZsub)
+
 /-- **Exercise 7.22 (neighbourhood-system part).** `S` is a *positive* neighbourhood system over the
-token type `Σ = {0,1}*`, with master neighbourhood `Δ = Σ = Set.univ`. Built choice-free via
-`NeighborhoodSystem.ofPositive`: positivity `(X ∩ Y) ∈ S ↔ (X ∩ Y).Nonempty` holds because every
-member of `S` is non-empty (`InS.nonempty`, the `→` direction) and `InS.inter` is exactly the `←`. -/
-def Ssys : NeighborhoodSystem (List Bool) :=
-  NeighborhoodSystem.ofPositive InS Set.univ InS.univ (fun {X} _ => Set.subset_univ X)
-    (fun _ _ hX hY => ⟨fun h => h.nonempty, fun h => InS.inter hX hY h⟩)
+token type `Σ = {0,1}*`, with master neighbourhood `Δ = Σ = Set.univ`. Proof fields are named so
+Palomar can lock this value. -/
+def Ssys : NeighborhoodSystem (List Bool) where
+  mem := InS
+  master := Set.univ
+  master_nonempty := Ssys_master_nonempty
+  master_mem := Ssys_master_mem
+  inter_mem := Ssys_inter_mem
+  sub_master := Ssys_sub_master
 
 @[simp] theorem Ssys_mem {X : Set (List Bool)} : Ssys.mem X ↔ InS X := Iff.rfl
 

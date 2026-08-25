@@ -148,7 +148,7 @@ theorem negPart_append {E : NeighborhoodSystem α} (Q : ComputablePresentation E
     {m : ℕ | ∀ j ∈ (n1 ++ n2), m ∉ idxSet Q.X j} =
       {m | ∀ j ∈ n1, m ∉ idxSet Q.X j} ∩ {m | ∀ j ∈ n2, m ∉ idxSet Q.X j} := by
   ext m
-  simp only [Set.mem_setOf_eq, List.forall_mem_append, Set.mem_inter_iff]
+  simp only [Set.mem_ofPred_eq, List.forall_mem_append, Set.mem_inter_iff]
 
 /-- **`genAtom` reindexed via `idxSet e` matches `DAtom (P0 P)` at the `posnegList`
 accumulator.** The heart of Part 6c: since `(P0 P).X = e P`, this is exactly the fact that a
@@ -184,7 +184,7 @@ theorem genAtom_eq_DAtom (δ : ℕ → Bool) :
       unfold DAtom
       rw [negPart_append]
       have hZ : {m : ℕ | m ∉ idxSet (e P) n} = Set.univ \ idxSet (e P) n := by
-        ext m; simp [Set.mem_diff]
+        ext m; simp [Set.mem_sdiff]
       have hn : {m : ℕ | ∀ j ∈ [n], m ∉ idxSet (e P) j} = {m : ℕ | m ∉ idxSet (e P) n} := by
         ext m; simp
       rw [hn, hZ]

@@ -98,6 +98,7 @@ def interSys (E : NeighborhoodSystem α) (ℱ : Set (Set (Set α)))
     (hne : ℱ.Nonempty) (hℱ : ℱ ⊆ subFam E) : NeighborhoodSystem α where
   mem X := ∀ 𝒮 ∈ ℱ, X ∈ 𝒮
   master := E.master
+  master_nonempty := E.master_nonempty
   master_mem := fun 𝒮 h𝒮 => subFam_master_mem E (hℱ h𝒮)
   inter_mem := by
     intro X Y Z hX hY hZ hsub 𝒮 h𝒮
@@ -144,6 +145,7 @@ def unionSys (E : NeighborhoodSystem α) (ℱ : Set (Set (Set α)))
     NeighborhoodSystem α where
   mem X := ∃ 𝒮 ∈ ℱ, X ∈ 𝒮
   master := E.master
+  master_nonempty := E.master_nonempty
   master_mem := by
     obtain ⟨𝒮, h𝒮⟩ := hne
     exact ⟨𝒮, h𝒮, subFam_master_mem E (hℱ h𝒮)⟩
@@ -213,6 +215,7 @@ def ofMem (E : NeighborhoodSystem α) (𝒮 : Set (Set α)) (h : 𝒮 ∈ subFam
     NeighborhoodSystem α where
   mem X := X ∈ 𝒮
   master := E.master
+  master_nonempty := E.master_nonempty
   master_mem := subFam_master_mem E h
   inter_mem := by
     intro X Y Z hX hY hZ hsub

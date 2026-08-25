@@ -98,6 +98,9 @@ splits into witnesses `Z₀ ⊆ X ∩ X'`, `Z₁ ⊆ Y ∩ Y'` by `prodNbhd_subs
 def prod (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β) : NeighborhoodSystem (α ⊕ β) where
   mem W := ∃ X Y, V₀.mem X ∧ V₁.mem Y ∧ W = prodNbhd X Y
   master := prodNbhd V₀.master V₁.master
+  master_nonempty := by
+    obtain ⟨a, ha⟩ := V₀.master_nonempty
+    exact ⟨Sum.inl a, mem_prodNbhd_inl.mpr ha⟩
   master_mem := ⟨V₀.master, V₁.master, V₀.master_mem, V₁.master_mem, rfl⟩
   inter_mem := by
     rintro W W' Z ⟨X, Y, hX, hY, rfl⟩ ⟨X', Y', hX', hY', rfl⟩ ⟨Z₀, Z₁, hZ₀, hZ₁, rfl⟩ hsub

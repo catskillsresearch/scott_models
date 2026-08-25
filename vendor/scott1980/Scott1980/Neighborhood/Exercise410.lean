@@ -50,6 +50,7 @@ and master, neighbourhoods exactly the members of the filter `a`. -/
 def relSystem (a : V.Element) : NeighborhoodSystem α where
   mem X := a.mem X
   master := V.master
+  master_nonempty := V.master_nonempty
   master_mem := a.master_mem
   sub_master := fun hX => V.sub_master (a.sub hX)
   inter_mem := fun hX hY _ _ => a.inter_mem hX hY

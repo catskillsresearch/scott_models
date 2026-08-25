@@ -63,6 +63,7 @@ def oplusTok (D₀ D₁ : NeighborhoodSystem Str)
   mem W := W = sumTokMaster D₀ D₁ ∨ (∃ X, D₀.mem X ∧ X ≠ D₀.master ∧ W = embBit false X) ∨
     (∃ Y, D₁.mem Y ∧ Y ≠ D₁.master ∧ W = embBit true Y)
   master := sumTokMaster D₀ D₁
+  master_nonempty := ⟨[], nil_mem_sumTokMaster⟩
   master_mem := Or.inl rfl
   sub_master := by
     rintro W (rfl | ⟨X, hX, -, rfl⟩ | ⟨Y, hY, -, rfl⟩)
@@ -130,6 +131,7 @@ def otimesTok (D₀ D₁ : NeighborhoodSystem Str) : NeighborhoodSystem Str wher
   mem W := W = prodTokNbhd D₀.master D₁.master ∨
     (∃ X Y, D₀.mem X ∧ D₁.mem Y ∧ X ≠ D₀.master ∧ Y ≠ D₁.master ∧ W = prodTokNbhd X Y)
   master := prodTokNbhd D₀.master D₁.master
+  master_nonempty := ⟨[], mem_prodTokNbhd_nil⟩
   master_mem := Or.inl rfl
   sub_master := by
     rintro W (rfl | ⟨X, Y, hX, hY, -, -, rfl⟩)

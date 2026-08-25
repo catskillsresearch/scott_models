@@ -153,7 +153,9 @@ def autStateCard : SExpr → ℕ
 
 theorem autStateCard_le_card (e : SExpr) : autStateCard e ≤ Fintype.card (autState e) := by
   induction e with
-  | sigma => simp [autStateCard, autState]
+  | sigma =>
+    simp [autStateCard, autState]
+    exact (Fintype.card_unique (α := Unit)).ge
   | single σ =>
     have heq : autStateCard (.single σ) = Fintype.card (autState (.single σ)) := by
       simp only [autStateCard, autState]
@@ -251,21 +253,24 @@ def pathStateAtAux {s t : σ} {x : List Bool} : M.Path s t x → ∀ n, n ≤ x.
 def pathStateAt {s t : σ} {x : List Bool} (p : M.Path s t x) (n : ℕ) (hn : n ≤ x.length) : σ :=
   pathStateAtAux p n hn
 
+omit [Fintype σ] in
 @[simp] theorem pathStateAt_zero {s t : σ} {x : List Bool} (p : M.Path s t x) :
     pathStateAt p 0 (Nat.zero_le _) = s := by
   cases x with
   | nil =>
-    cases p <;> simp [pathStateAt, pathStateAtAux]
+    cases p; simp [pathStateAt, pathStateAtAux]
   | cons a xs =>
     cases p with
     | cons _ s' _ _ _ _ _ => simp [pathStateAt, pathStateAtAux]
 
+omit [Fintype σ] in
 theorem pathStateAt_succ {sMid s' u : σ} {a : Bool} {xs : List Bool}
     (hstep : sMid ∈ M.step s' a) (p' : M.Path sMid u xs) (n : ℕ) (hn : n ≤ xs.length) :
     pathStateAt (.cons sMid s' u a xs hstep p') (n + 1) (Nat.succ_le_succ hn) =
       pathStateAt p' n hn := by
   simp [pathStateAt, pathStateAtAux]
 
+omit [Fintype σ] in
 theorem pathStateAt_last {s t : σ} {x : List Bool} (p : M.Path s t x) :
     pathStateAt p x.length (Nat.le_refl _) = t := by
   induction p with
@@ -312,11 +317,13 @@ noncomputable def pathAppend_take_drop {s t : σ} {x : List Bool} (p : M.Path s 
         hu := by rw [pathStateAt_succ hstep p' n' hn']; exact split.hu
       }
 
+omit [Fintype σ] in
 theorem mem_accepts_of_path {s t : σ} {x : List Bool} (hs : s ∈ M.start) (ht : t ∈ M.accept)
     (p : M.Path s t x) : x ∈ M.accepts := by
   rw [NFA.accepts_iff_exists_path]
   exact ⟨s, hs, t, ht, ⟨p⟩⟩
 
+omit [Fintype σ] in
 theorem accepts_skip_loop {s t : σ} {x : List Bool} {i j : ℕ}
     (hi : i ≤ x.length) (hj : j ≤ x.length) (_hij : i < j)
     (hs : s ∈ M.start) (ht : t ∈ M.accept) (hp : M.Path s t x)
@@ -347,17 +354,13 @@ theorem accepts_shorten_step {x : List Bool} (hx : x ∈ M.accepts)
   rcases Nat.lt_or_gt_of_ne hval with hij | hij
   · refine ⟨x.take i.val ++ x.drop j.val, ?_, ?_⟩
     · exact accepts_skip_loop (by omega) (by omega) hij hs ht hp heq
-    · have hi' : i.val ≤ x.length := by omega
-      have hj' : j.val ≤ x.length := by omega
-      have : j.val - i.val > 0 := Nat.sub_pos_of_lt hij
-      simp [List.length_append, List.length_take, List.length_drop, hi', hj']
+    · have : j.val - i.val > 0 := Nat.sub_pos_of_lt hij
+      simp [List.length_append, List.length_take, List.length_drop]
       omega
   · refine ⟨x.take j.val ++ x.drop i.val, ?_, ?_⟩
     · exact accepts_skip_loop (by omega) (by omega) hij hs ht hp heq.symm
-    · have hi' : i.val ≤ x.length := by omega
-      have hj' : j.val ≤ x.length := by omega
-      have : i.val - j.val > 0 := Nat.sub_pos_of_lt hij
-      simp [List.length_append, List.length_take, List.length_drop, hj', hi']
+    · have : i.val - j.val > 0 := Nat.sub_pos_of_lt hij
+      simp [List.length_append, List.length_take, List.length_drop]
       omega
 
 theorem exists_accepted_word_short (h : M.accepts.Nonempty) :
@@ -390,7 +393,9 @@ theorem nfa_accepts_nonempty_iff_short :
 
 theorem autStateCard_eq_card (e : SExpr) : autStateCard e = Fintype.card (autState e) := by
   induction e with
-  | sigma => simp [autStateCard, autState]
+  | sigma =>
+    simp [autStateCard, autState]
+    exact (Fintype.card_unique (α := Unit)).symm
   | single σ =>
     simp only [autStateCard, autState]
     have h1 : Fintype.card (Option (Fin (σ.length + 1))) =

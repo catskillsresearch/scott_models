@@ -298,7 +298,7 @@ theorem plusIdx_testBit (n m k : ℕ) :
 theorem compl_nbhd_plusIdx (n m : ℕ) : (nbhd (plusIdx n m))ᶜ = (nbhd n)ᶜ +ˢ (nbhd m)ᶜ := by
   rw [compl_nbhd, compl_nbhd, compl_nbhd]
   ext k
-  simp only [mem_sumSet, Set.mem_setOf_eq, plusIdx_testBit]
+  simp only [mem_sumSet, Set.mem_ofPred_eq, plusIdx_testBit]
   constructor
   · rintro ⟨a, hak, ha, hb⟩; exact ⟨a, ha, k - a, hb, by omega⟩
   · rintro ⟨a, ha, b, hb, rfl⟩

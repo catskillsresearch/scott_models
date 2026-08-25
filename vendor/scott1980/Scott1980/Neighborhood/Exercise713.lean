@@ -163,6 +163,7 @@ tokens `ℕ`, master `Δ = ℕ = S_{topIdx}`; closure under intersection is axio
 def toSystem : NeighborhoodSystem ℕ where
   mem Y := ∃ n, Y = I.toNbhd n
   master := Set.univ
+  master_nonempty := Set.univ_nonempty
   master_mem := ⟨I.topIdx, I.toNbhd_top.symm⟩
   inter_mem := by
     rintro X Y Z ⟨n, rfl⟩ ⟨m, rfl⟩ ⟨l, rfl⟩ hZsub

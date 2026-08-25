@@ -62,7 +62,8 @@ theorem flatNOD : NestedOrDisjoint flatMem := by
 
 /-- **Exercise 1.15 — the flat domain.** `𝒟 = {ℕ} ∪ {{n}}`. -/
 def flat : NeighborhoodSystem ℕ :=
-  ofNestedOrDisjoint flatMem Set.univ (Or.inl rfl) flatNOD (fun _ => Set.subset_univ _)
+  ofNestedOrDisjoint flatMem Set.univ Set.univ_nonempty
+    (Or.inl rfl) flatNOD (fun _ => Set.subset_univ _)
 
 @[simp] theorem flat_mem {X : Set ℕ} : flat.mem X ↔ X = Set.univ ∨ ∃ n, X = {n} := Iff.rfl
 
@@ -186,7 +187,8 @@ theorem stemNOD : NestedOrDisjoint stemMem := by
 
 /-- **Exercise 1.15 — the stem domain.** `𝒟 = {ℕ, {0,1}} ∪ {{n}}`. -/
 def stem : NeighborhoodSystem ℕ :=
-  ofNestedOrDisjoint stemMem Set.univ (Or.inl rfl) stemNOD (fun _ => Set.subset_univ _)
+  ofNestedOrDisjoint stemMem Set.univ Set.univ_nonempty
+    (Or.inl rfl) stemNOD (fun _ => Set.subset_univ _)
 
 @[simp] theorem stem_mem {X : Set ℕ} :
     stem.mem X ↔ X = Set.univ ∨ X = {0, 1} ∨ ∃ n, X = {n} := Iff.rfl

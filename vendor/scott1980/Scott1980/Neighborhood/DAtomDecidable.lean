@@ -75,7 +75,7 @@ theorem mem_IPos {pos : List ℕ} {m : ℕ} : m ∈ IPos P pos ↔ ∀ i ∈ pos
 theorem IPos_cons (i : ℕ) (rest : List ℕ) :
     IPos P (i :: rest) = idxSet P.X i ∩ IPos P rest := by
   ext m
-  simp only [IPos, Set.mem_setOf_eq, List.mem_cons, mem_idxSet, Set.mem_inter_iff]
+  simp only [IPos, Set.mem_ofPred_eq, List.mem_cons, mem_idxSet, Set.mem_inter_iff]
   constructor
   · intro h; exact ⟨h i (Or.inl rfl), fun j hj => h j (Or.inr hj)⟩
   · rintro ⟨hi, hrest⟩ j (rfl | hj)
@@ -89,7 +89,7 @@ def DAtom (pos neg : List ℕ) : Set ℕ := IPos P pos ∩ {m | ∀ j ∈ neg, m
 
 theorem mem_DAtom {pos neg : List ℕ} {m : ℕ} :
     m ∈ DAtom P pos neg ↔ (∀ i ∈ pos, P.X m ⊆ P.X i) ∧ (∀ j ∈ neg, ¬ P.X m ⊆ P.X j) := by
-  simp only [DAtom, Set.mem_inter_iff, mem_IPos, Set.mem_setOf_eq, mem_idxSet]
+  simp only [DAtom, Set.mem_inter_iff, mem_IPos, Set.mem_ofPred_eq, mem_idxSet]
 
 /-- `idxSet P.X P.masterIdx = Set.univ`: `masterIdx` indexes `D`'s master `Δ`, and every
 `D`-neighbourhood is `⊆ Δ`. -/

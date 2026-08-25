@@ -7,14 +7,16 @@ Github:  https://github.com/catskillsresearch/scott1980
 
 import Scott1980.Neighborhood.Theorem88
 import Scott1980.Neighborhood.Definition610
+import Scott1980.Neighborhood.Lemma615
 import Mathlib.Data.Countable.Defs
 
 /-!
-# Theorem 8.8(a) (Scott 1981, PRG-19, Lecture VIII) — assembling `D ≅ᴰ D' ∧ D' ◁ U`
+# First sentence of Theorem 8.8 — assembling `D ≅ᴰ D' ∧ D' ◁ U`
 
 `Theorem88.lean` builds, for **any** sequence `X : ℕ → Set α` and master `Δ : Set α` with
 `Δ.Nonempty`, a sequence `Yseq X Δ : ℕ → Set ℚ` satisfying the finite-constraint transfer laws.
-This file supplies the missing final ingredient and assembles Theorem 8.8(a) in full.
+This file supplies the missing final ingredient and assembles the first sentence
+of Scott's unlettered Theorem 8.8. Internally the project calls this part (a).
 
 ## The `D†` preparation (Scott's "without loss of generality `𝒟 ≅ 𝒟†`")
 
@@ -213,6 +215,7 @@ across to `Yidx e i ∩ Yidx e j = Yidx e m`. -/
 noncomputable def DprimeU : NeighborhoodSystem ℚ where
   mem Y := ∃ n, Y = Yidx e n
   master := U.master
+  master_nonempty := U.master_nonempty
   master_mem := ⟨0, (Yidx_zero D e hcover he0).symm⟩
   sub_master := by rintro Y ⟨n, rfl⟩; exact Yidx_subset_master e n
   inter_mem := by
@@ -322,14 +325,14 @@ noncomputable def domainIso : DomainIso D (DprimeU D e hcover he0) where
       obtain ⟨n, hn, hxn⟩ := hY
       exact ⟨n, hn, hle _ hxn⟩
 
-/-- **Theorem 8.8(a) (isomorphism half).** `D ≅ᴰ D'`. -/
+/-- **First sentence of Theorem 8.8 (isomorphism half).** `D ≅ᴰ D'`. -/
 theorem isomorphic_DprimeU : D ≅ᴰ DprimeU D e hcover he0 := ⟨domainIso D e hcover he0⟩
 
 end Iso
 
-/-! ## Theorem 8.8(a): the general (non-effective) universality of `U` -/
+/-! ## Theorem 8.8, first sentence: the general (non-effective) universality of `U` -/
 
-/-- **Theorem 8.8(a) (Scott 1981, PRG-19, Lecture VIII).** `𝒰` is universal: every *countable*
+/-- **First sentence of Theorem 8.8 (Scott 1981, PRG-19, Lecture VIII).** `𝒰` is universal: every *countable*
 neighbourhood system `D` embeds, up to isomorphism, as a subsystem of `𝒰`.
 
 The enumeration `e` is built from any surjection `f : ℕ → {S // D.mem S}` (`exists_surjective_nat`,
@@ -337,10 +340,10 @@ using `Countable`/`Nonempty` — the only place `Classical.choice` enters, since
 data), shifted by one and patched at `0` to enforce Scott's convention `X₀ = Δ`. Everything else —
 `idxSet`'s "separated" reindexing, the `Yidx`/transfer apparatus of `Theorem88.lean`, and the
 `DprimeU`/`domainIso` machinery above — is then assembled directly. -/
-theorem theorem_8_8_a {α : Type*} (D : NeighborhoodSystem α)
+theorem theorem_8_8_a.{u} {α : Type u} (D : NeighborhoodSystem α)
     [Countable {S : Set α // D.mem S}] :
     ∃ D' : NeighborhoodSystem ℚ, (D ≅ᴰ D') ∧ (D' ◁ U) := by
-  haveI : Nonempty {S : Set α // D.mem S} := ⟨⟨D.master, D.master_mem⟩⟩
+  have : Nonempty {S : Set α // D.mem S} := ⟨⟨D.master, D.master_mem⟩⟩
   obtain ⟨f, hf⟩ := exists_surjective_nat {S : Set α // D.mem S}
   set e : ℕ → Set α := fun n => if n = 0 then D.master else (f (n - 1)).1 with hedef
   have he0 : e 0 = D.master := if_pos rfl
@@ -359,5 +362,13 @@ theorem theorem_8_8_a {α : Type*} (D : NeighborhoodSystem α)
       | zero => rw [he0]; exact D.master_mem
       | succ n => rw [hen n]; exact (f n).2
   exact ⟨DprimeU D e hcover he0, isomorphic_DprimeU D e hcover he0, DprimeU_subsystem D e hcover he0⟩
+
+/-- **First sentence of Theorem 8.8 (Scott 1981, PRG-19).** Scott's wording:
+"The system `𝒰` is universal in the sense that, for every countable neighbourhood
+system `𝒟`, we have `𝒟 ⊴ 𝒰`." This packages `theorem_8_8_a` as that relation. -/
+theorem theorem_8_8.{u} {α : Type u} (D : NeighborhoodSystem α)
+    [Countable {S : Set α // D.mem S}] : D ⊴ U := by
+  obtain ⟨D', hiso, hsub⟩ := theorem_8_8_a D
+  exact ⟨D', hsub, hiso⟩
 
 end Scott1980.Neighborhood

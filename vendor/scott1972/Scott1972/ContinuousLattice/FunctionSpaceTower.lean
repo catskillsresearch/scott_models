@@ -7,17 +7,20 @@ Github:  https://github.com/catskillsresearch/scott1972
 
 import Scott1972.ContinuousLattice.InverseLimits
 import Mathlib.Order.Hom.Basic
+import Mathlib.Topology.Homeomorph.Defs
 
 /-!
-# The function-space tower and Scott's `D_∞ ≅ [D_∞ → D_∞]` (Scott 1972, §4, Theorem 4.4)
+# The function-space tower and Theorem 4.4
+(Scott 1972; wording from `sources/ScottContinLatt1972.md`)
 
-Starting from a continuous lattice `D₀` together with a chosen projection `j₀ : [D₀ → D₀] → D₀`
-(Proposition 3.13 provides one), we build the recursively-defined ω-system
+Scott, just above Theorem 4.4: let \(D = D_0\) be a given continuous lattice; make
+\(D_0\) a projection of \(D_1 = [D_0 \to D_0]\) by a pair \(i_0, j_0\) (Proposition 3.13);
+define recursively \(D_{n+1} = [D_n \to D_n]\) and introduce \(i_{n+1}, j_{n+1}\) by
+Proposition 3.7, so \(j_{n+1} = [j_n \to j_n]\).
 
-  `D_{n+1} = [D_n → D_n]`,   `j_{n+1} = [j_n → j_n]`   (the function-space functor, Proposition 3.7),
-
-and form its inverse limit `D_∞`. Theorem 4.4 is that `D_∞` is *homeomorphic to its own function
-space* `[D_∞ → D_∞]`.
+**4.4 Theorem.** *The inverse limit \(D_\infty\) of the recursively defined sequence
+\(\langle D_n, j_n \rangle_{n=0}^{\infty}\) of function spaces is not only a continuous
+lattice, but it is also homeomorphic to its own function space \([D_\infty \to D_\infty]\).*
 -/
 
 namespace Scott1972.ContinuousLattice
@@ -61,12 +64,11 @@ instance towerCoeFun {D₀ : CLat.{u}} {n : ℕ} :
 @[simp] theorem towerToMap_coe {D₀ : CLat.{u}} {n : ℕ} (f : towerType D₀ (n + 1))
     (x : towerType D₀ n) : towerToMap f x = f x := rfl
 
-/-! ### The function-space functor on projections (Proposition 3.7, continuous form)
+/-! ### Conjugation used in Scott's §4 limit formulas
 
-`proposition_3_7_projection` builds the embedding/projection pair on function spaces as *plain
-functions*; here we upgrade them to genuine Scott maps, so that `[Dₙ → Dₙ]` is a continuous-lattice
-projection of `[D_{n+1} → D_{n+1}]`. The map `f ↦ post ∘ f ∘ pre` (conjugation) is Scott-continuous
-because directed suprema of function spaces are computed pointwise. -/
+Theorem 4.4 uses maps of the form `f ↦ post ∘ f ∘ pre`.  We bundle this operation as a Scott map;
+its continuity follows because directed suprema in function spaces are computed pointwise
+(Theorem 3.3). -/
 
 section Conj
 
@@ -95,17 +97,6 @@ theorem conjMap_preservesDirectedSup (post : ScottMap Y Z) (pre : ScottMap W Y) 
     ScottMap.sSup_apply, Set.image_image, Set.image_image]
   rfl
 
-theorem conjMap_preservesDirectedSup_apply (post : ScottMap Y Z) (pre : ScottMap W Y)
-    (F : Set (ScottMap Y Y)) (hF : F.Nonempty) (hFdir : DirectedOn (· ≤ ·) F) (y : W) :
-    post ((sSup F : ScottMap Y Y) (pre y)) = (sSup (conjMapFun post pre '' F) : ScottMap W Z) y := by
-  have hdir : DirectedOn (· ≤ ·) ((fun f : ScottMap Y Y => f (pre y)) '' F) := by
-    rintro _ ⟨a, ha, rfl⟩ _ ⟨b, hb, rfl⟩
-    obtain ⟨c, hc, hac, hbc⟩ := hFdir a ha b hb
-    exact ⟨c (pre y), ⟨c, hc, rfl⟩, hac (pre y), hbc (pre y)⟩
-  rw [ScottMap.sSup_apply F (pre y), post.preservesDirectedSup_coe _ (hF.image _) hdir,
-    ScottMap.sSup_apply, Set.image_image, Set.image_image]
-  rfl
-
 /-- Conjugation `f ↦ post ∘ f ∘ pre` as a Scott map `[Y → Y] → [W → Z]`. -/
 noncomputable def conjMap (post : ScottMap Y Z) (pre : ScottMap W Y) :
     ScottMap (ScottMap Y Y) (ScottMap W Z) :=
@@ -116,46 +107,115 @@ noncomputable def conjMap (post : ScottMap Y Z) (pre : ScottMap W Y) :
 
 end Conj
 
-/-- **Scott 1972, Proposition 3.7 (continuous projection on the diagonal).** If `D` is a
-continuous-lattice projection of `D'`, then `[D → D]` is a projection of `[D' → D']` via
-`i_{[·]}(f) = i ∘ f ∘ j` and `j_{[·]}(g) = j ∘ g ∘ i`. -/
-noncomputable def IsContinuousLatticeProjection.functionSpace
-    {A B : Type u} [CompleteLattice A] [CompleteLattice B]
-    (P : IsContinuousLatticeProjection A B) :
-    IsContinuousLatticeProjection (ScottMap A A) (ScottMap B B) where
-  incl := conjMap P.incl P.retr
-  retr := conjMap P.retr P.incl
-  retr_incl f := by
-    apply ScottMap.ext; intro x
-    simp only [conjMap_apply, P.retr_incl]
-  incl_retr_le g := by
-    rw [ScottMap.le_def]; intro x
-    simp only [conjMap_apply]
-    exact le_trans (P.incl_retr_le _) (g.monotone (P.incl_retr_le x))
+/-- Continuity of the inner map `i ∘ f ∘ j`. -/
+theorem functionSpaceInclFun_continuous {D D' : Type u}
+    [CompleteLattice D] [CompleteLattice D']
+    (P : IsContinuousLatticeProjection D D') (f : ScottMap D D) :
+    @Continuous D' D' scottTopologicalSpace scottTopologicalSpace
+      (fun x => P.incl (f (P.retr x))) :=
+  @Continuous.congr D' D' scottTopologicalSpace scottTopologicalSpace
+    (P.incl.comp (f.comp P.retr)).1 (fun x => P.incl (f (P.retr x)))
+    (P.incl.comp (f.comp P.retr)).continuous (fun _ => rfl)
 
-/-- The projection tower `j_{n+1} = [j_n → j_n]`, anchored at a chosen base projection
-`j₀ : [D₀ → D₀] → D₀`. -/
+/-- The inclusion part of `[P → P]`, with its underlying function explicit. -/
+def functionSpaceInclFun {D D' : Type u} [CompleteLattice D] [CompleteLattice D']
+    (P : IsContinuousLatticeProjection D D') (f : ScottMap D D) : ScottMap D' D' :=
+  ⟨fun x => P.incl (f (P.retr x)), functionSpaceInclFun_continuous P f⟩
+
+/-- Continuity, for the lattice Scott topologies on the function spaces, of
+`f ↦ i ∘ f ∘ j`. -/
+theorem functionSpaceInclFun_outer_continuous {D D' : Type u}
+    [CompleteLattice D] [CompleteLattice D']
+    (P : IsContinuousLatticeProjection D D') :
+    @Continuous (ScottMap D D) (ScottMap D' D')
+      scottTopologicalSpace scottTopologicalSpace (functionSpaceInclFun P) := by
+  exact @Continuous.congr (ScottMap D D) (ScottMap D' D')
+    scottTopologicalSpace scottTopologicalSpace (conjMap P.incl P.retr).1
+    (functionSpaceInclFun P) (conjMap P.incl P.retr).continuous
+    (fun f => ScottMap.ext fun _ => rfl)
+
+/-- Continuity of the inner map `j ∘ g ∘ i`. -/
+theorem functionSpaceRetrFun_continuous {D D' : Type u}
+    [CompleteLattice D] [CompleteLattice D']
+    (P : IsContinuousLatticeProjection D D') (g : ScottMap D' D') :
+    @Continuous D D scottTopologicalSpace scottTopologicalSpace
+      (fun x => P.retr (g (P.incl x))) :=
+  @Continuous.congr D D scottTopologicalSpace scottTopologicalSpace
+    (P.retr.comp (g.comp P.incl)).1 (fun x => P.retr (g (P.incl x)))
+    (P.retr.comp (g.comp P.incl)).continuous (fun _ => rfl)
+
+/-- The retraction part of `[P → P]`, with its underlying function explicit. -/
+def functionSpaceRetrFun {D D' : Type u} [CompleteLattice D] [CompleteLattice D']
+    (P : IsContinuousLatticeProjection D D') (g : ScottMap D' D') : ScottMap D D :=
+  ⟨fun x => P.retr (g (P.incl x)), functionSpaceRetrFun_continuous P g⟩
+
+/-- Continuity, for the lattice Scott topologies on the function spaces, of
+`g ↦ j ∘ g ∘ i`. -/
+theorem functionSpaceRetrFun_outer_continuous {D D' : Type u}
+    [CompleteLattice D] [CompleteLattice D']
+    (P : IsContinuousLatticeProjection D D') :
+    @Continuous (ScottMap D' D') (ScottMap D D)
+      scottTopologicalSpace scottTopologicalSpace (functionSpaceRetrFun P) := by
+  exact @Continuous.congr (ScottMap D' D') (ScottMap D D)
+    scottTopologicalSpace scottTopologicalSpace (conjMap P.retr P.incl).1
+    (functionSpaceRetrFun P) (conjMap P.retr P.incl).continuous
+    (fun g => ScottMap.ext fun _ => rfl)
+
+/-- Retraction law for the diagonal Proposition 3.7 construction. -/
+theorem functionSpaceRetrIncl {D D' : Type u} [CompleteLattice D] [CompleteLattice D']
+    (P : IsContinuousLatticeProjection D D') :
+    ∀ f, functionSpaceRetrFun P (functionSpaceInclFun P f) = f :=
+  (proposition_3_7_projection P P).retr_incl
+
+/-- Projection inequality for the diagonal Proposition 3.7 construction. -/
+theorem functionSpaceInclRetrLe {D D' : Type u} [CompleteLattice D] [CompleteLattice D']
+    (P : IsContinuousLatticeProjection D D') :
+    ∀ g, functionSpaceInclFun P (functionSpaceRetrFun P g) ≤ g := by
+  intro g
+  exact ScottMap.le_def.mpr ((proposition_3_7_projection P P).incl_retr_le g)
+
+/-- Scott's Proposition 3.7 construction specialized diagonally. -/
+noncomputable def functionSpaceProjection
+    {D D' : Type u} [CompleteLattice D] [CompleteLattice D']
+    (P : IsContinuousLatticeProjection D D') :
+    IsContinuousLatticeProjection (ScottMap D D) (ScottMap D' D') where
+  incl := ⟨functionSpaceInclFun P, functionSpaceInclFun_outer_continuous P⟩
+  retr := ⟨functionSpaceRetrFun P, functionSpaceRetrFun_outer_continuous P⟩
+  retr_incl := functionSpaceRetrIncl P
+  incl_retr_le := functionSpaceInclRetrLe P
+
+/-- The projection tower from Scott's recursion immediately before Theorem 4.4:
+`j_{n+1} = [j_n → j_n]`, anchored at `j₀ : [D₀ → D₀] → D₀`.
+
+At each successor, the maps and projection laws are the diagonal specialization
+`proposition_3_7_projection P P`.  `conjMap` supplies the outer Scott-continuity needed to bundle
+those canonical maps as an `IsContinuousLatticeProjection`. -/
 noncomputable def towerProj (D₀ : CLat.{u})
     (j₀ : IsContinuousLatticeProjection D₀.carrier (ScottMap D₀.carrier D₀.carrier)) :
     ∀ n, IsContinuousLatticeProjection (towerType D₀ n) (towerType D₀ (n + 1))
   | 0 => j₀
-  | (n + 1) => (towerProj D₀ j₀ n).functionSpace
+  | (n + 1) => functionSpaceProjection (towerProj D₀ j₀ n)
 
 theorem towerProj_succ (D₀ : CLat.{u})
     (j₀ : IsContinuousLatticeProjection D₀.carrier (ScottMap D₀.carrier D₀.carrier)) (n : ℕ) :
-    towerProj D₀ j₀ (n + 1) = (towerProj D₀ j₀ n).functionSpace := rfl
+    let P := towerProj D₀ j₀ n
+    (towerProj D₀ j₀ (n + 1)).incl = conjMap P.incl P.retr ∧
+      (towerProj D₀ j₀ (n + 1)).retr = conjMap P.retr P.incl := by
+  exact ⟨rfl, rfl⟩
 
 section Tower
 
 variable (D₀ : CLat.{u})
   (j₀ : IsContinuousLatticeProjection D₀.carrier (ScottMap D₀.carrier D₀.carrier))
 
-/-- **Scott 1972, §4 (recursion for the embeddings).** `i_{n+1}(x) = iₙ ∘ x ∘ jₙ`. -/
+/-- **Scott 1972, recursion before Theorem 4.4 (from Proposition 3.7).**
+`i_{n+1}(x) = iₙ ∘ x ∘ jₙ`. -/
 theorem towerProj_succ_incl_apply (n : ℕ) (x : towerType D₀ (n + 1)) (y : towerType D₀ (n + 1)) :
     ((towerProj D₀ j₀ (n + 1)).incl x) y
       = (towerProj D₀ j₀ n).incl (x ((towerProj D₀ j₀ n).retr y)) := rfl
 
-/-- **Scott 1972, §4 (recursion for the projections).** `j_{n+1}(x') = jₙ ∘ x' ∘ iₙ`. -/
+/-- **Scott 1972, recursion before Theorem 4.4 (from Proposition 3.7).**
+`j_{n+1}(x') = jₙ ∘ x' ∘ iₙ`. -/
 theorem towerProj_succ_retr_apply (n : ℕ) (x' : towerType D₀ (n + 2)) (y : towerType D₀ n) :
     ((towerProj D₀ j₀ (n + 1)).retr x') y
       = (towerProj D₀ j₀ n).retr (x' ((towerProj D₀ j₀ n).incl y)) := rfl
@@ -294,13 +354,15 @@ theorem embInf_succ_iSup (n : ℕ) (f : ℕ → towerType D₀ (n + 1)) (hf : Mo
   rfl
 
 /-- **Diagonal simplification.** `conjMap (j_{∞n}, i_{n∞})` applied to the `n`-th summand of `i_∞`
-recovers the component `x_{n+1}`. This is exactly `j_{[·]} ∘ i_{[·]} = id` for the function-space
-projection built from `proposition_4_2`. -/
+recovers the component `x_{n+1}`. This is Proposition 3.7's equation
+`j_{[·]} ∘ i_{[·]} = id`, diagonally specialized to the projection from Proposition 4.2. -/
 theorem conj_iInfTerm_eq (n : ℕ) (x : DInf D₀ j₀) :
     conjMap (projInf (towerType D₀) (towerProj D₀ j₀) n)
             (embInf (towerType D₀) (towerProj D₀ j₀) n)
             (iInfTerm D₀ j₀ n x) = x.1 (n + 1) :=
-  (proposition_4_2 (towerType D₀) (towerProj D₀ j₀) n).functionSpace.retr_incl
+  (proposition_3_7_projection
+      (proposition_4_2 (towerType D₀) (towerProj D₀ j₀) n)
+      (proposition_4_2 (towerType D₀) (towerProj D₀ j₀) n)).retr_incl
     (projInf (towerType D₀) (towerProj D₀ j₀) (n + 1) x)
 
 /-- `i_{n∞}(yₙ) ⊑ y_{n+1}`: climbing one level and embedding stays below the next component. -/
@@ -588,10 +650,10 @@ theorem embInfInf_comp_projInfInf :
 
 end Thm44b
 
-/-! ### Theorem 4.4(d): capstone `D_∞ ≅ [D_∞ → D_∞]`
+/-! ### Theorem 4.4(d): `D_∞` is homeomorphic to `[D_∞ → D_∞]`
 
-Package the mutually-inverse Scott maps from (b) and (c). Scott's homeomorphism follows because
-`i_∞` and `j_∞` are Scott-continuous (`embInfInf` / `projInfInf` are bundled `ScottMap`s). -/
+Scott's statement of Theorem 4.4 is the homeomorphism. The maps `i_∞` and `j_∞` from (b) and (c)
+are mutually inverse and Scott-continuous (bundled `ScottMap`s), so they are that homeomorphism. -/
 
 section Thm44d
 
@@ -616,21 +678,74 @@ theorem embInfInf_le_iff (x y : DInf D₀ j₀) :
     rwa [projInfInf_embInfInf, projInfInf_embInfInf] at this
   · intro h; exact (embInfInf D₀ j₀).monotone h
 
-/-- **Scott 1972, §4 (Theorem 4.4).** The inverse limit `D_∞` of the function-space tower is
-order-isomorphic to its own function space `[D_∞ → D_∞]` via the mutually-inverse Scott maps
-`i_∞ = embInfInf` and `j_∞ = projInfInf`. -/
-theorem theorem_4_4 :
+/-- The inverse pair Scott writes down in the proof of Theorem 4.4:
+`i_∞ = embInfInf` and `j_∞ = projInfInf` satisfy `j_∞ ∘ i_∞ = id` and `i_∞ ∘ j_∞ = id`. -/
+theorem theorem_4_4_inverses :
     (projInfInf D₀ j₀).comp (embInfInf D₀ j₀) = ScottMap.idMap ∧
     (embInfInf D₀ j₀).comp (projInfInf D₀ j₀) = ScottMap.idMap :=
   ⟨projInfInf_comp_embInfInf D₀ j₀, embInfInf_comp_projInfInf D₀ j₀⟩
 
-/-- The order isomorphism `D_∞ ≃o [D_∞ → D_∞]` witnessing Theorem 4.4. Both directions are
-Scott-continuous (they are bundled `ScottMap`s), so this is the order-theoretic half of Scott's
-homeomorphism. -/
+/-- Lattice isomorphism along the same pair `i_∞`, `j_∞`. Scott's abstract also says the spaces
+are isomorphic; this is not the statement of Theorem 4.4 (that statement is the homeomorphism). -/
 noncomputable def theorem_4_4_orderIso : OrderIso (DInf D₀ j₀) (DInfFn D₀ j₀) :=
   (Equiv.mk (embInfInf D₀ j₀) (projInfInf D₀ j₀)
       (projInfInf_embInfInf D₀ j₀) (embInfInf_projInfInf D₀ j₀)).toOrderIso
     (embInfInf D₀ j₀).monotone (projInfInf D₀ j₀).monotone
+
+/-- The pair \(i_\infty, j_\infty\) from the proof of Theorem 4.4, first packaged using the
+Scott lattice topologies on both sides.  Scott writes
+`i∞(x) = ⨆ₙ (i_{n∞} ∘ x_{n+1} ∘ j_{∞n})` and
+`j∞(f) = ⨆ₙ i_{(n+1)∞}(j_{∞n} ∘ f ∘ i_{n∞})`, and says
+(`sources/ScottContinLatt1972.md`): “We can write down directly the pair of maps
+`i∞, j∞` that provide the homeomorphism.”
+
+This helper is deliberately distinct from the source-topology homeomorphism in the numbered
+theorem below. -/
+noncomputable def theorem_4_4_scottTopology_homeomorph :
+    @Homeomorph (DInf D₀ j₀) (DInfFn D₀ j₀) scottTopologicalSpace scottTopologicalSpace :=
+  @Homeomorph.mk (DInf D₀ j₀) (DInfFn D₀ j₀) scottTopologicalSpace scottTopologicalSpace
+    (Equiv.mk (embInfInf D₀ j₀) (projInfInf D₀ j₀)
+      (projInfInf_embInfInf D₀ j₀) (embInfInf_projInfInf D₀ j₀))
+    (embInfInf D₀ j₀).continuous (projInfInf D₀ j₀).continuous
+
+/-- Scott's Theorem 4.4 homeomorphism with the literal topologies used in the source:
+the inverse-limit subspace topology from the Pi product on `D∞`, and Definition 3.1's
+pointwise (equivalently Pi-induced) topology on `[D∞ → D∞]`.
+
+The topology changes are the mathematical identifications supplied by Proposition 4.1 and
+Theorem 3.3; the underlying maps remain Scott's displayed `i∞` and `j∞` formulas above. -/
+noncomputable def theorem_4_4_sourceTopology_homeomorph
+    (hTower : ∀ n, IsContinuousLattice (towerType D₀ n)) :
+    @Homeomorph (DInf D₀ j₀) (DInfFn D₀ j₀)
+      (inverseLimitTopology (towerType D₀) (towerProj D₀ j₀))
+      (scottMapInducedPiTopology (DInf D₀ j₀) (DInf D₀ j₀)) := by
+  have hDInf : IsContinuousLattice (DInf D₀ j₀) :=
+    proposition_4_1 (towerType D₀) (towerProj D₀ j₀) hTower
+  rw [← inverseLimit_scottTopology_eq_induced_pi
+        (towerType D₀) (towerProj D₀ j₀) hTower,
+      ← theorem_3_3_topology_induced_pi hDInf hDInf]
+  exact theorem_4_4_scottTopology_homeomorph D₀ j₀
+
+/-- **Scott 1972, Theorem 4.4** (`sources/ScottContinLatt1972.md`):
+*The inverse limit \(D_\infty\) of the recursively defined sequence
+\(\langle D_n, j_n \rangle_{n=0}^{\infty}\) of function spaces is not only a
+continuous lattice, but it is also homeomorphic to its own function space
+\([D_\infty \to D_\infty]\).*  Here “inverse limit” carries Scott's subspace
+topology from the Pi product, while the function space carries Definition 3.1's
+pointwise/Pi-induced topology. -/
+theorem theorem_4_4 (h₀ : IsContinuousLattice D₀.carrier) :
+    @IsContinuousLattice (DInf D₀ j₀) inferInstance ∧
+      Nonempty
+        (@Homeomorph (DInf D₀ j₀) (DInfFn D₀ j₀)
+          (inverseLimitTopology (towerType D₀) (towerProj D₀ j₀))
+          (scottMapInducedPiTopology (DInf D₀ j₀) (DInf D₀ j₀))) := by
+  have hTower : ∀ n, IsContinuousLattice (towerType D₀ n) := by
+    intro n
+    induction n with
+    | zero => exact h₀
+    | succ n ih => exact theorem_3_3_isContinuousLattice ih ih
+  refine ⟨proposition_4_1 (towerType D₀) (towerProj D₀ j₀) hTower, ?_⟩
+  exact ⟨theorem_4_4_sourceTopology_homeomorph D₀ j₀ hTower⟩
 
 end Thm44d
 

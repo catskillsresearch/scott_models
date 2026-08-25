@@ -77,7 +77,7 @@ theorem exists_split {A : Set α} {B : Set ℚ} (hAB : A = ∅ ↔ B = ∅)
   · refine ⟨∅, B, Or.inl rfl, hBU, by simp [h1], ?_, by simp, by simp⟩
     have hAeq : A \ Xn = A := by
       ext x
-      simp only [Set.mem_diff]
+      simp only [Set.mem_sdiff]
       refine ⟨fun hx => hx.1, fun hx => ⟨hx, fun hxn => ?_⟩⟩
       exact Set.eq_empty_iff_forall_notMem.mp h1 x ⟨hx, hxn⟩
     rw [hAeq, hAB]
@@ -554,18 +554,18 @@ theorem transfer_subset_iff (i j : ℕ) :
   have hLHS : {x ∈ Δ | ∀ p ∈ [(i, true), (j, false)], (p.2 = true ↔ x ∈ X p.1)}
       = (Δ ∩ X i) \ X j := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ U.master |
       ∀ p ∈ [(i, true), (j, false)], (p.2 = true ↔ y ∈ Yseq split X Δ p.1)}
       = (U.master ∩ Yseq split X Δ i) \ Yseq split X Δ j := by
     ext y
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   rw [hLHS, hRHS] at key
-  rw [← Set.diff_eq_empty, ← Set.diff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
+  rw [← Set.sdiff_eq_empty, ← Set.sdiff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
     ← Set.not_nonempty_iff_eq_empty, not_iff_not]
   exact key
 
@@ -582,13 +582,13 @@ theorem transfer_inter_empty_iff (i j : ℕ) :
   have hLHS : {x ∈ Δ | ∀ p ∈ [(i, true), (j, true)], (p.2 = true ↔ x ∈ X p.1)}
       = Δ ∩ X i ∩ X j := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
       forall_eq_or_imp, forall_eq, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ U.master | ∀ p ∈ [(i, true), (j, true)], (p.2 = true ↔ y ∈ Yseq split X Δ p.1)}
       = U.master ∩ Yseq split X Δ i ∩ Yseq split X Δ j := by
     ext y
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
       forall_eq_or_imp, forall_eq, Set.mem_inter_iff]
     tauto
   rw [hLHS, hRHS] at key
@@ -612,18 +612,18 @@ theorem transfer_double_subset_iff (i j k : ℕ) :
   have hLHS : {x ∈ Δ | ∀ p ∈ [(i, true), (j, true), (k, false)], (p.2 = true ↔ x ∈ X p.1)}
       = (Δ ∩ X i ∩ X j) \ X k := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ U.master |
       ∀ p ∈ [(i, true), (j, true), (k, false)], (p.2 = true ↔ y ∈ Yseq split X Δ p.1)}
       = (U.master ∩ Yseq split X Δ i ∩ Yseq split X Δ j) \ Yseq split X Δ k := by
     ext y
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   rw [hLHS, hRHS] at key
-  rw [← Set.diff_eq_empty, ← Set.diff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
+  rw [← Set.sdiff_eq_empty, ← Set.sdiff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
     ← Set.not_nonempty_iff_eq_empty, not_iff_not]
   exact key
 
@@ -648,7 +648,7 @@ theorem Yseq_zero_eq_master (h0 : X 0 = Δ) : Yseq split X Δ 0 = U.master := by
     rw [← hspec.2.2.2.1]
     show genAtom X Δ δ 0 \ X 0 = ∅
     rw [show genAtom X Δ δ 0 = Δ from rfl, h0]
-    exact Set.diff_self
+    exact Set.sdiff_self
   have hI : (split (genAtom X Δ δ 0) (atomU split X Δ δ 0) (X 0)).1 = U.master := by
     have hunion := hspec.2.2.2.2.1
     rw [hJ, Set.union_empty] at hunion

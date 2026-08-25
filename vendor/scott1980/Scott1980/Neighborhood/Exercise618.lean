@@ -250,7 +250,7 @@ theorem chain_le_of_succ {β : Type*} {W : NeighborhoodSystem β} {a : ℕ → W
   | step _ ih => exact ih.trans (h _)
 
 /-- Directedness of a successor-increasing chain. -/
-def succChainDir {β : Type*} {W : NeighborhoodSystem β} (a : ℕ → W.Element)
+theorem succChainDir {β : Type*} {W : NeighborhoodSystem β} (a : ℕ → W.Element)
     (h : ∀ n, a n ≤ a (n + 1)) : ∀ i j, ∃ l, a i ≤ a l ∧ a j ≤ a l :=
   fun i j => ⟨max i j, chain_le_of_succ h (le_max_left i j), chain_le_of_succ h (le_max_right i j)⟩
 

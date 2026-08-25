@@ -58,9 +58,13 @@ theorem iterElem_succ (f : ApproximableMap V V) (n : ℕ) :
 theorem iterElem_zero (f : ApproximableMap V V) : f.iterElem 0 = V.bot :=
   toElementMap_idMap V.bot
 
+/-- The approximants form a monotone `ω`-chain (the `Monotone` packaging of `iterElem_mono`). -/
+theorem iterElem_monotone (f : ApproximableMap V V) : Monotone f.iterElem :=
+  fun _ _ hab => iterElem_mono f hab
+
 /-- The approximants `fⁿ(⊥)` form a monotone chain whose sup is `fix(f)`. -/
 theorem fixElement_eq_supChain (f : ApproximableMap V V) :
-    f.fixElement = supChain f.iterElem (fun _ _ hab => iterElem_mono f hab) := by
+    f.fixElement = supChain f.iterElem (iterElem_monotone f) := by
   apply Element.ext
   intro X
   rw [mem_supChain, mem_fixElement]
@@ -75,7 +79,7 @@ theorem fix_induction (f : ApproximableMap V V) (P : V.Element → Prop)
     (hstep : ∀ x, P x → P (f.toElementMap x))
     (hsup : ∀ (s : ℕ → V.Element) (hmono : Monotone s), (∀ n, P (s n)) → P (supChain s hmono)) :
     P f.fixElement := by
-  have hmono : Monotone f.iterElem := fun _ _ hab => iterElem_mono f hab
+  have hmono : Monotone f.iterElem := iterElem_monotone f
   have hP : ∀ n, P (f.iterElem n) := by
     intro n
     induction n with

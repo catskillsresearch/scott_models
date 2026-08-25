@@ -136,6 +136,7 @@ def gColim (T : GExpr) (hT : T.RootedConst) : ScottSys where
   sys :=
     { mem := fun X => ∃ n, (gTower T n).sys.mem X
       master := gFix T
+      master_nonempty := (gTower T 0).sys.master_nonempty
       master_mem := ⟨0, (gTower T 0).sys.master_mem⟩
       inter_mem := by
         rintro X Y Z ⟨n, hX⟩ ⟨m, hY⟩ ⟨p, hZ⟩ hsub
@@ -277,7 +278,7 @@ def gFunctorMap (T : GExpr) {X Y : ScottSys} (f : StrictMap X.sys Y.sys) :
 on a strict map `f` it is the strict map `T(f)` (`GExpr.map_isStrict`). Functoriality is
 `GExpr.map_id` and `GExpr.map_comp` (the latter needs `g` strict — automatic here, since every
 morphism of this category is strict). -/
-def gFunctor (T : GExpr) : Endofunctor ScottSys where
+abbrev gFunctor (T : GExpr) : Endofunctor ScottSys where
   obj := T.obj
   map := gFunctorMap T
   map_id X := Subtype.ext (T.map_id X)
@@ -290,7 +291,7 @@ def gFunctor (T : GExpr) : Endofunctor ScottSys where
     (gFunctorMap T f).1 = T.map f.1 := rfl
 
 /-- **The endofunctor `T(X) = N ⊕ ((X×X) + (X×X))`** of Exercise 6.23. -/
-def TexpF (N : ScottSys) : Endofunctor ScottSys := gFunctor (Texp N)
+abbrev TexpF (N : ScottSys) : Endofunctor ScottSys := gFunctor (Texp N)
 
 /-- The identity isomorphism in any category induced by an object equality. -/
 def isoOfObjEq {Obj : Type*} [Category Obj] {X Y : Obj} (h : X = Y) : Iso X Y := by
@@ -306,7 +307,7 @@ def ExpIso (N : ScottSys) (hN : ([] : Str) ∈ N.sys.master) :
 /-- **`Exp` as a `T`-algebra** with structure map the isomorphism `T(Exp) ≅ Exp` (the identity, since
 `T(Exp) = Exp`). This realises Scott's "construe the initial solution as a syntactic domain of
 expressions": `Exp` is an algebra of `T(X) = N ⊕ ((X×X)+(X×X))`. -/
-def ExpAlg (N : ScottSys) (hN : ([] : Str) ∈ N.sys.master) : TAlgebra (TexpF N) where
+abbrev ExpAlg (N : ScottSys) (hN : ([] : Str) ∈ N.sys.master) : TAlgebra (TexpF N) where
   carrier := Exp N hN
   str := (ExpIso N hN).hom
 
@@ -327,36 +328,36 @@ existence. (Uniqueness — initiality — is the remaining Phase 4.) -/
 /-- The structure map of an algebra `B`, as a raw approximable map (its strictness is `algStr_strict`).
 The ascription to `StrictMap` forces the categorical `Hom` to its underlying subtype. -/
 def algStr (B : TAlgebra (TexpF N)) :
-    ApproximableMap ((Texp N).obj B.carrier).sys B.carrier.sys :=
-  (B.str : StrictMap ((Texp N).obj B.carrier).sys B.carrier.sys).1
+    ApproximableMap ((TexpF N).obj B.carrier).sys B.carrier.sys :=
+  (B.str : StrictMap ((TexpF N).obj B.carrier).sys B.carrier.sys).1
 
 theorem algStr_strict (B : TAlgebra (TexpF N)) : IsStrict (algStr B) :=
-  (B.str : StrictMap ((Texp N).obj B.carrier).sys B.carrier.sys).2
+  (B.str : StrictMap ((TexpF N).obj B.carrier).sys B.carrier.sys).2
 
 /-- The inverse `j = i⁻¹ : Exp → T(Exp)` of the structure isomorphism, as a raw map. -/
 def expInv (N : ScottSys) (hN : ([] : Str) ∈ N.sys.master) :
-    ApproximableMap (Exp N hN).sys ((Texp N).obj (Exp N hN)).sys :=
-  ((ExpIso N hN).inv : StrictMap (Exp N hN).sys ((Texp N).obj (Exp N hN)).sys).1
+    ApproximableMap (Exp N hN).sys ((TexpF N).obj (Exp N hN)).sys :=
+  ((ExpIso N hN).inv : StrictMap (Exp N hN).sys ((TexpF N).obj (Exp N hN)).sys).1
 
 theorem expInv_strict (N : ScottSys) (hN : ([] : Str) ∈ N.sys.master) : IsStrict (expInv N hN) :=
-  ((ExpIso N hN).inv : StrictMap (Exp N hN).sys ((Texp N).obj (Exp N hN)).sys).2
+  ((ExpIso N hN).inv : StrictMap (Exp N hN).sys ((TexpF N).obj (Exp N hN)).sys).2
 
 /-- The structure map `i : T(Exp) → Exp` as a raw map (the identity, since `T(Exp) = Exp`). -/
 def expHom (N : ScottSys) (hN : ([] : Str) ∈ N.sys.master) :
-    ApproximableMap ((Texp N).obj (Exp N hN)).sys (Exp N hN).sys :=
-  ((ExpIso N hN).hom : StrictMap ((Texp N).obj (Exp N hN)).sys (Exp N hN).sys).1
+    ApproximableMap ((TexpF N).obj (Exp N hN)).sys (Exp N hN).sys :=
+  ((ExpIso N hN).hom : StrictMap ((TexpF N).obj (Exp N hN)).sys (Exp N hN).sys).1
 
 /-- `j ∘ i = I_{T(Exp)}` at the raw level (from the iso's `hom_inv_id`). -/
 theorem expInv_comp_expHom (N : ScottSys) (hN : ([] : Str) ∈ N.sys.master) :
-    (expInv N hN).comp (expHom N hN) = idMap ((Texp N).obj (Exp N hN)).sys := by
+    (expInv N hN).comp (expHom N hN) = idMap ((TexpF N).obj (Exp N hN)).sys := by
   have h := congrArg (Subtype.val) (ExpIso N hN).hom_inv_id
-  simpa [expInv, expHom] using h
+  exact h
 
 /-- `i ∘ j = I_Exp` at the raw level (from the iso's `inv_hom_id`). -/
 theorem expHom_comp_expInv (N : ScottSys) (hN : ([] : Str) ∈ N.sys.master) :
     (expHom N hN).comp (expInv N hN) = idMap (Exp N hN).sys := by
   have h := congrArg (Subtype.val) (ExpIso N hN).inv_hom_id
-  simpa [expInv, expHom] using h
+  exact h
 
 section Existence
 
@@ -858,7 +859,7 @@ section Uniqueness
 variable {N : ScottSys} (hN : ([] : Str) ∈ N.sys.master)
 
 /-- The subdomain `Texpⁿ({Γ}) ◁ Exp` (Proposition 6.12's pair lives here). -/
-def expSub (n : ℕ) : (gTower (Texp N) n).sys ◁ (Exp N hN).sys :=
+theorem expSub (n : ℕ) : (gTower (Texp N) n).sys ◁ (Exp N hN).sys :=
   gTower_sub_colim (Texp N) (Texp_rooted hN) n
 
 /-- **`ρₙ = iₙ ∘ jₙ : Exp → Exp`**, the retraction onto `Texpⁿ({Γ})`. -/

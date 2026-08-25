@@ -88,7 +88,7 @@ theorem U_diff_mem {X Y : Set ℚ} (hX : U.mem X) (hY : U.mem Y) : X \ Y = ∅ �
   rcases Set.eq_empty_or_nonempty (presentedIntervals L1 \ presentedIntervals L2) with h | h
   · exact Or.inl h
   · exact Or.inr ⟨⟨diffLists L1 L2, (presentedIntervals_diffLists L1 L2).symm⟩, h,
-      Set.diff_subset.trans hXsub⟩
+      Set.sdiff_subset.trans hXsub⟩
 
 /-! ### `V` is difference-closed -/
 
@@ -114,7 +114,7 @@ theorem levelSet_diff (k₁ m₁ k₂ m₂ : ℕ) :
   rw [← levelSet_upsample (le_max_left k₁ k₂) (m := m₁),
     ← levelSet_upsample (le_max_right k₁ k₂) (m := m₂)]
   ext n
-  simp only [mem_levelSet, Set.mem_diff, testBit_xor_and_self, Bool.and_eq_true, Bool.not_eq_true,
+  simp only [mem_levelSet, Set.mem_sdiff, testBit_xor_and_self, Bool.and_eq_true, Bool.not_eq_true,
     Bool.not_eq_true']
 
 /-- **`V` is closed under set-difference of two of its own neighbourhoods** (or the difference is
@@ -238,7 +238,7 @@ theorem exists_split' {α γ : Type*} {E : NeighborhoodSystem γ} (hEnomin : E.N
   · refine ⟨∅, B, Or.inl rfl, hBE, by simp [h1], ?_, by simp, by simp⟩
     have hAeq : A \ Xn = A := by
       ext x
-      simp only [Set.mem_diff]
+      simp only [Set.mem_sdiff]
       refine ⟨fun hx => hx.1, fun hx => ⟨hx, fun hxn => ?_⟩⟩
       exact Set.eq_empty_iff_forall_notMem.mp h1 x ⟨hx, hxn⟩
     rw [hAeq, hAB]
@@ -330,7 +330,7 @@ theorem if_swap_disjoint {γ : Type*} {P Q : Set γ} (hPQ : P ∩ Q = ∅) {b b'
     simp_all [Set.inter_comm]
 
 theorem inter_diff_self_eq_empty {γ : Type*} (P Q : Set γ) : (P ∩ Q) ∩ (P \ Q) = ∅ := by
-  ext x; simp only [Set.mem_inter_iff, Set.mem_diff, Set.mem_empty_iff_false, iff_false]; tauto
+  ext x; simp only [Set.mem_inter_iff, Set.mem_sdiff, Set.mem_empty_iff_false, iff_false]; tauto
 
 /-- **`A ∩ (M \ Z) = A \ Z` whenever `A ⊆ M`**: needed to turn a `genAtom`-style "intersect with
 `M \ Z`" step into a literal `A \ Z` once `A` is known to already lie inside `M`. Generic set-theory
@@ -338,7 +338,7 @@ fact, used by 8.12(c)(vi)(5)(b)'s `genAtom_combinedX_succ_eq` below. -/
 theorem inter_diff_eq_diff_of_subset {γ : Type*} {A M Z : Set γ} (h : A ⊆ M) :
     A ∩ (M \ Z) = A \ Z := by
   ext x
-  simp only [Set.mem_inter_iff, Set.mem_diff]
+  simp only [Set.mem_inter_iff, Set.mem_sdiff]
   constructor
   · rintro ⟨hxA, -, hxZ⟩; exact ⟨hxA, hxZ⟩
   · rintro ⟨hxA, hxZ⟩; exact ⟨hxA, h hxA, hxZ⟩
@@ -412,7 +412,7 @@ theorem xStep_fst_subset {α β : Type*} (D₁ : NeighborhoodSystem β) (hD₁no
     (A : Set α) (B : Set β) (Xn : Set α) (b : Bool) : (xStep D₁ hD₁nomin A B Xn b).1 ⊆ A := by
   by_cases hb : b = true
   · simp only [xStep, xyStep, hb, if_true]; exact Set.inter_subset_left
-  · simp only [xStep, xyStep, hb]; exact Set.diff_subset
+  · simp only [xStep, xyStep, hb]; exact Set.sdiff_subset
 
 /-- **`xStep`'s `β`-side output is a subset of `B`**, given the `SplitSpec'` preconditions
 (`I ∪ J = B`, so both `I ⊆ B` and `J ⊆ B`). -/
@@ -440,7 +440,7 @@ theorem yStep_snd_subset {α β : Type*} (D₀ : NeighborhoodSystem α) (hD₀no
     (A1 : Set α) (B1 : Set β) (Yn : Set β) (b : Bool) : (yStep D₀ hD₀nomin A1 B1 Yn b).2 ⊆ B1 := by
   by_cases hb : b = true
   · simp only [yStep, xyStep, Prod.swap, hb, if_true]; exact Set.inter_subset_left
-  · simp only [yStep, xyStep, Prod.swap, hb]; exact Set.diff_subset
+  · simp only [yStep, xyStep, Prod.swap, hb]; exact Set.sdiff_subset
 
 /-- **`xStep`'s two outputs, at two different sign bits, are pairwise disjoint.** -/
 theorem xStep_disjoint_of_ne {α β : Type*} {D₁ : NeighborhoodSystem β} (hD₁nomin : D₁.NoMinimal)
@@ -477,7 +477,7 @@ theorem inter_mem_or_empty {γ : Type*} {D : NeighborhoodSystem γ} (hpos : D.Is
 theorem diff_mem_or_empty {γ : Type*} {D : NeighborhoodSystem γ} (hdiff : D.DiffClosed)
     {A B : Set γ} (hA : A = ∅ ∨ D.mem A) (hB : D.mem B) : A \ B = ∅ ∨ D.mem (A \ B) := by
   rcases hA with rfl | hA
-  · exact Or.inl (Set.empty_diff B)
+  · exact Or.inl (Set.empty_sdiff B)
   · exact hdiff hA hB
 
 /-! ### A generic union-closure fact for `IsPositive` + `DiffClosed` systems
@@ -496,7 +496,7 @@ theorem union_eq_master_diff_inter_compl {γ : Type*} (M X Y : Set γ) (hX : X �
   ext x
   have hXx : x ∈ X → x ∈ M := @hX x
   have hYx : x ∈ Y → x ∈ M := @hY x
-  simp only [Set.mem_union, Set.mem_diff, Set.mem_inter_iff]
+  simp only [Set.mem_union, Set.mem_sdiff, Set.mem_inter_iff]
   tauto
 
 /-- **Union-closure from `IsPositive` + `DiffClosed` alone**: if `X` and `Y` are each mem-or-∅ in a
@@ -513,17 +513,17 @@ theorem union_mem_or_empty {γ : Type*} {D : NeighborhoodSystem γ} (hpos : D.Is
       have hYM : Y ⊆ M := D.sub_master hY
       rcases hdiff D.master_mem hX with hMX0 | hMXm
       · refine Or.inr ?_
-        have hXeqM : X = M := Set.Subset.antisymm hXM (Set.diff_eq_empty.mp hMX0)
+        have hXeqM : X = M := Set.Subset.antisymm hXM (Set.sdiff_eq_empty.mp hMX0)
         rw [Set.Subset.antisymm (Set.union_subset hXM hYM) (hXeqM ▸ Set.subset_union_left)]
         exact D.master_mem
       · rcases hdiff D.master_mem hY with hMY0 | hMYm
         · refine Or.inr ?_
-          have hYeqM : Y = M := Set.Subset.antisymm hYM (Set.diff_eq_empty.mp hMY0)
+          have hYeqM : Y = M := Set.Subset.antisymm hYM (Set.sdiff_eq_empty.mp hMY0)
           rw [Set.Subset.antisymm (Set.union_subset hXM hYM) (hYeqM ▸ Set.subset_union_right)]
           exact D.master_mem
         · rw [union_eq_master_diff_inter_compl M X Y hXM hYM]
           rcases Set.eq_empty_or_nonempty ((M \ X) ∩ (M \ Y)) with hcap0 | hcapne
-          · rw [hcap0, Set.diff_empty]; exact Or.inr D.master_mem
+          · rw [hcap0, Set.sdiff_empty]; exact Or.inr D.master_mem
           · exact hdiff D.master_mem ((hpos hMXm hMYm).mpr hcapne)
 
 /-- **`Fintype`-indexed union-closure from `IsPositive` + `DiffClosed` alone**, generalizing
@@ -1525,19 +1525,19 @@ theorem transfer_subset_combined (i j : ℕ) :
       = (D₀.master ∩ combinedX D₀ D₁ hD₀nomin hD₁nomin X Y i) \
         combinedX D₀ D₁ hD₀nomin hD₁nomin X Y j := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ D₁.master |
       ∀ p ∈ [(i, true), (j, false)], (p.2 = true ↔ y ∈ combinedY D₀ D₁ hD₀nomin hD₁nomin X Y p.1)}
       = (D₁.master ∩ combinedY D₀ D₁ hD₀nomin hD₁nomin X Y i) \
         combinedY D₀ D₁ hD₀nomin hD₁nomin X Y j := by
     ext y
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   rw [hLHS, hRHS] at key
-  rw [← Set.diff_eq_empty, ← Set.diff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
+  rw [← Set.sdiff_eq_empty, ← Set.sdiff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
     ← Set.not_nonempty_iff_eq_empty, not_iff_not]
   exact key
 
@@ -1555,7 +1555,7 @@ theorem transfer_inter_empty_combined (i j : ℕ) :
       = D₀.master ∩ combinedX D₀ D₁ hD₀nomin hD₁nomin X Y i ∩
           combinedX D₀ D₁ hD₀nomin hD₁nomin X Y j := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
       forall_eq_or_imp, forall_eq, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ D₁.master |
@@ -1563,7 +1563,7 @@ theorem transfer_inter_empty_combined (i j : ℕ) :
       = D₁.master ∩ combinedY D₀ D₁ hD₀nomin hD₁nomin X Y i ∩
           combinedY D₀ D₁ hD₀nomin hD₁nomin X Y j := by
     ext y
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
       forall_eq_or_imp, forall_eq, Set.mem_inter_iff]
     tauto
   rw [hLHS, hRHS] at key
@@ -1587,19 +1587,19 @@ theorem transfer_double_subset_combined (i j k : ℕ) :
       = (D₀.master ∩ combinedX D₀ D₁ hD₀nomin hD₁nomin X Y i ∩
           combinedX D₀ D₁ hD₀nomin hD₁nomin X Y j) \ combinedX D₀ D₁ hD₀nomin hD₁nomin X Y k := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ D₁.master | ∀ p ∈ [(i, true), (j, true), (k, false)],
       (p.2 = true ↔ y ∈ combinedY D₀ D₁ hD₀nomin hD₁nomin X Y p.1)}
       = (D₁.master ∩ combinedY D₀ D₁ hD₀nomin hD₁nomin X Y i ∩
           combinedY D₀ D₁ hD₀nomin hD₁nomin X Y j) \ combinedY D₀ D₁ hD₀nomin hD₁nomin X Y k := by
     ext y
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   rw [hLHS, hRHS] at key
-  rw [← Set.diff_eq_empty, ← Set.diff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
+  rw [← Set.sdiff_eq_empty, ← Set.sdiff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
     ← Set.not_nonempty_iff_eq_empty, not_iff_not]
   exact key
 
@@ -1823,7 +1823,7 @@ theorem XPseq_zero : XPseq D₀ D₁ hD₀nomin hD₁nomin X Y 0 = D₁.master :
     ⟨fun h => absurd h hD₀mne.ne_empty, fun h => absurd h hD₁mne.ne_empty⟩
   have hBE1 : D₁.master = ∅ ∨ D₁.mem D₁.master := Or.inr D₁.master_mem
   have hspec1 := splitChoice'_isSplitSpec D₁ hD₁nomin hAB1 hBE1 (X 0)
-  have hdiff1 : D₀.master \ X 0 = ∅ := by rw [hX0]; exact Set.diff_self
+  have hdiff1 : D₀.master \ X 0 = ∅ := by rw [hX0]; exact Set.sdiff_self
   have h2empty1 : (splitChoice' D₁ hD₁nomin D₀.master D₁.master (X 0)).2 = ∅ :=
     hspec1.2.2.2.1.mp hdiff1
   have hunion1 := hspec1.2.2.2.2.1
@@ -1845,7 +1845,7 @@ theorem YPseq_zero : YPseq D₀ D₁ hD₀nomin hD₁nomin X Y 0 = D₀.master :
     ⟨fun h => absurd h hD₀mne.ne_empty, fun h => absurd h hD₁mne.ne_empty⟩
   have hBE1 : D₁.master = ∅ ∨ D₁.mem D₁.master := Or.inr D₁.master_mem
   have hspec1 := splitChoice'_isSplitSpec D₁ hD₁nomin hAB1 hBE1 (X 0)
-  have hdiff1 : D₀.master \ X 0 = ∅ := by rw [hX0]; exact Set.diff_self
+  have hdiff1 : D₀.master \ X 0 = ∅ := by rw [hX0]; exact Set.sdiff_self
   have h2empty1 : (splitChoice' D₁ hD₁nomin D₀.master D₁.master (X 0)).2 = ∅ :=
     hspec1.2.2.2.1.mp hdiff1
   have hunion1 := hspec1.2.2.2.2.1
@@ -1853,7 +1853,7 @@ theorem YPseq_zero : YPseq D₀ D₁ hD₀nomin hD₁nomin X Y 0 = D₀.master :
   have hAB2 : D₁.master = ∅ ↔ D₀.master = ∅ := hAB1.symm
   have hBE2 : D₀.master = ∅ ∨ D₀.mem D₀.master := Or.inr D₀.master_mem
   have hspec2 := splitChoice'_isSplitSpec D₀ hD₀nomin hAB2 hBE2 (Y 0)
-  have hdiff2 : D₁.master \ Y 0 = ∅ := by rw [hY0]; exact Set.diff_self
+  have hdiff2 : D₁.master \ Y 0 = ∅ := by rw [hY0]; exact Set.sdiff_self
   have h2empty2 : (splitChoice' D₀ hD₀nomin D₁.master D₀.master (Y 0)).2 = ∅ :=
     hspec2.2.2.2.1.mp hdiff2
   have hunion2 := hspec2.2.2.2.2.1

@@ -173,7 +173,7 @@ theorem stepFun_funListOf_nonempty_iff (el : List ℕ) :
       intro X' hX'
       obtain ⟨nx, hnx⟩ := P₀.surj hX'
       obtain ⟨finc, _, hfinc⟩ := P₀.incl_computable
-      letI : DecidablePred (fun e : ℕ => X' ⊆ P₀.X e.unpair.1) := fun e =>
+      let : DecidablePred (fun e : ℕ => X' ⊆ P₀.X e.unpair.1) := fun e =>
         decidable_of_iff (finc (Nat.pair nx e.unpair.1) = 1) (by
           have h := hfinc (Nat.pair nx e.unpair.1)
           simp only [unpair_pair_fst, unpair_pair_snd] at h
@@ -726,13 +726,13 @@ theorem rel_interYs_funList {f : ApproximableMap V₀ V₁} {el : List ℕ}
       have heq : interYs V₁.master (funPair P₀ P₁ e :: funListOf P₀ P₁ el) (P₀.X n')
           = P₁.X e.unpair.2 ∩ interYs V₁.master (funListOf P₀ P₁ el) (P₀.X n') := by
         rw [interYs_cons]; ext z
-        simp only [Set.mem_inter_iff, Set.mem_setOf_eq, funPair]
+        simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, funPair]
         exact ⟨fun ⟨h1, h2⟩ => ⟨h1 hinc, h2⟩, fun ⟨h1, h2⟩ => ⟨fun _ => h1, h2⟩⟩
       rw [heq]; exact f.inter_right hXp2 htail
     · have heq : interYs V₁.master (funPair P₀ P₁ e :: funListOf P₀ P₁ el) (P₀.X n')
           = interYs V₁.master (funListOf P₀ P₁ el) (P₀.X n') := by
         rw [interYs_cons]; ext z
-        simp only [Set.mem_inter_iff, Set.mem_setOf_eq, funPair]
+        simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, funPair]
         exact ⟨fun h => h.2, fun h => ⟨fun hc => absurd hc hinc, h⟩⟩
       rw [heq]; exact htail
 

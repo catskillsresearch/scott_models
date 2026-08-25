@@ -2365,10 +2365,14 @@ theorem mem_listToLamDFinset {xs : List (RawLamToken α)}
 theorem lamDForget_listToLamDFinset (xs : List (RawLamToken α))
     (h : ∀ t ∈ xs, IsLamWF A t) :
     lamDForgetFinset A (listToLamDFinset A xs h) = listToFinset xs := by
-  induction xs with
-  | nil => rfl
-  | cons t ts ih =>
-    rw [listToLamDFinset, lamDForgetFinset_insert, listToFinset, ih]
+  ext t
+  rw [mem_lamDForgetFinset, mem_listToFinset]
+  constructor
+  · rintro ⟨p, hp, rfl⟩
+    exact (mem_listToLamDFinset A).1 hp
+  · intro ht
+    let p : LamDToken A := ⟨t, h t ht⟩
+    exact ⟨p, (mem_listToLamDFinset A).2 ht, rfl⟩
 
 theorem LamDCon_listToLamDFinset (xs : List (RawLamToken α))
     (hCon : LamConDepth A (listToFinset xs)) :

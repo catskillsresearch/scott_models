@@ -166,7 +166,8 @@ end NeighborhoodSystem
 /-- All non-empty subsets of `Δ = {0,1,2}` (a positive neighbourhood system). -/
 def triSys : NeighborhoodSystem (Fin 3) :=
   NeighborhoodSystem.ofPositive (fun X => X.Nonempty) Set.univ
-    (⟨0, Set.mem_univ 0⟩) (fun {_} _ => Set.subset_univ _) (fun _ _ _ _ => Iff.rfl)
+    (⟨0, Set.mem_univ 0⟩) (⟨0, Set.mem_univ 0⟩)
+    (fun {_} _ => Set.subset_univ _) (fun _ _ _ _ => Iff.rfl)
 
 theorem triSys_master : triSys.master = (Set.univ : Set (Fin 3)) := rfl
 

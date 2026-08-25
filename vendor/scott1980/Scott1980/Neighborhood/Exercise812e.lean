@@ -351,7 +351,7 @@ theorem splitFromBisection_isSplitSpec' (hpos : V.IsPositive) (hnomin : V.NoMini
     · have hInterEmpty : P.X n ∩ P.X k = ∅ := (emptyInterDec_eq_one_iff P hpos hnomin n k).mp h1
       have hdiffEq : P.X n \ P.X k = P.X n := by
         ext x
-        simp only [Set.mem_diff]
+        simp only [Set.mem_sdiff]
         exact ⟨fun hx => hx.1, fun hx =>
           ⟨hx, fun hxk => Set.eq_empty_iff_forall_notMem.mp hInterEmpty x ⟨hx, hxk⟩⟩⟩
       rw [if_pos h1]

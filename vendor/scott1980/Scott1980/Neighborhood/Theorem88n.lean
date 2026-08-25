@@ -105,7 +105,7 @@ theorem isoProj_rel_iff_incl {b a : ℕ} :
     (isoProj P).rel (Yc P b) (P.X a) ↔ Yc P b ⊆ Yc P (eIdx P a) := by
   show (∃ _ : (DprimeUCode P).mem (Yc P b),
       (toDCode P ((DprimeUCode P).principal ⟨b, rfl⟩)).mem (P.X a)) ↔ _
-  simp only [toDCode, mem_principal]
+  simp only [toDCode]
   have hea : e P (eIdx P a) = P.X a := by
     show P.X (eIdx P (eIdx P a)) = P.X a
     rw [eIdx_involutive P a]

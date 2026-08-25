@@ -244,8 +244,9 @@ theorem L_nestedOrDisjoint : NestedOrDisjoint Lmem := by
       · exact Or.inr (Or.inr (by rw [nbhd_cons, nbhd_cons]; exact consSet_inter_ne hij _ _))
 
 /-- **Exercise 7.24 — `L` is a neighbourhood system** on tokens `Γ`, master `Γ = nbhd []`. -/
-def L : NeighborhoodSystem Gamma :=
-  NeighborhoodSystem.ofNestedOrDisjoint Lmem Set.univ (mem_nbhd []) L_nestedOrDisjoint
+abbrev L : NeighborhoodSystem Gamma :=
+  NeighborhoodSystem.ofNestedOrDisjoint Lmem Set.univ Set.univ_nonempty
+    (mem_nbhd []) L_nestedOrDisjoint
     (fun {X} _ => Set.subset_univ X)
 
 @[simp] theorem L_mem {X : Set Gamma} : L.mem X ↔ Lmem X := Iff.rfl
@@ -630,7 +631,7 @@ def streamElement (f : ℕ → ℕ) : L.Element where
 
 /-- **`toElement`: `Γ → |L|`**, realizing Scott's identification. -/
 def toElement : Gamma → L.Element
-  | .inl l => L.principal (mem_nbhd l)
+  | .inl l => L.principal (L_mem.mpr (mem_nbhd l))
   | .inr f => streamElement f
 
 /-- A filter `x` **has a minimum neighbourhood** — the hallmark of Scott's *finite* elements. -/
@@ -874,7 +875,8 @@ theorem sigmaBot_le_iff_toElement_inl_embStr (σ τ : ExampleB.Str) :
     ExampleB.sigmaBot σ ≤ ExampleB.sigmaBot τ ↔
       toElement (Sum.inl (embStr σ)) ≤ toElement (Sum.inl (embStr τ)) := by
   show ExampleB.sigmaBot σ ≤ ExampleB.sigmaBot τ ↔
-      L.principal (mem_nbhd (embStr σ)) ≤ L.principal (mem_nbhd (embStr τ))
+      L.principal (L_mem.mpr (mem_nbhd (embStr σ))) ≤
+        L.principal (L_mem.mpr (mem_nbhd (embStr τ)))
   rw [ExampleB.sigmaBot_le_iff, L.principal_le_iff, nbhd_subset_iff, embStr_prefix_iff]
 
 /-! ## Exercise 7.24, fourth claim — LUCID combinators as computable maps

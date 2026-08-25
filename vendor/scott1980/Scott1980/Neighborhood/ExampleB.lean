@@ -97,7 +97,8 @@ theorem nestedOrDisjoint : NestedOrDisjoint memB := by
 
 /-- **Example 1.B (Scott 1981, PRG-19).** The binary neighbourhood system `B` on `Δ = Σ*`. -/
 def B : NeighborhoodSystem Str :=
-  NeighborhoodSystem.ofNestedOrDisjoint memB Set.univ ⟨[], cone_nil.symm⟩ nestedOrDisjoint
+  NeighborhoodSystem.ofNestedOrDisjoint memB Set.univ
+    ⟨[], Set.mem_univ _⟩ ⟨[], cone_nil.symm⟩ nestedOrDisjoint
     (fun _ => Set.subset_univ _)
 
 @[simp] theorem B_mem {X : Set Str} : B.mem X ↔ memB X := Iff.rfl

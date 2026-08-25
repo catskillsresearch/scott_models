@@ -78,7 +78,7 @@ theorem xStepG_fst_subset (splitX : Set α → Set β → Set α → Set β × S
     (A : Set α) (B : Set β) (Xn : Set α) (b : Bool) : (xStepG splitX A B Xn b).1 ⊆ A := by
   by_cases hb : b = true
   · simp only [xStepG, xyStep, hb, if_true]; exact Set.inter_subset_left
-  · simp only [xStepG, xyStep, hb]; exact Set.diff_subset
+  · simp only [xStepG, xyStep, hb]; exact Set.sdiff_subset
 
 theorem xStepG_snd_subset {D₁ : NeighborhoodSystem β}
     {splitX : Set α → Set β → Set α → Set β × Set β} (hxSplit : SplitSpec' D₁ splitX)
@@ -104,7 +104,7 @@ theorem yStepG_snd_subset (splitY : Set β → Set α → Set β → Set α × S
     (A1 : Set α) (B1 : Set β) (Yn : Set β) (b : Bool) : (yStepG splitY A1 B1 Yn b).2 ⊆ B1 := by
   by_cases hb : b = true
   · simp only [yStepG, xyStep, Prod.swap, hb, if_true]; exact Set.inter_subset_left
-  · simp only [yStepG, xyStep, Prod.swap, hb]; exact Set.diff_subset
+  · simp only [yStepG, xyStep, Prod.swap, hb]; exact Set.sdiff_subset
 
 /-- **`xStepG`'s two direct-refine outputs reunion to exactly the parent**: the trivial two-set
 identity `(A ∩ Xn) ∪ (A \ Xn) = A`, restated through `xStepG`'s `.1`. Needed for
@@ -114,7 +114,7 @@ theorem xStepG_fst_union (splitX : Set α → Set β → Set α → Set β × Se
     (A : Set α) (B : Set β) (Xn : Set α) :
     (xStepG splitX A B Xn true).1 ∪ (xStepG splitX A B Xn false).1 = A := by
   simp only [xStepG, xyStep]
-  exact Set.inter_union_diff A Xn
+  exact Set.inter_union_sdiff A Xn
 
 /-- **`yStepG`'s two split-side outputs reunion to exactly the split's own input `A1`**: from
 `SplitSpec'`'s unconditional `(split A B Xn).1 ∪ (split A B Xn).2 = B` field (here with `B := A1`,
@@ -137,7 +137,7 @@ theorem yStepG_snd_union (splitY : Set β → Set α → Set β → Set α × Se
     (A1 : Set α) (B1 : Set β) (Yn : Set β) :
     (yStepG splitY A1 B1 Yn true).2 ∪ (yStepG splitY A1 B1 Yn false).2 = B1 := by
   simp only [yStepG, xyStep, Prod.swap]
-  exact Set.inter_union_diff B1 Yn
+  exact Set.inter_union_sdiff B1 Yn
 
 /-- **`xStepG`'s two split-side outputs reunion to exactly its own input `B`**: from `SplitSpec'`'s
 unconditional `(split A B Xn).1 ∪ (split A B Xn).2 = B` field, applied directly (no `.swap`, unlike
@@ -3802,7 +3802,7 @@ theorem XPseqCode_zero :
     ⟨fun h => absurd h hD₀mne.ne_empty, fun h => absurd h hD₁mne.ne_empty⟩
   have hBE1 : D₁.master = ∅ ∨ D₁.mem D₁.master := Or.inr D₁.master_mem
   have hspec1 := hxSplit hAB1 hBE1 D₀.master
-  have hdiff1 : D₀.master \ D₀.master = ∅ := Set.diff_self
+  have hdiff1 : D₀.master \ D₀.master = ∅ := Set.sdiff_self
   have h2empty1 : (splitX D₀.master D₁.master D₀.master).2 = ∅ := hspec1.2.2.2.1.mp hdiff1
   have hunion1 : (splitX D₀.master D₁.master D₀.master).1 = D₁.master := by
     have hu := hspec1.2.2.2.2.1
@@ -3857,7 +3857,7 @@ theorem YPseqCode_zero :
     ⟨fun h => absurd h hD₀mne.ne_empty, fun h => absurd h hD₁mne.ne_empty⟩
   have hBE1 : D₁.master = ∅ ∨ D₁.mem D₁.master := Or.inr D₁.master_mem
   have hspec1 := hxSplit hAB1 hBE1 D₀.master
-  have hdiff1 : D₀.master \ D₀.master = ∅ := Set.diff_self
+  have hdiff1 : D₀.master \ D₀.master = ∅ := Set.sdiff_self
   have h2empty1 : (splitX D₀.master D₁.master D₀.master).2 = ∅ := hspec1.2.2.2.1.mp hdiff1
   have hunion1 : (splitX D₀.master D₁.master D₀.master).1 = D₁.master := by
     have hu := hspec1.2.2.2.2.1
@@ -3917,7 +3917,7 @@ theorem YPseqCode_zero :
   have hAB2 : D₁.master = ∅ ↔ D₀.master = ∅ := hAB1.symm
   have hBE2 : D₀.master = ∅ ∨ D₀.mem D₀.master := Or.inr D₀.master_mem
   have hspec2 := hySplit hAB2 hBE2 D₁.master
-  have hdiff2 : D₁.master \ D₁.master = ∅ := Set.diff_self
+  have hdiff2 : D₁.master \ D₁.master = ∅ := Set.sdiff_self
   have h2empty2 : (splitY D₁.master D₀.master D₁.master).2 = ∅ := hspec2.2.2.2.1.mp hdiff2
   have hunion2 : (splitY D₁.master D₀.master D₁.master).1 = D₀.master := by
     have hu := hspec2.2.2.2.2.1
@@ -5085,8 +5085,8 @@ theorem transfer_subset_combinedCode (i j : ℕ) :
       = (D₀.master ∩ combinedXCode P₀ P₁ hDiff0 hDiff1 splitX hSplitX splitY hSplitY hUnion0 i) \
         combinedXCode P₀ P₁ hDiff0 hDiff1 splitX hSplitX splitY hSplitY hUnion0 j := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ D₁.master | ∀ p ∈ [(i, true), (j, false)],
       (p.2 = true ↔ y ∈ combinedYCode P₀ P₁ hDiff0 hDiff1 splitX hSplitX splitY hSplitY hUnion1
@@ -5094,11 +5094,11 @@ theorem transfer_subset_combinedCode (i j : ℕ) :
       = (D₁.master ∩ combinedYCode P₀ P₁ hDiff0 hDiff1 splitX hSplitX splitY hSplitY hUnion1 i) \
         combinedYCode P₀ P₁ hDiff0 hDiff1 splitX hSplitX splitY hSplitY hUnion1 j := by
     ext y
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   rw [hLHS, hRHS] at key
-  rw [← Set.diff_eq_empty, ← Set.diff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
+  rw [← Set.sdiff_eq_empty, ← Set.sdiff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
     ← Set.not_nonempty_iff_eq_empty, not_iff_not]
   exact key
 
@@ -5125,8 +5125,8 @@ theorem transfer_double_subset_combinedCode (i j k : ℕ) :
           combinedXCode P₀ P₁ hDiff0 hDiff1 splitX hSplitX splitY hSplitY hUnion0 j) \
         combinedXCode P₀ P₁ hDiff0 hDiff1 splitX hSplitX splitY hSplitY hUnion0 k := by
     ext x
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   have hRHS : {y ∈ D₁.master | ∀ p ∈ [(i, true), (j, true), (k, false)],
       (p.2 = true ↔ y ∈ combinedYCode P₀ P₁ hDiff0 hDiff1 splitX hSplitX splitY hSplitY hUnion1
@@ -5135,11 +5135,11 @@ theorem transfer_double_subset_combinedCode (i j k : ℕ) :
           combinedYCode P₀ P₁ hDiff0 hDiff1 splitX hSplitX splitY hSplitY hUnion1 j) \
         combinedYCode P₀ P₁ hDiff0 hDiff1 splitX hSplitX splitY hSplitY hUnion1 k := by
     ext y
-    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false,
-      forall_eq_or_imp, forall_eq, Set.mem_diff, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
+      forall_eq_or_imp, forall_eq, Set.mem_sdiff, Set.mem_inter_iff]
     tauto
   rw [hLHS, hRHS] at key
-  rw [← Set.diff_eq_empty, ← Set.diff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
+  rw [← Set.sdiff_eq_empty, ← Set.sdiff_eq_empty, ← Set.not_nonempty_iff_eq_empty,
     ← Set.not_nonempty_iff_eq_empty, not_iff_not]
   exact key
 

@@ -58,6 +58,7 @@ approximable map `a : E → E` — the neighbourhood-system axioms need only `mo
 def fixedNbhd (a : ApproximableMap E E) : NeighborhoodSystem α where
   mem X := E.mem X ∧ a.rel X X
   master := E.master
+  master_nonempty := E.master_nonempty
   master_mem := ⟨E.master_mem, a.master_rel⟩
   inter_mem := by
     rintro X Y Z ⟨hXE, hXa⟩ ⟨hYE, hYa⟩ ⟨hZE, _⟩ hZsub

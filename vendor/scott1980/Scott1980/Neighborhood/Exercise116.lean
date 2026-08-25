@@ -42,6 +42,7 @@ closed under finite intersection since `(X∩Y)ᶜ = Xᶜ ∪ Yᶜ`. -/
 def cofiniteSystem : NeighborhoodSystem ℕ where
   mem X := Xᶜ.Finite
   master := Set.univ
+  master_nonempty := Set.univ_nonempty
   master_mem := by rw [Set.compl_univ]; exact Set.finite_empty
   inter_mem := by
     intro X Y _ hX hY _ _
@@ -165,6 +166,7 @@ the principal filters of singletons (the system is "flat"). -/
 def fullSystem : NeighborhoodSystem ℕ where
   mem _ := True
   master := Set.univ
+  master_nonempty := Set.univ_nonempty
   master_mem := trivial
   inter_mem := fun _ _ _ _ => trivial
   sub_master := fun _ => Set.subset_univ _

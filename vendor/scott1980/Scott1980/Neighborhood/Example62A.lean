@@ -73,12 +73,16 @@ theorem prodN_injective {X X' : Fin n → Set β} (h : prodN X = prodN X') : ∀
   have := Set.ext_iff.mp h (j, b)
   simpa only [mem_prodN] using this
 
-/-- **The `n`-fold product `Vⁿ`** of a neighbourhood system `V`, over `Fin n × β`. Its neighbourhoods
-are exactly the proper products `prodN X` with each component `X j ∈ V`. Closure under intersection is
-componentwise (no tags to disambiguate, so no non-emptiness is needed here). -/
-def npow (V : NeighborhoodSystem β) (n : ℕ) : NeighborhoodSystem (Fin n × β) where
+/-- **The positive `n`-fold product `Vⁿ`** of a neighbourhood system `V`, over `Fin n × β`.
+The assumption `0 < n` is necessary because Scott's token set `Fin n × Δ` must be non-empty.
+Its neighbourhoods are exactly the proper products `prodN X` with each component `X j ∈ V`;
+closure under intersection is componentwise. -/
+def npow (V : NeighborhoodSystem β) (n : ℕ) (hn : 0 < n) : NeighborhoodSystem (Fin n × β) where
   mem W := ∃ X : Fin n → Set β, (∀ j, V.mem (X j)) ∧ W = prodN X
   master := prodN (fun _ => V.master)
+  master_nonempty := by
+    obtain ⟨b, hb⟩ := V.master_nonempty
+    exact ⟨(⟨0, hn⟩, b), hb⟩
   master_mem := ⟨_, fun _ => V.master_mem, rfl⟩
   inter_mem := by
     rintro W W' Z ⟨X, hX, rfl⟩ ⟨X', hX', rfl⟩ ⟨Zw, hZw, rfl⟩ hsub
@@ -90,13 +94,13 @@ def npow (V : NeighborhoodSystem β) (n : ℕ) : NeighborhoodSystem (Fin n × β
     rintro W ⟨X, hX, rfl⟩
     exact prodN_subset.mpr (fun j => V.sub_master (hX j))
 
-@[simp] theorem npow_mem {V : NeighborhoodSystem β} {W : Set (Fin n × β)} :
-    (npow V n).mem W ↔ ∃ X : Fin n → Set β, (∀ j, V.mem (X j)) ∧ W = prodN X := Iff.rfl
+@[simp] theorem npow_mem {V : NeighborhoodSystem β} {W : Set (Fin n × β)} {hn : 0 < n} :
+    (npow V n hn).mem W ↔ ∃ X : Fin n → Set β, (∀ j, V.mem (X j)) ∧ W = prodN X := Iff.rfl
 
 /-- Under Scott's standing assumption `∅ ∉ V`, no neighbourhood of `Vⁿ` is empty (provided `0 < n`,
 so there is a coordinate to witness). -/
 theorem npow_nonempty {V : NeighborhoodSystem β} (hn : 0 < n)
-    (hV : ∀ X, V.mem X → X.Nonempty) : ∀ W, (npow V n).mem W → W.Nonempty := by
+    (hV : ∀ X, V.mem X → X.Nonempty) : ∀ W, (npow V n hn).mem W → W.Nonempty := by
   rintro W ⟨X, hX, rfl⟩
   obtain ⟨b, hb⟩ := hV (X ⟨0, hn⟩) (hX ⟨0, hn⟩)
   exact ⟨(⟨0, hn⟩, b), hb⟩
@@ -277,6 +281,7 @@ theorem memA_inter (hn : 0 < n) :
 def Asys (n : ℕ) (hn : 0 < n) : NeighborhoodSystem Str where
   mem := MemA n
   master := Set.univ
+  master_nonempty := ⟨[], Set.mem_univ _⟩
   master_mem := MemA.univ
   inter_mem := fun hX hY hZ hsub => memA_inter hn hX hY hZ hsub
   sub_master := fun _ => Set.subset_univ _
@@ -288,7 +293,7 @@ def Asys (n : ℕ) (hn : 0 < n) : NeighborhoodSystem Str where
 /-! ### The domain equation `A ≅ Aⁿ + Aⁿ`. -/
 
 /-- The `n`-fold product `Aⁿ = npow A n`. -/
-abbrev Apow (hn : 0 < n) : NeighborhoodSystem (Fin n × Str) := npow (Asys n hn) n
+abbrev Apow (hn : 0 < n) : NeighborhoodSystem (Fin n × Str) := npow (Asys n hn) n hn
 
 theorem apowNe (hn : 0 < n) : ∀ W, (Apow hn).mem W → W.Nonempty :=
   npow_nonempty hn (fun _ h => memA_nonempty hn h)
