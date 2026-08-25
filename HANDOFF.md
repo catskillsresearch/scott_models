@@ -371,3 +371,13 @@ lives in each sibling's `arxiv.md`.
   and Palomar preflight scripts from `vendor/scott1972|1980|1982` so
   Palomar sees one Comparator config (root). Sibling kits stay on remotes.
 - Lakefiles default to the paper libs only; vendored CI runs `lake build`.
+
+### 2026-08-25 — Comparator closure universe mismatch
+
+- Palomar rejected definition hole `Scott1982.InfoSys.closure`: Challenge used
+  level parameter `u`, while the independently elaborated target uses `u_1`.
+- Isolated the Challenge closure hole in a `universe u_1` section, matching the
+  target `DefinitionVal` type, level parameters, and safety.
+- Removed universe-name normalization from the local comparison script:
+  Comparator compares level parameter names exactly. Full preflight is green
+  with exact Challenge/Solution output.

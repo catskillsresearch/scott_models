@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Diff Challenge vs Solution types for every comparator.json name.
-# Palomar Comparator compares exported types syntactically (pp.all / instance
-# names). A green `lake build` does not imply a match.
+# Diff Challenge vs Solution declaration types for every comparator.json name.
+# Palomar Comparator compares exported types, including exact universe parameter
+# names and instance paths. A green `lake build` does not imply a match.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -67,24 +67,15 @@ lake env lean "${tmp}/SolutionTypes.lean" 2>/dev/null \
   | grep -vE 'LEAN_PATH|trace:|warning:|declaration uses' \
   >"${tmp}/solution.txt" || true
 
-# Drop universe-name noise (u_1 vs u_4) so instance-name mismatches stand out.
-normalize() {
-  tr '\n' ' ' | sed -E \
-    's/\.\{u(_[0-9]+)?(,[ ]*u(_[0-9]+)?)*\}//g; s/u_[0-9]+/u/g; s/  */ /g'
-}
-
-normalize <"${tmp}/challenge.txt" >"${tmp}/challenge.norm"
-normalize <"${tmp}/solution.txt" >"${tmp}/solution.norm"
-
-echo "== Challenge (pp.all, universes normalized) =="
-cat "${tmp}/challenge.norm"
+echo "== Challenge (pp.all, exact universe names) =="
+cat "${tmp}/challenge.txt"
 echo
-echo "== Solution (pp.all, universes normalized) =="
-cat "${tmp}/solution.norm"
+echo "== Solution (pp.all, exact universe names) =="
+cat "${tmp}/solution.txt"
 echo
-if diff -u "${tmp}/challenge.norm" "${tmp}/solution.norm"; then
-  echo "OK: Challenge and Solution types match (after universe-name normalize)."
+if diff -u "${tmp}/challenge.txt" "${tmp}/solution.txt"; then
+  echo "OK: Challenge and Solution types match exactly."
 else
-  echo "FAIL: type/instance mismatch — Palomar Comparator will reject this."
+  echo "FAIL: type/universe/instance mismatch — Palomar Comparator will reject this."
   exit 1
 fi

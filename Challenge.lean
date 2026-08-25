@@ -145,13 +145,21 @@ instance : PartialOrder sys.Element where
     subst hc
     rfl
 
+end Element
+
+section Closure
+
+universe u_1
+
+variable {α : Type u_1} [DecidableEq α] (sys : InfoSys α)
+
 /-- Entailment closure of a consistent set (Factoid 3.5). Supporting hole. -/
 noncomputable def closure (u : Finset α) (hu : u ∈ sys.Con) : sys.Element :=
   let _ := u
   let _ := hu
   sorry
 
-end Element
+end Closure
 
 /-- Tokens of the tree / S-expression system (Scott 1982, Factoid 8.1). -/
 inductive TreeToken (α : Type u) where

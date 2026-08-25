@@ -31,7 +31,7 @@ PY
 step "Build Lean project"
 lake build
 
-step "Compare Challenge/Solution types and definition values"
+step "Compare Challenge/Solution declaration types"
 PALOMAR_QUIET=1 bash scripts/compare_challenge_solution_types.sh
 
 step "Reject proof holes in Solution sources"
