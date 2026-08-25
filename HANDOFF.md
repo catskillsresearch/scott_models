@@ -381,3 +381,11 @@ lives in each sibling's `arxiv.md`.
 - Removed universe-name normalization from the local comparison script:
   Comparator compares level parameter names exactly. Full preflight is green
   with exact Challenge/Solution output.
+
+### 2026-08-25 — Challenge `NeighborhoodSystem` missing `master_nonempty`
+
+- Palomar rejected `Scott1980.Neighborhood.NeighborhoodSystem.mk`: Challenge
+  still had the pre-re-vendor 5-field constructor, while the 1980 target now
+  requires `master_nonempty`.
+- Challenge structure now matches `vendor/scott1980` field order.
+- Local compare script also `#print`s walked structure constructors.

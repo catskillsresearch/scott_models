@@ -54,6 +54,21 @@ write_lean() {
     for n in "${NAMES[@]}"; do
       echo "#check ${n}"
     done
+    # Comparator walks constructors of structures used in those types.
+    for n in \
+      Scott1980.Neighborhood.NeighborhoodSystem \
+      Scott1980.Neighborhood.NeighborhoodSystem.mk \
+      Scott1980.Neighborhood.NeighborhoodSystem.Element \
+      Scott1980.Neighborhood.NeighborhoodSystem.Element.mk \
+      Scott1982.InfoSys \
+      Scott1982.InfoSys.mk \
+      Scott1982.InfoSys.Element \
+      Scott1982.InfoSys.Element.mk \
+      ScottModels.NbhdBasis \
+      ScottModels.NbhdBasis.mk
+    do
+      echo "#print ${n}"
+    done
   } >"${out}"
 }
 
