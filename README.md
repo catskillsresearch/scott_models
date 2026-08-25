@@ -1,4 +1,6 @@
 [![Lean 4](https://img.shields.io/github/actions/workflow/status/catskillsresearch/scott_models/build.yml?label=Lean%204)](https://github.com/catskillsresearch/scott_models/actions/workflows/build.yml)
+[![Palomar](https://img.shields.io/badge/Palomar-2026--08--25--000003-0f766e.svg)](https://palomar-registry.org/entry?id=PALOMAR-2026-08-25-000003&version=1)
+
 # scott_models
 
 Equivalence theorems relating the 1972 continuous-lattice, 1980 neighborhood-system,
