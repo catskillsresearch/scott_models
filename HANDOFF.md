@@ -22,6 +22,7 @@ lives in each sibling's `arxiv.md`.
 3. For dependency lemmas, **Grep** the relevant sibling `arxiv.md` / Lean module — do not rely on
    copied status dumps in this repo.
 4. Build: `lake build ScottModels` (filter: `| grep -vE 'LEAN_PATH|trace:' | tail`).
+   Standalone Mizar translation: `lake build Yellow17` (root `Yellow17.lean`, not imported by ScottModels).
 5. Palomar type check (green `lake build` is not enough): from repo root,
    `bash scripts/compare_challenge_solution_types.sh`.
    It `#check`s every `comparator.json` name from Challenge and from Solution
@@ -55,6 +56,8 @@ lives in each sibling's `arxiv.md`.
   (2026-08-25): no problems identified. Registered as
   [PALOMAR-2026-08-25-000003](https://palomar-registry.org/entry?id=PALOMAR-2026-08-25-000003&version=1)
   v1.
+- Standalone `Yellow17` (Mizar `YELLOW_17` Tychonoff translation) is green;
+  not part of the ScottModels bridge article.
 
 ## On finishing a bridge theorem
 
@@ -452,3 +455,24 @@ lives in each sibling's `arxiv.md`.
 ### 2026-08-25 — rebuild PDFs after Palomar citation
 
 - Regenerated `arxiv.pdf` / `view.pdf` (57 pages, all fonts embedded).
+
+### 2026-08-25 — `Yellow17` (Mizar `YELLOW_17`)
+
+Standalone root translation of Bartłomiej Skorulski, *The Tichonov Theorem*
+(`yellow17.miz`). Not wired into `ScottModels` / `arxiv.md`.
+
+- File: `Yellow17.lean`. Lake target: `[[lean_lib]] name = "Yellow17"` (not a
+  default target).
+- Representation: dependent products `∀ i, X i`, `Function.eval`,
+  `Function.update`, cylinders `eval i ⁻¹' U` (not Mizar set-coded
+  `product` / `proj` / `+*`).
+- `Th1`–`Th13`: typed projection / cylinder / update lemmas.
+- `Th14`–`Th15`: `isCompact_iff_finite_subcover`, `isCompact_generateFrom`.
+- `Th16`–`Th18`: `cylinderSubbasis` generates `Pi.topologicalSpace`.
+- `Th19`–`Th22`: cylinder-subbasis finite-subcover combinatorics.
+- Headlines: `yellow17_tychonoff_sets` (`isCompact_univ_pi`),
+  `yellow17_tychonoff` / `yellow17_tychonoff'` (`Pi.compactSpace`).
+- `lake build Yellow17` green, zero `sorry`.
+- Axiom audit of the three headlines:
+  `{propext, Classical.choice, Quot.sound}` (classical compactness /
+  Tychonoff; choice is expected).

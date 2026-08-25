@@ -39,6 +39,9 @@ name = "ScottModels"
 name = "everything"
 
 [[lean_lib]]
+name = "Yellow17"
+
+[[lean_lib]]
 name = "Challenge"
 
 [[lean_lib]]
