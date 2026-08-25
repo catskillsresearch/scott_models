@@ -94,8 +94,9 @@ fidelity:
     InfoSys.basicOpen; informal ↟a is wayBelowUp. DecidableEq on tokens
     (and on D for the ↟-coding) is required so InfoSys can use the
     choice-free Finset prelude. The sibling packages remain the
-    per-paper remotes; this snapshot vendors them in vendor/ and proves
-    the maps between them.
+    per-paper remotes; this snapshot vendors modified copies in
+    vendor/ (revisions and local patches: vendor/FROZEN.txt) and
+    proves the maps between them.
 
 # ---------------------------------------------------------------------------
 # Mathematical sources.
@@ -178,29 +179,53 @@ related_formalizations:
       continuation, not a reimplementation by someone else. The archive
       is historical and is not vendored.
 
-  - id: "https://github.com/catskillsresearch/scott1972/tree/36bf01f99f00fcb78b999052212372ba026521ba"
+  - id: "https://github.com/catskillsresearch/scott1972/tree/278ba1745b6fb023fc3e9ffe53b7106ce60222c1"
     relationship: other
     note: >-
-      Same-author per-paper home for Scott 1972 continuous lattices,
-      frozen at 36bf01f99f00fcb78b999052212372ba026521ba and copied
-      into vendor/scott1972 for this Palomar snapshot. The remote
-      remains the 1972 development; this tree is an in-tree convenience
-      archive of that checkout, not a replacement.
+      Same-author per-paper home for Scott 1972 continuous lattices.
+      vendor/scott1972 is a copy of revision
+      278ba1745b6fb023fc3e9ffe53b7106ce60222c1 (ledger
+      vendor/FROZEN.txt), not the earlier 36bf01f… pin. Local
+      modifications: the sibling Palomar kit is omitted
+      (Challenge.lean, Solution.lean, comparator.json,
+      formalization.yaml, preflight scripts, docs, PROVENANCE.md);
+      lakefile.toml and CI default to the Scott1972 library only.
+      No Lean sources were edited.
 
-  - id: "https://github.com/catskillsresearch/scott1980/tree/f6cbc2d62a636ab24e60d185f80c0f61daf73fe1"
+  - id: "https://github.com/catskillsresearch/scott1980/tree/ef6c05671582b7883ecd40b7081b642ce5351963"
     relationship: other
     note: >-
-      Same-author per-paper home for PRG-19 neighbourhood systems,
-      frozen at f6cbc2d62a636ab24e60d185f80c0f61daf73fe1 and copied
-      into vendor/scott1980. The remote remains the 1980 development.
+      Same-author per-paper home for PRG-19 neighbourhood systems.
+      vendor/scott1980 is a copy of revision
+      ef6c05671582b7883ecd40b7081b642ce5351963 (ledger
+      vendor/FROZEN.txt), not the earlier f6cbc2d… pin. Local
+      modifications: the sibling Palomar kit is omitted, including
+      Neighborhood/PalomarExamples.lean and its Scott1980.lean
+      import; lakefile.toml and CI default to the Scott1980 library
+      only; NeighborhoodSystem.instPartialOrderElement is named
+      explicitly so Verso can emit a Comparator anchor. No other
+      Lean sources were edited.
 
-  - id: "https://github.com/catskillsresearch/scott1982/tree/7ed95c16db5be1131f79af84cdf29ba18f07646a"
+  - id: "https://github.com/catskillsresearch/scott1982/tree/d3221eec09505aa75e1b818aabc73f1f04339bdc"
     relationship: other
     note: >-
       Same-author per-paper home for Scott 1982 information systems
-      (through Factoid 8.4 / domain equations), frozen at
-      7ed95c16db5be1131f79af84cdf29ba18f07646a and copied into
-      vendor/scott1982. The remote remains the 1982 development.
+      (through Factoid 8.4 / domain equations). vendor/scott1982 is
+      a copy of revision d3221eec09505aa75e1b818aabc73f1f04339bdc
+      (ledger vendor/FROZEN.txt), not the earlier 7ed95c1… pin.
+      Local modifications beyond the Palomar-kit omission and
+      paper-library lakefile/CI: (1) Factoid81 bridge patch required
+      by ScottModels/SexDomainEquation — TreeEntPayload kernel
+      disjuncts for pairL/pairR bot, TreeCon_insert_bot, and a
+      handwritten instDecidableEqTreeToken on Type u (upstream at
+      this revision is Scott-faithful only and uses deriving
+      DecidableEq); (2) Lean 4.33 compatibility —
+      Constructive.funion_empty_right, Proposition23 uses that
+      lemma, Factoid77 explicit tensor/product transports with named
+      category instances, and robustness edits in Factoid82,
+      Fixpoint, and Theorem72; (3) named Comparator instances
+      instPartialOrderElement, instDecidableEqSumToken, and
+      instDecidableEqProdToken.
 
   - id: "https://github.com/Vilin97/lean-pool/tree/main/LeanPool/DomainTheory"
     relationship: other
@@ -312,6 +337,11 @@ limitations:
     The compared claim is the named bridges, not “we formalized Scott
     1972 / PRG-19 / ICALP 1982,” not LRSOD / D∞ ≅ [D∞ → D∞], and not a
     Mathlib or Tau Ceti ingest.
+  - >-
+    The three vendor/ trees are modified copies of the frozen sibling
+    revisions in vendor/FROZEN.txt (not bit-identical checkouts). See
+    related_formalizations for the Palomar-kit omissions and the
+    scott1982 Lean patches.
 
 alignment:
   namespace: "ScottModels"

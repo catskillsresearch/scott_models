@@ -28,6 +28,29 @@ print(f"OK: {len(cfg['theorem_names'])} theorem targets and "
       f"{len(cfg['definition_names'])} definition targets.")
 PY
 
+step "Match formalization.yaml vendor revisions to FROZEN.txt"
+python3 - <<'PY'
+import re
+
+frozen = open("vendor/FROZEN.txt", encoding="utf-8").read()
+yaml = open("formalization.yaml", encoding="utf-8").read()
+revs = re.findall(
+    r"vendor/(scott19\d{2})\n(?:  .*\n)*?  rev:\s+(\S+)", frozen
+)
+if len(revs) != 3:
+    raise SystemExit(f"Could not parse three vendor revisions from FROZEN.txt: {revs}")
+missing = []
+for name, rev in revs:
+    if f"/tree/{rev}" not in yaml:
+        missing.append(f"{name} {rev}")
+if missing:
+    raise SystemExit(
+        "formalization.yaml is missing related_formalizations "
+        f"tree URLs for: {', '.join(missing)}"
+    )
+print("OK: related_formalizations revisions match vendor/FROZEN.txt.")
+PY
+
 step "Require explicit Challenge names for compared instances"
 python3 - <<'PY'
 import json

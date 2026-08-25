@@ -93,7 +93,8 @@ The sibling packages are **finished dependencies**, not work items of this paper
 [`scott1980`](https://github.com/catskillsresearch/scott1980), and
 [`scott1982`](https://github.com/catskillsresearch/scott1982) (information systems through
 Factoid 8.4 / domain equations). They are vendored in `vendor/` at frozen SHAs
-(see `vendor/FROZEN.txt` / `lakefile.toml`); the remotes remain the per-paper homes. The Palomar statement
+(see `vendor/FROZEN.txt` / `lakefile.toml`), with the local modifications
+recorded there and in `formalization.yaml`; the remotes remain the per-paper homes. The Palomar statement
 of record is the presentation-bridge family in the catalog below (`Challenge.lean` /
 `comparator.json`), not a formalization of the three papers. Figure~2 is left-to-right: sibling packages on the
 left, local `ScottModels/` modules on the right, with arrows for **direct** imports

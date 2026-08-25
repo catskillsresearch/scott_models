@@ -14,10 +14,13 @@
 # explicitly named (`instPartialOrderElement`, `instDecidableEqSumToken`,
 # `instDecidableEqProdToken`) so Challenge and Solution share anchors.
 #
-# Vendored trees deliberately omit sibling Palomar packaging
-# (comparator.json, Challenge/Solution, formalization.yaml, preflight
-# scripts) so this monorepo has a single Comparator config at the root.
-# Full Palomar kits remain on the per-paper remotes.
+# All three trees omit sibling Palomar packaging (comparator.json,
+# Challenge/Solution, formalization.yaml, preflight scripts, docs) so
+# this monorepo has a single Comparator config at the root. Lakefiles
+# and CI default to the paper libraries only. Full Palomar kits remain
+# on the per-paper remotes.
+# vendor/scott1972 Lean sources are otherwise unmodified from the
+# frozen revision.
 
 vendor/scott1972
   origin: https://github.com/catskillsresearch/scott1972

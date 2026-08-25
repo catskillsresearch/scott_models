@@ -399,3 +399,14 @@ lives in each sibling's `arxiv.md`.
   `instPartialOrderElement` (1980 and 1982), `instDecidableEqSumToken`,
   and `instDecidableEqProdToken`. The same names are now explicit in the
   vendored 1980/1982 sources. `comparator.json` names are unchanged.
+
+### 2026-08-25 — Palomar provenance: vendor revisions
+
+- `formalization.yaml` still listed the 2026-08-19 pins (`36bf01f…`,
+  `f6cbc2d…`, `7ed95c1…`). Related-formalization IDs now match
+  `vendor/FROZEN.txt`: scott1972 `278ba174…`, scott1980 `ef6c0567…`,
+  scott1982 `d3221eec…`.
+- Each sibling note now records the in-tree modifications (Palomar-kit
+  strip on all three; named 1980 instance; 1982 Factoid 8.1 bridge
+  patch, Lean 4.33 compatibility, and named Comparator instances).
+- Preflight checks that those `/tree/<rev>` URLs match `FROZEN.txt`.

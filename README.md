@@ -18,9 +18,9 @@ into [`scott1972`](https://github.com/catskillsresearch/scott1972),
 [`scott1980`](https://github.com/catskillsresearch/scott1980),
 [`scott1982`](https://github.com/catskillsresearch/scott1982), and this
 bridges package. This snapshot copies those three paper trees into
-`vendor/` (frozen SHAs in `vendor/FROZEN.txt`) so one Palomar SHA has the
-complete development; the remotes remain the per-paper homes. See
-`PROVENANCE.md`. The paper of record for the bridges is `view.pdf`
+`vendor/` (frozen SHAs and local patches in `vendor/FROZEN.txt`) so one
+Palomar SHA has the complete development; the remotes remain the
+per-paper homes. See `PROVENANCE.md`. The paper of record for the bridges is `view.pdf`
 (source `arxiv.md`).
 
 ## Build

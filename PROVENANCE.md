@@ -14,8 +14,13 @@ tree:
 
 This Palomar snapshot copies the three paper repos into `vendor/` so a
 preservation fork of `scott_models` contains the complete development.
-The three remotes remain the per-paper homes. Frozen SHAs and copy date
-are in `vendor/FROZEN.txt`. This is a convenience archive of the author’s
+The three remotes remain the per-paper homes. Frozen SHAs, copy date,
+and in-tree modifications are in `vendor/FROZEN.txt` and the
+`related_formalizations` notes in `formalization.yaml`. The copies are
+not bit-identical: Palomar kits are omitted from all three trees;
+`scott1980` names `instPartialOrderElement`; `scott1982` also carries
+the Factoid 8.1 bridge patch, Lean 4.33 compatibility edits, and named
+Comparator instances. This is a convenience archive of the author’s
 own split, not a republication of someone else’s formalization. The
 archived `domain_theory` tree is historical and is not vendored; the
 split remotes are the sources of truth.
