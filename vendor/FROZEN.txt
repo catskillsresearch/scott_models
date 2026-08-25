@@ -9,6 +9,11 @@
 # (`funion_empty_right`), Factoid77 (explicit tensor/product transports),
 # Factoid82, Fixpoint, and Theorem72 (proofs robust to stricter transparency).
 # Its lake-manifest.json is refreshed from mathlib v4.33.0.
+#
+# Vendored trees deliberately omit sibling Palomar packaging
+# (comparator.json, Challenge/Solution, formalization.yaml, preflight
+# scripts) so this monorepo has a single Comparator config at the root.
+# Full Palomar kits remain on the per-paper remotes.
 
 vendor/scott1972
   origin: https://github.com/catskillsresearch/scott1972

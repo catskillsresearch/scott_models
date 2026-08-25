@@ -364,3 +364,10 @@ lives in each sibling's `arxiv.md`.
   product/function/presentation compatibility proofs do not themselves
   select witnesses; `arxiv.md` §4 distinguishes this inherited instance
   frontier from genuine classical classification.
+
+### 2026-08-24 — strip vendored Palomar kits
+
+- Removed `comparator.json`, Challenge/Solution, formalization.yaml,
+  and Palomar preflight scripts from `vendor/scott1972|1980|1982` so
+  Palomar sees one Comparator config (root). Sibling kits stay on remotes.
+- Lakefiles default to the paper libs only; vendored CI runs `lake build`.
