@@ -22,7 +22,10 @@ into [`scott1972`](https://github.com/catskillsresearch/scott1972),
 bridges package. This snapshot copies those three paper trees into
 `vendor/` (frozen SHAs and local patches in `vendor/FROZEN.txt`) so one
 Palomar SHA has the complete development; the remotes remain the
-per-paper homes. See `PROVENANCE.md`. The paper of record for the bridges is `view.pdf`
+per-paper homes. See `PROVENANCE.md`. This package is registered with
+[Palomar](https://palomar-registry.org/about) as
+[PALOMAR-2026-08-25-000003](https://palomar-registry.org/entry?id=PALOMAR-2026-08-25-000003&version=1).
+The paper of record for the bridges is `view.pdf`
 (source `arxiv.md`).
 
 ## Build

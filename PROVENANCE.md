@@ -38,3 +38,7 @@ Brian Milnes’s
 documents the four remotes and clones them with a script; the Lean is
 git-ignored there. That is a known local reference checkout, not a
 published second formalization.
+
+This formalization is registered in the Palomar registry as
+[PALOMAR-2026-08-25-000003](https://palomar-registry.org/entry?id=PALOMAR-2026-08-25-000003&version=1)
+(version 1). Palomar preserves a pinned commit of *this* repository.
